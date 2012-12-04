@@ -1,0 +1,44 @@
+# vim:filetype=sh
+
+RESET='\033[0m'
+
+# Basic colors
+BLACK='\033[0;30m'
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[0;33m'
+BLUE='\033[0;34m'
+PURPLE='\033[0;35m'
+CYAN='\033[0;36m'
+WHITE='\033[0;37m'
+
+# Bold colors
+EBLACK='\033[1;30m'
+ERED='\033[1;31m'
+EGREEN='\033[1;32m'
+EYELLOW='\033[1;33m'
+EBLUE='\033[1;34m'
+EPURPLE='\033[1;35m'
+ECYAN='\033[1;36m'
+EWHITE='\033[1;37m'
+
+# Underlined colors
+UBLACK='\033[4;30m'
+URED='\033[4;31m'
+UGREEN='\033[4;32m'
+UYELLOW='\033[4;33m'
+UBLUE='\033[4;34m'
+UPURPLE='\033[4;35m'
+UCYAN='\033[4;36m'
+UWHITE='\033[4;37m'
+
+# Background colors
+BBLACK='\033[40m'
+BRED='\033[41m'
+BGREEN='\033[42m'
+BYELLOW='\033[43m'
+BBLUE='\033[44m'
+BPURPLE='\033[45m'
+BCYAN='\033[46m'
+BWHITE='\033[47m'
+

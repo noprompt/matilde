@@ -1,0 +1,101 @@
+# vim:filetype=sh
+
+# ls aliases
+if [[ `ls --color 2>/dev/null` ]]; then
+  alias ls="ls --color -F"
+else
+  alias ls="ls -GF"
+fi
+alias lsa="ls -a"
+alias lsA="ls -A"
+alias l="ls -l"
+alias ll="ls -l"
+alias la="l -a"
+alias lA="l -A"
+
+# cd aliases
+alias back="cd -"
+alias cd.="cd ."
+alias cd..="cd .."
+alias cd...="cd ../.. && pwd"
+alias cd....="cd ../../.. && pwd"
+alias cd.....="cd ../../../.. && pwd"
+
+alias so="source"
+alias pcp="pbcopy"
+alias pps="pbpaste"
+alias timestamp="date +%s"
+alias grep="grep --color"
+
+alias gst="git status"
+alias gc="git commit"
+alias gca="git commit -a"
+alias ga="git add"
+alias gco="git checkout"
+alias gb="git branch"
+alias gm="git merge"
+alias gd="git diff"
+
+alias be="bundle exec"
+
+alias rest="tail -n +2"
+alias init="head -n -1"
+
+# Code cat.
+[ `which pygmentize` ] \
+  && alias ccat="pygmentize -O style=rrt -f console256 -g"
+
+# Alias vim to terminal MacVim if possible.
+[ `which mvim` ] \
+  && alias vim="mvim -v"
+
+# Vim style help function. Attempts to try `help` with the given command. If
+# that fails, `man` is attempted, followed by `<command> --help`.
+function :h() {
+  help "$1" 2>/dev/null && return 0
+  man  "$1" 2>/dev/null && return 0
+  eval "$1 --help"
+}
+
+# Vim style edit.
+function :e() {
+  eval $EDITOR $@
+}
+
+function ..() {
+  case $# in
+    0) cd .. ;;
+
+    *) n=$1;
+       dir='.';
+
+       while [ $n -gt 0 ]; do
+         dir="$dir/.."
+         n=$(($n - 1))
+       done
+
+       cd $dir
+       ;;
+   esac
+   pwd
+}
+
+# Pushes a path on to $PATH.
+function pushp() {
+  if [ -n "$1" ]; then
+    export PATH="$PATH:$1"
+  fi
+  ppp
+}
+
+# Pop a path from $PATH.
+function popp() {
+  export PATH="$(ppp | init | tr '\n' ':' | sed -e "s/:$//")"
+  ppp
+}
+
+# Pretty print path.
+function ppp() {
+  echo $PATH | sed -e 's/:\{1,\}/ /g' | tr ' ' '\n'
+}
+

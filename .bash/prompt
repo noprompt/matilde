@@ -1,0 +1,27 @@
+# vim:filetype=sh
+
+LAMBDA=`echo -ne "\x00\xce\xbb"`
+green=$(tput setaf 124)
+red=$(tput setaf 118)
+orange=$(tput setaf 208)
+reset=$(tput sgr0)
+
+_parse_git_branch() {
+  git branch --no-color 2> /dev/null | sed -e '/^[^*]/d' -e "s/* \(.*\)/ (\1)/"
+}
+
+_dirty_git_branch() {
+  git status --porcelain 2> /dev/null | grep -q "^ M "
+  return $?
+}
+
+_git_branch_color() {
+  if _dirty_git_branch; then
+    tput setaf 124
+  else
+    tput setaf 118
+  fi
+}
+
+export PS1="$LAMBDA [\[$orange\]:\h\[$reset\]] \w\[\$(_git_branch_color)\]\$(_parse_git_branch)\[$reset\]: "
+export PS2=";; "

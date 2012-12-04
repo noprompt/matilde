@@ -1,0 +1,9 @@
+# vim:filetype=sh
+shopt -s cdspell
+shopt -s histappend
+
+# Enable vi mode
+set -o vi
+
+# Disallow existing regular files to be overwritten by redirection of output.
+set -o noclobber

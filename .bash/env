@@ -1,0 +1,46 @@
+# vim:filetype=sh
+
+# Command history file location.
+export HISTFILE="$HOME/.bash_history"
+
+# Format command history timestamps.
+# See: strftime(3)
+export HISTTIMEFORMAT="%F %T "
+
+# Store no more than 4000 lines in the command history file.
+export HISTSIZE=4000
+
+# Remember no more than 2000 commands in the command history file.
+export HISTFILESIZE=2000
+
+# Enable colors with the `ls` command
+export CLICOLOR=1
+export LSCOLORS=Gxfxcxdxbxegedabagacad
+
+# Use Vim as the default editor for everything.
+export VISUAL=vim
+export EDITOR=vim
+export FCEDIT=vim
+
+# Node
+[ `which npm` ] \
+  && export NODE_PATH=`npm -g root`
+
+# Personal binaries
+[ -d "$HOME/bin" ] \
+  && PERSONAL="$HOME/bin"
+
+# Homebrew
+[ `which brew` ] \
+  && HOMEBREW="/usr/local/bin:$(brew --prefix coreutils)/libexec/gnubin"
+
+# Ruby
+[ -d "$HOME/.rbenv" ] \
+  && RBENV="$HOME/.rbenv/bin" \
+  && eval "$($HOME/.rbenv/bin/rbenv init -)"
+
+# Haskell
+[ -d "$HOME/.cabal" ] \
+  && CABAL="$HOME/.cabal/bin"
+
+export PATH="$PERSONAL:$HOMEBREW:$RBENV:$CABAL:$PATH"
