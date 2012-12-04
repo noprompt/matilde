@@ -43,4 +43,9 @@ export FCEDIT=vim
 [ -d "$HOME/.cabal" ] \
   && CABAL="$HOME/.cabal/bin"
 
+# VimClojure
+if [ -d "$HOME/lib/VimClojure" ]; then
+  export VIMCLOJURE_SERVER_JAR="$(find "$HOME/lib/VimClojure" -name '*.jar' | tail -1)"
+fi
+
 export PATH="$PERSONAL:$HOMEBREW:$RBENV:$CABAL:$PATH"
