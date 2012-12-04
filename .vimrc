@@ -151,6 +151,15 @@ let g:Powerline_symbols = 'fancy'
 " Use Clojure syntax highlighting for ClojureScript files.
 au BufNewFile,BufRead *.cljs set filetype=clojure
 
+" VimClojure
+let g:vimclojure#HighlightBuiltins = 1
+let g:vimclojure#ParenRainbow = 1
+let g:vimclojure#NailgunPort = "127.0.0.1"
+let g:vimclojure#NailgunPort = "2113"
+let g:vimclojure#SplitPos = "right"
+let g:vimclojure#WantNailgun = 1
+let g:vimclojure#FuzzyIndent = 1
+
 " Use Bash syntax for shell scripts by default.
 let g:is_bash=1
 
