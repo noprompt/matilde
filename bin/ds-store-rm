@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+
+main() {
+  local directory=${1:-"."}
+
+  find "$directory" -name '.DS_Store' -print -exec rm '{}' \;
+}
+
+main $@
