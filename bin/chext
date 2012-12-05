@@ -1,0 +1,32 @@
+#!/usr/bin/env bash
+
+usage () {
+  echo "usage: chext <filename> <extension>"
+}
+
+check_args () {
+  [ -n "$1" ] && [ -n "$2" ] && return 0
+  return 1
+}
+
+chext () {
+  local fname="$1"
+  local ext="$2"
+
+  if [ -f "$fname" ]; then
+    [ -n "$ext" ] && mv -v "$fname" "${fname%.*}.$ext"
+  else
+    echo "chext: "$fname" is not a file"
+    exit 1
+  fi
+}
+
+main () {
+  if $(check_args "$@"); then
+    chext "$@"
+  else
+    usage && exit 1
+  fi
+}
+
+main "$@"
