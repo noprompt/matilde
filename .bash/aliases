@@ -35,6 +35,7 @@ alias gco="git checkout"
 alias gb="git branch"
 alias gm="git merge"
 alias gd="git diff"
+alias glo="git log --pretty=oneline"
 
 alias be="bundle exec"
 
