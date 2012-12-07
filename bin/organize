@@ -1,0 +1,38 @@
+#!/usr/bin/env bash
+# Title: organize
+# Author: Joel Holdbrooks <cjholdbrooks@gmail.com>
+# Description: Organizes files in to subfolders by extension.
+
+get_extensions () {
+  local exts
+
+  for f in *; do
+    local i=${#exts[@]}
+    # Get the file extension.
+    exts[$i]="${f##*.}"
+  done
+
+  echo ${exts[@]} | tr ' ' "\n" | sort | uniq
+}
+
+organize () {
+  local extensions=$@
+
+  for ext in $extensions; do
+    mkdir $ext 2>/dev/null
+
+    for f in *.$ext; do
+      [ -f "$f" ] && mv -v "$f" "$ext/$f"
+    done
+  done
+}
+
+main () {
+  if [ -n $@ ]; then
+    organize $(get_extensions)
+  else
+    organize $@
+  fi
+}
+
+main "$@"
