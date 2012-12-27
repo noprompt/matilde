@@ -1,6 +1,6 @@
 # vim:filetype=sh
 
-# ls aliases
+# ls
 if [[ `ls --color 2>/dev/null` ]]; then
   alias ls="ls --color -F"
 else
@@ -13,7 +13,7 @@ alias ll="ls -l"
 alias la="l -a"
 alias lA="l -A"
 
-# cd aliases
+# cd
 alias back="cd -"
 alias cd.="cd ."
 alias cd..="cd .."
@@ -21,7 +21,7 @@ alias cd...="cd ../.. && pwd"
 alias cd....="cd ../../.. && pwd"
 alias cd.....="cd ../../../.. && pwd"
 
-# git aliases
+# git
 alias gst="git status"
 alias gc="git commit"
 alias gca="git commit -a"
@@ -32,6 +32,10 @@ alias gm="git merge"
 alias gd="git diff"
 alias glo="git log --pretty=oneline"
 alias hard-head="git reset --hard HEAD"
+
+# tar
+alias tarc="tar -czvf"
+alias tarx="tar -xzvf"
 
 # Miscellaneous
 alias so="source"
