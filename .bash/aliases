@@ -80,22 +80,3 @@ function ..() {
    pwd
 }
 
-# Pretty print path.
-function ppp() {
-  echo $PATH | sed -e 's/:\{1,\}/ /g' | tr ' ' '\n'
-}
-
-# Pushes a path on to $PATH.
-function pushp() {
-  if [ -n "$1" ]; then
-    export PATH="$PATH:$1"
-  fi
-  ppp
-}
-
-# Pop a path from $PATH.
-function popp() {
-  export PATH="$(ppp | init | tr '\n' ':' | sed -e "s/:$//")"
-  ppp
-}
-

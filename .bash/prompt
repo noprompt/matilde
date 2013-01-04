@@ -1,9 +1,10 @@
 # vim:filetype=sh
 
 LAMBDA=`echo -ne "\x00\xce\xbb"`
-green=$(tput setaf 124)
-red=$(tput setaf 118)
-orange=$(tput setaf 208)
+red=$(tput setaf 210)
+green=$(tput setaf 120)
+#orange=$(tput setaf 208)
+fuchsia=$(tput setaf 213)
 reset=$(tput sgr0)
 
 _parse_git_branch() {
@@ -23,5 +24,5 @@ _git_branch_color() {
   fi
 }
 
-export PS1="$LAMBDA [\[$orange\]:\h\[$reset\]] \w\[\$(_git_branch_color)\]\$(_parse_git_branch)\[$reset\]: "
+export PS1="$LAMBDA [\[$fuchsia\]:\h\[$reset\]] \w\[\$(_git_branch_color)\]\$(_parse_git_branch)\[$reset\]: "
 export PS2=";; "

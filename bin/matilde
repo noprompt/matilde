@@ -1,0 +1,47 @@
+#!/usr/bin/env bash
+
+load_environment() {
+  source $MATILDE_ROOT/.bash/env
+  source $MATILDE_ROOT/.bash/config
+  source $MATILDE_ROOT/.bash/util
+  source $MATILDE_ROOT/.bash/aliases
+  source $MATILDE_ROOT/.bash/colors
+  source $MATILDE_ROOT/.bash/prompt
+}
+
+updates_available() {
+  return [[ "!" < "$(git fetch)" ]]
+}
+
+update() {
+  pushd "$MATILDE_ROOT" 1>/dev/null
+
+  echo "There are updates available. Here is the current status of your branch:"
+  git status
+
+  if would_like "to sync your master branch"; then
+    git checkout master
+    git rebase origin/master
+  fi
+
+  if would_like "to update submodules"; then
+    git submodule init
+    git submodule update
+  fi
+
+  popd
+}
+
+case "$1" in
+  load)
+    load_environment ;;
+  update)
+    if updates_available; then
+      update
+      load_environment
+    else
+      echo "Up to date."
+    fi
+     ;;
+  *) ;;
+esac
