@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+MATILDE_ROOT="$HOME/.matilde"
 
 load_environment() {
   source $MATILDE_ROOT/.bash/env
@@ -10,12 +11,14 @@ load_environment() {
 }
 
 updates_available() {
-  return [[ "!" < "$(git fetch)" ]]
+  if [[ "!" < "$(git fetch)" ]]; then
+    return 0
+  else
+    return 1
+  fi
 }
 
 update() {
-  pushd "$MATILDE_ROOT" 1>/dev/null
-
   echo "There are updates available. Here is the current status of your branch:"
   git status
 
@@ -28,20 +31,26 @@ update() {
     git submodule init
     git submodule update
   fi
-
-  popd
 }
 
-case "$1" in
-  load)
-    load_environment ;;
-  update)
-    if updates_available; then
-      update
-      load_environment
-    else
-      echo "Up to date."
-    fi
-     ;;
-  *) ;;
-esac
+main() {
+  pushd "$MATILDE_ROOT" 1>/dev/null
+
+  case "$1" in
+    load)
+      load_environment ;;
+    update)
+      if updates_available; then
+        update
+        load_environment
+      else
+        echo "Up to date."
+      fi
+       ;;
+    *) ;;
+  esac
+
+  popd 1>/dev/null
+}
+
+main $@
