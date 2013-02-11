@@ -1,10 +1,7 @@
 # vim:filetype=sh
 
 LAMBDA=`echo -ne "\x00\xce\xbb"`
-red=$(tput setaf 210)
-green=$(tput setaf 120)
-#orange=$(tput setaf 208)
-fuchsia=$(tput setaf 213)
+hostname=$(tput setaf 213) # Fuscia
 reset=$(tput sgr0)
 
 _parse_git_branch() {
@@ -18,11 +15,11 @@ _dirty_git_branch() {
 
 _git_branch_color() {
   if _dirty_git_branch; then
-    tput setaf 124
+    tput setaf 210 # Red
   else
-    tput setaf 118
+    tput setaf 120 # Green
   fi
 }
 
-export PS1="$LAMBDA [\[$fuchsia\]:\h\[$reset\]] \w\[\$(_git_branch_color)\]\$(_parse_git_branch)\[$reset\]: "
+export PS1="$LAMBDA [\[$hostname\]:\h\[$reset\]] \w\[\$(_git_branch_color)\]\$(_parse_git_branch)\[$reset\]: "
 export PS2=";; "
