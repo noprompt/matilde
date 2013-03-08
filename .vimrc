@@ -91,7 +91,7 @@ if has('gui_running')
   set guifont=Liberation\ Mono\ for\ Powerline:h14 linespace=1
   "set guifont=Menlo:h16
   "set guifont=Menlo\ for\ Powerline:h14
-  "set guifont=Monaco:h16
+  "set guifont=Monaco:h14 linespace=-1
   "set guifont=Monaco\ for\ Powerline:h14
   "set guifont=Ubuntu\ Mono:h18
   "set guifont=Source\ Code\ Pro:h16
