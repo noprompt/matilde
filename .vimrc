@@ -139,18 +139,20 @@ function! InsertTabWrapper()
 endfunction
 inoremap <tab> <c-r>=InsertTabWrapper()<cr>
 inoremap <s-tab> <c-n>
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Powerline
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+let g:Powerline_symbols = 'fancy'
+
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Miscellaneous
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+let g:clojure_lambda_conceal = 1
+
 " Always use the tree style display with netrw.
 let g:netrw_liststyle = 3
 let g:netrw_sort_sequence = '[\/]$,*,\.bak$,\.o$,\.h$,\.info$,\.swp$,\.obj$'
-
-" Use them fancy powerline symbols.
-let g:Powerline_symbols = 'fancy'
-
-" Use Clojure syntax highlighting for ClojureScript files.
-au BufNewFile,BufRead *.cljs set filetype=clojure
 
 " VimClojure
 let g:vimclojure#HighlightBuiltins = 1
