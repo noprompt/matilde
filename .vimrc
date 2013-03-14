@@ -65,7 +65,7 @@ set t_ti= t_te=
 " Color scheme {{{
 
 if (&t_Co == 256 || &t_Co == 88) || has('gui_running')
-  colorscheme lite-brite
+  colorscheme litebrite
 endif
 
 " }}}
@@ -111,6 +111,7 @@ nnoremap <leader>q :q!<cr>
 nnoremap <leader>sbd :w<cr> :bd<cr>
 " Hard buffer delete.
 nnoremap <leader>bd :bd!<cr>
+nnoremap <leader>elb :e ~/.vim/bundle/lite-brite/colors/litebrite.vim<cr>
 nnoremap H 0
 nnoremap L $
 " Page up/down
@@ -213,3 +214,5 @@ function! <SID>SynStack()
 endfunc
 
 "}}}
+
+" vim:foldmethod=marker
