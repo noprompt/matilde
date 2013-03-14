@@ -1,49 +1,48 @@
 call pathogen#infect()
 
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" General settings
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" General settings {{{
+
+" Turn syntax highlighting on.
+syntax on
+
 set nocompatible
-" Always show the statusline
+" Always show the statusline.
 set laststatus=2
-" Necessary to show unicode glyphs
+" Necessary to show unicode glyphs.
 set encoding=utf-8
-" Use spaces for tabs
+" Use spaces for tabs.
 set expandtab
 set smarttab
-" Copy indent from current line when starting a new line
+" Copy indent from current line when starting a new line.
 set autoindent
-" Do smart autoindenting when starting a line
+" Do smart autoindenting when starting a line.
 set smartindent
-" Set number of spaces a tab counts for to 2
+" Set number of spaces a tab counts for to 2.
 set tabstop=2
-" Set number of spaces a counts for while performing editing operations to 2
+" Set number of spaces a counts for while performing editing operations to 2.
 set softtabstop=2
-" Set number of spaces for each step of (auto)indent to 2
-set shiftwidth=2
-" Turn syntax highlighting on
-syntax on
+" Set number of spaces for each step of indent to 2 and use indent rounding
+" when using > and <.
+set shiftround shiftwidth=2
 " Show matching brackets as they are entered.
 set showmatch
 " Show search matches while typing.
 set incsearch
 " Highlight search results.
 set hlsearch
-" Turn on line numbers
+" Turn on line numbers.
 set number
-" Turn off text wrapping
+" Turn off text wrapping.
 set nowrap
-" Use a minimum window width of 84 (numberwidth + 80).
-set winwidth=84
-" Use a minumum window height of 24.
-set winheight=24
-" Use bash as the primary shell
+" Use a minimum window width of 84 (numberwidth + 80) and a minimum window
+" height of 24.
+set winwidth=84 winheight=24
+" Use bash as the primary shell.
 set shell=bash
-" Show line and column information
+" Show line and column information.
 set ruler
 " Look for and call vim commands within the first 5 lines of a document.
-set modeline
-set modelines=5
+set modeline modelines=5
 " Wildmenu!
 set wildmenu
 set wildmode=longest,list
@@ -54,31 +53,24 @@ filetype indent on
 filetype plugin indent on
 " Enable filetype specific plugins
 filetype plugin on
-
+" TextMate style invisible characters.
 set listchars=tab:▸\ ,eol:¬
-
 " Highlight the current line.
 set cursorline
-
 " Prevent Vim from clobbering the scrollback buffer.
 " See: http://www.shallowsky.com/linux/noaltscreen.html
 set t_ti= t_te=
 
-" Highlight the 80th column
-"if exists("+colorcolumn")
-"  set colorcolumn=80
-"endif
+" }}}
+" Color scheme {{{
 
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" Color scheme
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 if (&t_Co == 256 || &t_Co == 88) || has('gui_running')
   colorscheme lite-brite
 endif
 
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" GUI settings
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" }}}
+" GUI settings {{{
+
 if has('gui_running')
   "set guifont=Andale\ Mono:h16
   "set guifont=Consolas:h16
@@ -101,53 +93,69 @@ if has('gui_running')
   set fuopt=maxvert,maxhorz
 endif
 
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" Key mappings
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" }}}
+" Key mappings {{{
+
 let mapleader=","
 let maplocalleader=","
 
-" ,e to esc
 inoremap <leader>e <esc>
-inoremap <m-v> :r!pbpaste<cr>
 
-" ctrl+j to ctrl+d (page down)
-" ctrl+k to ctrl+u (page up)
+nnoremap <leader>sv :source $MYVIMRC<cr>
+nnoremap <leader>ev :vsplit $MYVIMRC<cr>
+" Save and quit.
+nnoremap <leader>sq ZZ
+" Hard quit.
+nnoremap <leader>q :q!<cr>
+" Save and delete buffer.
+nnoremap <leader>sbd :w<cr> :bd<cr>
+" Hard buffer delete.
+nnoremap <leader>bd :bd!<cr>
+nnoremap H 0
+nnoremap L $
+" Page up/down
 nnoremap <c-j> <c-d>
 nnoremap <c-k> <c-u>
-
+" TagBar
 nnoremap <leader>c :TagbarToggle<cr>
-
-" Don't 'normal' regular expressions
-nnoremap / /\v
-vnoremap / /\v
-
 " Keep search matches in the middle of the window.
 nnoremap n nzzzv
 nnoremap N Nzzzv
+" Use very magic regular expressions when seraching forward.
+nnoremap / /\v
+nnoremap ? ?\v
+" Clear the search buffer when typing return.
+nnoremap <cr> :nohlsearch<cr>
 
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" Tab
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Use very magic regular expressions when seraching backward.
+vnoremap / /\v
+vnoremap ? ?\v
+" TextMate style indention and dedention of visually selected lines.
+vnoremap <tab> >`<V`>
+vnoremap <s-tab> <`<V`>
+
+" }}}
+" Tab {{{
+
 function! InsertTabWrapper()
-    let col = col('.') - 1
-    if !col || getline('.')[col - 1] !~ '\k'
-        return "\<tab>"
-    else
-        return "\<c-p>"
-    endif
+  let col = col('.') - 1
+  if !col || getline('.')[col - 1] !~ '\k'
+    return "\<tab>"
+  else
+    return "\<c-p>"
+  endif
 endfunction
 inoremap <tab> <c-r>=InsertTabWrapper()<cr>
 inoremap <s-tab> <c-n>
 
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" Powerline
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" }}}
+" Powerline {{{
+
 let g:Powerline_symbols = 'fancy'
 
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" Miscellaneous
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" }}}
+" Miscellaneous {{{
+
 let g:clojure_lambda_conceal = 1
 
 " Always use the tree style display with netrw.
@@ -172,14 +180,7 @@ au BufNewFile,BufRead *.sql set filetype=mysql
 " Underline search results.
 hi Search cterm=underline ctermbg=NONE ctermfg=NONE gui=underline guibg=NONE guifg=NONE
 
-" Clear the search buffer when typing return.
-" See: https://github.com/garybernhardt/dotfiles/blob/master/.vimrc#L120-123
-function! MapCR()
-  nnoremap <cr> :nohlsearch<cr>
-endfunction
-call MapCR()
-
- " Jump to last cursor position unless it's invalid or in an event handler
+" Jump to last cursor position unless it's invalid or in an event handler
 autocmd BufReadPost *
       \ if line("'\"") > 0 && line("'\"") <= line("$") |
       \   exe "normal g`\"" |
@@ -210,3 +211,5 @@ function! <SID>SynStack()
   endif
   echo map(synstack(line('.'), col('.')), 'synIDattr(v:val, "name")')
 endfunc
+
+"}}}
