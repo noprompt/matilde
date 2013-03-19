@@ -205,13 +205,20 @@ endfunction
 autocmd BufWritePre * :call <SID>StripTrailingWhitespaces()
 
 " Show syntax highlighting groups for word under cursor
-nmap <C-S-h> :call <SID>SynStack()<CR>
-function! <SID>SynStack()
-  if !exists("*synstack")
-    return
-  endif
-  echo map(synstack(line('.'), col('.')), 'synIDattr(v:val, "name")')
-endfunc
+nnoremap <leader>hi :echo map(synstack(line('.'), col('.')), 'synIDattr(v:val, "name")')<cr>
+
+" Screen
+let g:ScreenImpl = 'Tmux'
+let g:ScreenShellTmuxInitArgs = '-2'
+let g:ScreenShellInitialFocus = 'shell'
+let g:ScreenShellQuitOnVimExit = 0
+
+nnoremap <leader>ssv :ScreenShellVertical<cr>
+nnoremap <leader>ssr :ScreenShellReopen<cr>
+nnoremap <leader>ssq :ScreenQuit<cr>
+nnoremap <leader>sss :ScreenSend<cr>
+nnoremap <leader>ssl :call ScreenShellSend("load '" . @% . "', true;")<cr>
+nnoremap <leader>sst :call ScreenShellSend("rspec " . @% . ":" . line("."))<cr>
 
 "}}}
 
