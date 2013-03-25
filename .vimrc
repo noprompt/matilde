@@ -1,9 +1,9 @@
-call pathogen#infect()
 
 " General settings {{{
 
 " Turn syntax highlighting on.
 syntax on
+filetype off
 
 set nocompatible
 " Always show the statusline.
@@ -61,6 +61,48 @@ set cursorline
 " See: http://www.shallowsky.com/linux/noaltscreen.html
 set t_ti= t_te=
 
+" }}}
+" Package management {{{
+" Pathogen {{{
+
+call pathogen#infect()
+
+" }}}
+" Vundle {{{
+
+set rtp+=~/.vim/bundle/vundle
+call vundle#rc()
+
+" Required
+Bundle "gmarik/vundle"
+
+" Clojure
+Bundle "guns/vim-clojure-static"
+Bundle "vim-scripts/VimClojure"
+" CoffeeScript
+Bundle "kchmck/vim-coffee-script"
+" JavaScript
+Bundle "pangloss/vim-javascript"
+" LiveScript
+Bundle "gkz/vim-ls"
+" Ruby
+Bundle "noprompt/vim-yardoc"
+Bundle "tpope/vim-rails"
+Bundle "vim-ruby/vim-ruby"
+" Vim
+Bundle "Lokaltog/vim-powerline"
+Bundle "Valloric/YouCompleteMe"
+Bundle "ervandew/screen"
+Bundle "godlygeek/tabular"
+Bundle "jpalardy/vim-slime"
+Bundle 'ctrlp.vim'
+Bundle 'rainbow_parentheses.vim'
+Bundle "majutsushi/tagbar"
+Bundle "noprompt/lite-brite"
+Bundle "tpope/vim-fugitive"
+Bundle "tpope/vim-surround"
+
+" }}}
 " }}}
 " Color scheme {{{
 
@@ -152,7 +194,7 @@ inoremap <s-tab> <c-n>
 " }}}
 " Powerline {{{
 
-let g:Powerline_symbols = 'fancy'
+"let g:Powerline_symbols = 'fancy'
 
 " }}}
 " Miscellaneous {{{
