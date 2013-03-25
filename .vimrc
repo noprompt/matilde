@@ -78,7 +78,6 @@ Bundle "gmarik/vundle"
 
 " Clojure
 Bundle "guns/vim-clojure-static"
-Bundle "vim-scripts/VimClojure"
 " CoffeeScript
 Bundle "kchmck/vim-coffee-script"
 " JavaScript
