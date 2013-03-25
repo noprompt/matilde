@@ -2,3 +2,4 @@ lein/self-installs
 lein/indices
 lein/repl-history
 .vim/.netrwhist
+.vim/bundle/.vundle
