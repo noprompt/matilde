@@ -196,22 +196,46 @@ inoremap <s-tab> <c-n>
 "let g:Powerline_symbols = 'fancy'
 
 " }}}
-" Miscellaneous {{{
-
-let g:clojure_lambda_conceal = 1
-
-" Always use the tree style display with netrw.
-let g:netrw_liststyle = 3
-let g:netrw_sort_sequence = '[\/]$,*,\.bak$,\.o$,\.h$,\.info$,\.swp$,\.obj$'
+" Clojure {{{
 
 " VimClojure
-let g:vimclojure#HighlightBuiltins = 1
-let g:vimclojure#ParenRainbow = 1
+
 let g:vimclojure#NailgunPort = "127.0.0.1"
 let g:vimclojure#NailgunPort = "2113"
 let g:vimclojure#SplitPos = "right"
 let g:vimclojure#WantNailgun = 1
-let g:vimclojure#FuzzyIndent = 1
+
+"let g:clojure_lambda_conceal = 1
+
+"}}}
+" Screen {{{
+
+let g:ScreenImpl = 'Tmux'
+let g:ScreenShellTmuxInitArgs = '-2'
+let g:ScreenShellInitialFocus = 'shell'
+let g:ScreenShellQuitOnVimExit = 0
+
+nnoremap <leader>ssv :ScreenShellVertical<cr>
+nnoremap <leader>ssr :ScreenShellReopen<cr>
+nnoremap <leader>ssq :ScreenQuit<cr>
+nnoremap <leader>sss :ScreenSend<cr>
+" Send the current line.
+nnoremap <leader>sel :call ScreenShellSend(getline("."))<cr>
+" Send the whole file (line by line)
+nnoremap <leader>sef :call ScreenShellSend(getline(1, "$"))<cr>
+
+" Ruby only
+au Syntax ruby
+      \nnoremap <leader>ssl :call ScreenShellSend("load '" . @% . "', true;")<cr>
+      \|
+      \nnoremap <leader>sst :call ScreenShellSend("rspec " . @% . ":" . line("."))<cr>
+
+"}}}
+" Miscellaneous {{{
+
+" Always use the tree style display with netrw.
+let g:netrw_liststyle = 3
+let g:netrw_sort_sequence = '[\/]$,*,\.bak$,\.o$,\.h$,\.info$,\.swp$,\.obj$'
 
 " Use Bash syntax for shell scripts by default.
 let g:is_bash=1
@@ -248,18 +272,6 @@ autocmd BufWritePre * :call <SID>StripTrailingWhitespaces()
 " Show syntax highlighting groups for word under cursor
 nnoremap <leader>hi :echo map(synstack(line('.'), col('.')), 'synIDattr(v:val, "name")')<cr>
 
-" Screen
-let g:ScreenImpl = 'Tmux'
-let g:ScreenShellTmuxInitArgs = '-2'
-let g:ScreenShellInitialFocus = 'shell'
-let g:ScreenShellQuitOnVimExit = 0
-
-nnoremap <leader>ssv :ScreenShellVertical<cr>
-nnoremap <leader>ssr :ScreenShellReopen<cr>
-nnoremap <leader>ssq :ScreenQuit<cr>
-nnoremap <leader>sss :ScreenSend<cr>
-nnoremap <leader>ssl :call ScreenShellSend("load '" . @% . "', true;")<cr>
-nnoremap <leader>sst :call ScreenShellSend("rspec " . @% . ":" . line("."))<cr>
 
 "}}}
 
