@@ -84,6 +84,8 @@ Bundle "kchmck/vim-coffee-script"
 Bundle "pangloss/vim-javascript"
 " LiveScript
 Bundle "gkz/vim-ls"
+" Racket
+Bundle "wlangstroth/vim-racket"
 " Ruby
 Bundle "noprompt/vim-yardoc"
 Bundle "tpope/vim-rails"
@@ -208,6 +210,39 @@ let g:vimclojure#WantNailgun = 1
 "let g:clojure_lambda_conceal = 1
 
 "}}}
+" Rainbow parentheses {{{
+
+let g:rbpt_colorpairs = [
+      \ ["15",   "#FFFFFF"],
+      \ ["45",   "#00DDFF"],
+      \ ["227",  "#FFFF5F"],
+      \ ["221",  "#FAD482"],
+      \ ["219",  "#FFAFFF"],
+      \ ["213",  "#FF87FF"],
+      \ ["210",  "#FF8787"],
+      \ ["183",  "#D7AFFF"],
+      \ ["120",  "#87FF87"],
+      \ ["117",  "#87D7FF"],
+      \ ["45",   "#00DDFF"],
+      \ ["227",  "#FFFF5F"],
+      \ ["221",  "#FAD482"],
+      \ ["219",  "#FFAFFF"],
+      \ ["213",  "#FF87FF"],
+      \ ["210",  "#FF8787"],
+      \ ]
+
+let g:rbpt_max = 16
+let g:rbpt_loadcmd_toggle = 0
+
+au Syntax clojure RainbowParenthesesToggle
+au Syntax clojure RainbowParenthesesLoadRound
+
+nnoremap <leader>rbpt :RainbowParenthesesToggle<cr>
+nnoremap <leader>rbpr :RainbowParenthesesLoadRound<cr>
+nnoremap <leader>rbps :RainbowParenthesesLoadSquare<cr>
+nnoremap <leader>rbpb :RainbowParenthesesLoadBrackets<cr>
+
+" }}}
 " Screen {{{
 
 let g:ScreenImpl = 'Tmux'
@@ -226,9 +261,9 @@ nnoremap <leader>sef :call ScreenShellSend(getline(1, "$"))<cr>
 
 " Ruby only
 au Syntax ruby
-      \nnoremap <leader>ssl :call ScreenShellSend("load '" . @% . "', true;")<cr>
-      \|
-      \nnoremap <leader>sst :call ScreenShellSend("rspec " . @% . ":" . line("."))<cr>
+      \ nnoremap <leader>ssl :call ScreenShellSend("load '" . @% . "', true;")<cr>
+      \ |
+      \ nnoremap <leader>sst :call ScreenShellSend("rspec " . @% . ":" . line("."))<cr>
 
 "}}}
 " Miscellaneous {{{
@@ -271,7 +306,6 @@ autocmd BufWritePre * :call <SID>StripTrailingWhitespaces()
 
 " Show syntax highlighting groups for word under cursor
 nnoremap <leader>hi :echo map(synstack(line('.'), col('.')), 'synIDattr(v:val, "name")')<cr>
-
 
 "}}}
 
