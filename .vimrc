@@ -223,15 +223,9 @@ let g:rbpt_colorpairs = [
       \ ["183",  "#D7AFFF"],
       \ ["120",  "#87FF87"],
       \ ["117",  "#87D7FF"],
-      \ ["45",   "#00DDFF"],
-      \ ["227",  "#FFFF5F"],
-      \ ["221",  "#FAD482"],
-      \ ["219",  "#FFAFFF"],
-      \ ["213",  "#FF87FF"],
-      \ ["210",  "#FF8787"],
       \ ]
 
-let g:rbpt_max = 16
+let g:rbpt_max = 10
 let g:rbpt_loadcmd_toggle = 0
 
 au Syntax clojure RainbowParenthesesToggle
