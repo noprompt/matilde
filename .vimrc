@@ -228,13 +228,13 @@ let g:rbpt_colorpairs = [
 let g:rbpt_max = 10
 let g:rbpt_loadcmd_toggle = 0
 
-au Syntax clojure RainbowParenthesesToggle
 au Syntax clojure RainbowParenthesesLoadRound
+au Syntax clojure RainbowParenthesesLoadSquare
 
-nnoremap <leader>rbpt :RainbowParenthesesToggle<cr>
-nnoremap <leader>rbpr :RainbowParenthesesLoadRound<cr>
-nnoremap <leader>rbps :RainbowParenthesesLoadSquare<cr>
-nnoremap <leader>rbpb :RainbowParenthesesLoadBrackets<cr>
+nnoremap <leader>rpt :RainbowParenthesesToggle<cr>
+nnoremap <leader>rpr :RainbowParenthesesLoadRound<cr>
+nnoremap <leader>rps :RainbowParenthesesLoadSquare<cr>
+nnoremap <leader>rpb :RainbowParenthesesLoadBrackets<cr>
 
 " }}}
 " Screen {{{
