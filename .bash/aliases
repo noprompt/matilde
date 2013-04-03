@@ -54,10 +54,6 @@ alias be="bundle exec"
 [ `which pygmentize` ] \
   && alias ccat="pygmentize -O style=rrt -f console256 -g"
 
-# Alias vim to terminal MacVim if possible.
-[ `which mvim` ] \
-  && alias vim="mvim -v"
-
 # Umbrella help function. Attempts to try `help` with the given command. If
 # that fails, `man` is attempted, followed by `<command> --help`.
 function woman() {
