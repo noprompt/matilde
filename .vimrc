@@ -108,7 +108,8 @@ Bundle "tpope/vim-surround"
 " Color scheme {{{
 
 if (&t_Co == 256 || &t_Co == 88) || has('gui_running')
-  colorscheme litebrite
+  colorscheme galaxy
+  hi Comment gui=italic
 endif
 
 " }}}
