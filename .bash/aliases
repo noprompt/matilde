@@ -50,18 +50,14 @@ alias timestamp="date +%s"
 alias grep="grep --color"
 alias be="bundle exec"
 
+# Emacs
+if test -f /Applications/Emacs.app/Contents/MacOS/Emacs; then
+    alias emacs="/Applications/Emacs.app/Contents/MacOS/Emacs -nw"
+fi
+
 # Cat with syntax highlighting.
 [ `which pygmentize` ] \
   && alias ccat="pygmentize -O style=rrt -f console256 -g"
-
-# Umbrella help function. Attempts to try `help` with the given command. If
-# that fails, `man` is attempted, followed by `<command> --help`.
-function woman() {
-  local command="$1"
-  help "$command" 2>/dev/null && return 0
-  man  "$command" 2>/dev/null && return 0
-  eval "$command --help"
-}
 
 function ..() {
   case $# in
