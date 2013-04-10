@@ -1,4 +1,3 @@
-
 " General settings {{{
 
 " Turn syntax highlighting on.
@@ -55,8 +54,6 @@ filetype plugin indent on
 filetype plugin on
 " TextMate style invisible characters.
 set listchars=tab:▸\ ,eol:¬
-" Highlight the current line.
-set cursorline
 " Prevent Vim from clobbering the scrollback buffer.
 " See: http://www.shallowsky.com/linux/noaltscreen.html
 set t_ti= t_te=
@@ -77,31 +74,35 @@ call vundle#rc()
 Bundle "gmarik/vundle"
 
 " Clojure
-Bundle "guns/vim-clojure-static"
+Bundle 'guns/vim-clojure-static'
+Bundle 'vim-scripts/VimClojure'
 " CoffeeScript
-Bundle "kchmck/vim-coffee-script"
+Bundle 'kchmck/vim-coffee-script'
 " JavaScript
-Bundle "pangloss/vim-javascript"
+Bundle 'pangloss/vim-javascript'
 " LiveScript
-Bundle "gkz/vim-ls"
+Bundle 'gkz/vim-ls'
+" Markdown
+Bundle 'tpope/vim-markdown'
 " Racket
-Bundle "wlangstroth/vim-racket"
+Bundle 'wlangstroth/vim-racket'
 " Ruby
-Bundle "noprompt/vim-yardoc"
-Bundle "tpope/vim-rails"
-Bundle "vim-ruby/vim-ruby"
+Bundle 'noprompt/vim-yardoc'
+Bundle 'tpope/vim-rails'
+Bundle 'vim-ruby/vim-ruby'
 " Vim
-Bundle "Lokaltog/vim-powerline"
-Bundle "Valloric/YouCompleteMe"
-Bundle "ervandew/screen"
-Bundle "godlygeek/tabular"
-Bundle "jpalardy/vim-slime"
+Bundle 'Lokaltog/vim-powerline'
+Bundle 'ervandew/screen'
+Bundle 'godlygeek/tabular'
+Bundle 'jpalardy/vim-slime'
 Bundle 'ctrlp.vim'
 Bundle 'rainbow_parentheses.vim'
-Bundle "majutsushi/tagbar"
-Bundle "noprompt/lite-brite"
-Bundle "tpope/vim-fugitive"
-Bundle "tpope/vim-surround"
+Bundle 'majutsushi/tagbar'
+Bundle 'noprompt/lite-brite'
+Bundle 'tpope/vim-fugitive'
+Bundle 'tpope/vim-surround'
+Bundle 'Rykka/colorv.vim'
+Bundle 'Rykka/galaxy.vim'
 
 " }}}
 " }}}
