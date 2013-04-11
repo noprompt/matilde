@@ -5,12 +5,17 @@
 ;; Path fix for OS X.
 (setenv "PATH" (shell-command-to-string "bash -lc 'echo $PATH'"))
 
+(defmacro comment (&rest body)
+  "Comment out one or more s-expressions."
+  nil)
+
 ;; Packages
 (require 'package)
 (add-to-list 'package-archives
              '("marmalade" . "http://marmalade-repo.org/packages/") t)
 (package-initialize)
 
+;; Turn off the annoying visual bell.
 (setq visible-bell nil)
 
 ;; Turn off line highlighting.
@@ -20,17 +25,31 @@
 (require 'evil)
 (evil-mode 1)
 (setq evil-shift-width 2)
+(setq evil-default-cursor t)
 
-(require 'evil-leader)
-(evil-leader/set-leader ",")
-(evil-leader/set-key
-  "e" 'find-file
-  "b" 'switch-to-buffer
-  "k" 'kill-buffer)
+(define-key evil-insert-state-map [(tab)] 'hippie-expand)
+(define-key evil-normal-state-map "(" 'paredit-backward-slurp-sexp)
+(define-key evil-normal-state-map ")" 'paredit-backward-barf-sexp)
+(define-key evil-normal-state-map "{" 'paredit-forward-barf-sexp)
+(define-key evil-normal-state-map "}" 'paredit-forward-slurp-sexp)
+
+(comment
+ (require 'evil-leader)
+ (evil-leader/set-leader ",")
+ (evil-leader/set-key
+   "e" 'find-file
+   "b" 'switch-to-buffer
+   "k" 'kill-buffer))
 
 ;; Key-chord
 (require 'key-chord)
 (key-chord-define evil-insert-state-map ",e" 'evil-normal-state)
+(key-chord-define evil-normal-state-map ",e" 'find-file)
+(key-chord-define evil-normal-state-map ",b" 'switch-to-buffer)
+(key-chord-define evil-normal-state-map ",k" 'kill-buffer)
+(define-key evil-normal-state-map "W(" 'paredit-wrap-round)
+(define-key evil-normal-state-map "W[" 'paredit-wrap-square)
+(define-key evil-normal-state-map "W{" 'paredit-wrap-curly)
 (key-chord-mode 1)
 
 ;; Color theme
