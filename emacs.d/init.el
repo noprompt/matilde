@@ -38,16 +38,30 @@
 (setq evil-shift-width 2)
 (setq evil-default-cursor t)
 
-;; Insert
-(define-key evil-insert-state-map (kbd "TAB") 'hippie-expand)
+(defun nmap (key def)
+  "Define an Evil normal state sequence."
+  (define-key evil-normal-state-map key def))
+
+(defun imap (key def)
+  "Define an Evil insert state sequence."
+  (define-key evil-insert-state-map key def))
 
 ;; Normal
-(define-key evil-normal-state-map "\C-j" 'evil-scroll-page-down)
-(define-key evil-normal-state-map "\C-k" 'evil-scroll-page-up)
+(nmap "\C-j" 'evil-scroll-page-down)
+(nmap "\C-k" 'evil-scroll-page-up)
+(nmap "W(" 'paredit-wrap-round)
+(nmap "W[" 'paredit-wrap-square)
+(nmap "W{" 'paredit-wrap-curly)
 
-(define-key evil-normal-state-map "W(" 'paredit-wrap-round)
-(define-key evil-normal-state-map "W[" 'paredit-wrap-square)
-(define-key evil-normal-state-map "W{" 'paredit-wrap-curly)
+;; Insert
+(imap (kbd "TAB") 'hippie-expand)
+
+;; ElScreen
+(require 'elscreen)
+(nmap (kbd "C-w t") 'elscreen-create)
+(nmap (kbd "C-w x") 'elscreen-kill)
+(nmap "gT" 'elscreen-previous)
+(nmap "gt" 'elscreen-next)
 
 ;; Key-chord
 (require 'key-chord)

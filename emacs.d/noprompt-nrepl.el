@@ -10,8 +10,18 @@
          (goto-char (- (point) 1))))
 
 (setq nrepl-hide-special-buffers nil)
+
 (add-hook 'nrepl-interaction-mode-hook 'nrepl-turn-on-eldoc-mode)
-(add-hook 'nrepl-mode-hook 'rainbow-delimiters-mode)
+
+(add-hook 'nrepl-mode-hook
+          (lambda ()
+            (paredit-mode)
+            (rainbow-delimiters-mode)))
+
 ;(add-hook 'nrepl-mode-hook 'subword-mode)
+
+(add-hook 'clojure-mode-hook
+          (lambda ()
+            (define-key evil-normal-state-local-map ",e" 'nrepl-eval-expression-at-point)))
 
 (provide 'noprompt-nrepl)
