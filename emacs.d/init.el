@@ -15,7 +15,7 @@
 ;; Editor
 (when (display-graphic-p)
   (progn
-    (set-face-attribute 'default nil :font "Cousine" :height 140)
+    (set-face-attribute 'default nil :font "Liberation Mono" :height 140)
     (require 'maxframe)
     (maximize-frame)))
 
