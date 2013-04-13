@@ -7,7 +7,7 @@
 ;; Packages
 (require 'package)
 (add-to-list 'package-archives
-            '("melpa" . "http://melpa.milkbox.net/packages/") t)
+             '("melpa" . "http://melpa.milkbox.net/packages/") t)
 (add-to-list 'package-archives
              '("marmalade" . "http://marmalade-repo.org/packages/") t)
 (package-initialize)
@@ -15,7 +15,7 @@
 ;; Editor
 (when (display-graphic-p)
   (progn
-    (set-face-attribute 'default nil :font "Cousine" :height 140)
+    (set-face-attribute 'default nil :font "Liberation Mono" :height 140)
     (require 'maxframe)
     (maximize-frame)))
 
@@ -38,6 +38,18 @@
 (setq evil-shift-width 2)
 (setq evil-default-cursor t)
 
+(defun gui (face font &rest options)
+  "Set face font for FACE."
+  (eval (append '(set-face-attribute face nil :font font) options)))
+
+(defun guibg (face color)
+  "Set face background for FACE."
+  (set-face-background face color))
+
+(defun guifg (face color)
+  "Set face foreground for FACE."
+  (set-face-foreground face color))
+
 (defun nmap (key def)
   "Define an Evil normal state sequence."
   (define-key evil-normal-state-map key def))
@@ -47,8 +59,9 @@
   (define-key evil-insert-state-map key def))
 
 ;; Normal
-(nmap "\C-j" 'evil-scroll-page-down)
-(nmap "\C-k" 'evil-scroll-page-up)
+(nmap (kbd "C-j") 'evil-scroll-page-down)
+(nmap (kbd "C-k") 'evil-scroll-page-up)
+(nmap (kbd "C-f") 'find-file)
 (nmap "W(" 'paredit-wrap-round)
 (nmap "W[" 'paredit-wrap-square)
 (nmap "W{" 'paredit-wrap-curly)
@@ -60,16 +73,15 @@
 (require 'elscreen)
 (nmap (kbd "C-w t") 'elscreen-create)
 (nmap (kbd "C-w x") 'elscreen-kill)
-(nmap "gT" 'elscreen-previous)
-(nmap "gt" 'elscreen-next)
+(nmap "gh" 'elscreen-previous)
+(nmap "gl" 'elscreen-next)
 
 ;; Key-chord
 (require 'key-chord)
 (key-chord-mode 1)
 
-(key-chord-define-global "ET" 'evil-mode) ; Toggle evil-mode 
+(key-chord-define-global "GH" 'evil-mode) ; Toggle evil-mode 
 (key-chord-define evil-insert-state-map ",e" 'evil-normal-state)
-(key-chord-define evil-normal-state-map ",f" 'find-file)
 (key-chord-define evil-normal-state-map ",s" 'switch-to-buffer)
 (key-chord-define evil-normal-state-map "xk" 'kill-buffer)
 
