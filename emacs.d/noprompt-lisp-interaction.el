@@ -6,8 +6,8 @@
             (define-key evil-normal-state-local-map ")" 'paredit-backward-barf-sexp)
             (define-key evil-normal-state-local-map "{" 'paredit-forward-barf-sexp)
             (define-key evil-normal-state-local-map "}" 'paredit-forward-slurp-sexp)
+            (define-key evil-normal-state-local-map "S" 'paredit-splice-sexp)
+            (define-key evil-normal-state-local-map ",e" 'eval-defun)
             (rainbow-delimiters-mode)))
-
-(key-chord-define lisp-interaction-mode-map ",d" 'eval-defun)
 
 (provide 'noprompt-lisp-interaction)

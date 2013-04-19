@@ -3,9 +3,9 @@
 ;;; Code:
 
 
-;;;### (autoloads nil "starter-kit-ruby" "starter-kit-ruby.el" (20839
-;;;;;;  34580 0 0))
-;;; Generated autoloads from starter-kit-ruby.el
+;;;### (autoloads nil "starter-kit-ruby" "../../../../.emacs.d/elpa/starter-kit-ruby-20120128.1450/starter-kit-ruby.el"
+;;;;;;  "8863b7bcb0a6393d7d55213f18439bfd")
+;;; Generated autoloads from ../../../../.emacs.d/elpa/starter-kit-ruby-20120128.1450/starter-kit-ruby.el
 
 (eval-after-load 'ruby-mode '(progn (ignore-errors (require 'ruby-compilation)) (setq ruby-use-encoding-map nil) (add-hook 'ruby-mode-hook 'inf-ruby-keys) (define-key ruby-mode-map (kbd "RET") 'reindent-then-newline-and-indent) (define-key ruby-mode-map (kbd "C-M-h") 'backward-kill-word)))
 
@@ -50,8 +50,9 @@ exec-to-string command, but it works and seems fast" (delq nil (mapcar (quote (l
 
 ;;;***
 
-;;;### (autoloads nil nil ("starter-kit-ruby-pkg.el") (20839 34580
-;;;;;;  440058 0))
+;;;### (autoloads nil nil ("../../../../.emacs.d/elpa/starter-kit-ruby-20120128.1450/starter-kit-ruby-pkg.el"
+;;;;;;  "../../../../.emacs.d/elpa/starter-kit-ruby-20120128.1450/starter-kit-ruby.el")
+;;;;;;  (20841 18332 924105 0))
 
 ;;;***
 

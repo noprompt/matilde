@@ -3,8 +3,9 @@
 ;;; Code:
 
 
-;;;### (autoloads nil nil ("evil-paredit-pkg.el" "evil-paredit.el")
-;;;;;;  (20836 63996 143079 0))
+;;;### (autoloads nil nil ("../../../../.emacs.d/elpa/evil-paredit-0.0.1/evil-paredit-pkg.el"
+;;;;;;  "../../../../.emacs.d/elpa/evil-paredit-0.0.1/evil-paredit.el")
+;;;;;;  (20843 51777 827804 0))
 
 ;;;***
 

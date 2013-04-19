@@ -18,10 +18,9 @@
             (paredit-mode)
             (rainbow-delimiters-mode)))
 
-;(add-hook 'nrepl-mode-hook 'subword-mode)
-
 (add-hook 'clojure-mode-hook
           (lambda ()
-            (define-key evil-normal-state-local-map ",e" 'nrepl-eval-expression-at-point)))
+            (define-key evil-normal-state-local-map ",e" 'nrepl-eval-expression-at-point)
+            (define-key evil-normal-state-local-map ",l" 'nrepl-load-file)))
 
 (provide 'noprompt-nrepl)
