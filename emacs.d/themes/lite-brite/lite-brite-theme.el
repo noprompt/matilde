@@ -62,8 +62,15 @@
    `(font-lock-comment-face ((t (:foreground ,bgd-7 :slant italic))))
    `(font-lock-comment-delimiter-face ((t (:foreground ,bgd-9))))
    `(font-lock-warning-face ((t (:foreground ,syn-8))))
-   
-      ))
+   `(which-func ((t (:foreground ,syn-4))))
+   `(eshell-prompt ((t (:foreground ,syn-1))))
+   `(eshell-is-directory ((t (:foreground ,syn-4))))
+   `(eshell-ls-symlink ((t (:foreground ,syn-6))))
+   `(eshell-ls-executable ((t (:foreground ,syn-8))))
+   `(erc-notice-face ((t (:foreground ,bgd-9))))
+   `(erc-nick-default-face ((t :foreground ,syn-4)))
+   `(erc-input-face ((t (:foreground ,fgd-3))))
+   ))
 
 ;;;###autoload
 (when load-file-name
