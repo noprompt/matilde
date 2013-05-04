@@ -56,8 +56,10 @@
          (hippie-expand nil)
         (indent-for-tab-command)))))
 
-(imap (kbd "TAB") 'smart-tab)
+;;(imap (kbd "TAB") 'smart-tab)
 (imap (kbd "C-j") 'next-line)
+(imap (kbd "C-n") 'next-line)
 (imap (kbd "C-k") 'previous-line)
+(imap (kbd "C-p") 'previous-line)
 
 (provide 'noprompt-evil)

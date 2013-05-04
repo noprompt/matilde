@@ -20,6 +20,8 @@
         (indent-for-tab-command)))))
 
 ; Normal state
+(nmap "zo" 'evil-toggle-fold)
+(nmap "zc" 'evil-toggle-fold)
 
 (nmap (kbd "C-j") 'evil-scroll-page-down)
 (nmap (kbd "C-k") 'evil-scroll-page-up)

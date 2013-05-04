@@ -10,6 +10,12 @@
             (define-key evil-normal-state-local-map "S" 'paredit-splice-sexp)
             (define-key evil-normal-state-local-map "T" 'transpose-sexps)
             (define-key evil-normal-state-local-map "t" 'clojure-test-run-test)
+            (put-clojure-indent 'select 'defun)
+            (put-clojure-indent 'insert 'defun)
+            (put-clojure-indent 'create-table 'defun)
+            (put-clojure-indent 'drop-table 'defun)
+            (put-clojure-indent 'GET 'defun)
+            (put-clojure-indent 'POST 'defun)
             (rainbow-delimiters-mode)))
 
 (provide 'noprompt-clojure)
