@@ -44,7 +44,7 @@ set ruler
 set modeline modelines=5
 " Wildmenu!
 set wildmenu
-set wildmode=longest,list
+set wildmode=full
 " Backspace
 set bs=2
 " Enable filetype specific indention
@@ -57,6 +57,8 @@ set listchars=tab:▸\ ,eol:¬
 " Prevent Vim from clobbering the scrollback buffer.
 " See: http://www.shallowsky.com/linux/noaltscreen.html
 set t_ti= t_te=
+
+set path=**
 
 " }}}
 " Package management {{{
@@ -73,25 +75,35 @@ call vundle#rc()
 " Required
 Bundle "gmarik/vundle"
 
-" Clojure
+" Clojure {{{
 Bundle 'guns/vim-clojure-static'
-Bundle 'vim-scripts/VimClojure'
-" CoffeeScript
+Bundle 'dgrnbrg/vim-redl'
+Bundle 'tpope/vim-fireplace'
+Bundle 'tpope/vim-classpath'
+"Bundle 'vim-scripts/VimClojure'
+" }}}
+" CoffeeScript {{{
 Bundle 'kchmck/vim-coffee-script'
-" JavaScript
+" }}}
+" JavaScript {{{
 Bundle 'pangloss/vim-javascript'
-" LiveScript
+" }}}
+" LiveScript {{{
 Bundle 'gkz/vim-ls'
-" Markdown
+" }}}
+" Markdown {{{
 Bundle 'tpope/vim-markdown'
-" Racket
+" }}}
+" Racket {{{
 Bundle 'wlangstroth/vim-racket'
-" Ruby
+" }}}
+" Ruby {{{
 Bundle 'noprompt/vim-yardoc'
 Bundle 'tpope/vim-rails'
 Bundle 'vim-ruby/vim-ruby'
-" Vim
-Bundle 'Lokaltog/vim-powerline'
+" }}}
+" Vim {{{
+"Bundle 'Lokaltog/vim-powerline'
 Bundle 'ervandew/screen'
 Bundle 'godlygeek/tabular'
 Bundle 'jpalardy/vim-slime'
@@ -103,6 +115,7 @@ Bundle 'tpope/vim-fugitive'
 Bundle 'tpope/vim-surround'
 Bundle 'Rykka/colorv.vim'
 Bundle 'Rykka/galaxy.vim'
+" }}}
 
 " }}}
 " }}}
@@ -162,6 +175,8 @@ nnoremap L $
 " Page up/down
 nnoremap <c-j> <c-d>
 nnoremap <c-k> <c-u>
+" Find
+nnoremap <c-f> :find<space>
 " TagBar
 nnoremap <leader>c :TagbarToggle<cr>
 " Keep search matches in the middle of the window.
