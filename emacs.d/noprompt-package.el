@@ -23,6 +23,9 @@
         clojure-test-mode
         nrepl
 
+        ;; Prolog
+        prolog
+
         ;; Ruby
         inf-ruby
         rinari

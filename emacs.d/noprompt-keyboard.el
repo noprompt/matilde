@@ -1,6 +1,7 @@
 (require 'noprompt-evil)
 (require 'key-chord)
 (key-chord-mode 1)
+(require 'ace-jump-mode)
 
 ; Function to implement a smarter TAB (EmacsWiki)
 (defun smart-tab ()
@@ -26,6 +27,8 @@
 (nmap (kbd "C-j") 'evil-scroll-page-down)
 (nmap (kbd "C-k") 'evil-scroll-page-up)
 (nmap (kbd "C-f") 'find-file)
+(nmap (kbd "SPC") 'ace-jump-mode)
+(nmap (kbd "S-SPC") 'ace-jump-mode-pop-mark)
 
 (nmap "W(" 'paredit-wrap-round)
 (nmap "W[" 'paredit-wrap-square)
