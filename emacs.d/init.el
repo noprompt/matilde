@@ -5,10 +5,9 @@
 (require 'noprompt-evil)
 (require 'noprompt-keyboard)
 
-;; Path fix for OS X.
 (require 'exec-path-from-shell)
 (exec-path-from-shell-initialize)
-;(setenv "PATH" (shell-command-to-string "bash -lc 'echo $PATH'"))
+
 
 ;; ElScreen
 (require 'elscreen)
@@ -23,3 +22,4 @@
 (require 'noprompt-lisp-interaction)
 (require 'noprompt-emacs-lisp)
 (require 'noprompt-ruby)
+(require 'noprompt-prolog)
