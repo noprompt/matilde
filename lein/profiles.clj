@@ -6,4 +6,10 @@
         :injections [(require 'spyscope.core)
                      (require '[redl core complete])]
         :dependencies [[redl "0.1.0"]
-                       [spyscope "0.1.2"]]}}
+                       [spyscope "0.1.2"]
+                       [javert "0.2.0-SNAPSHOT"]
+                       [ritz/ritz-nrepl-middleware "0.7.0"]]
+        :repl-options {:nrepl-middleware
+                       [inspector.middleware/wrap-inspect
+                        ritz.nrepl.middleware.javadoc/wrap-javadoc
+                        ritz.nrepl.middleware.apropos/wrap-apropos]}}}
