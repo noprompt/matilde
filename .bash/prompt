@@ -1,11 +1,13 @@
+# -*- mode: sh; -*-
 # vim:filetype=sh
 
-LAMBDA=`echo -ne "\x00\xce\xbb"`
-hostname=$(tput setaf 213) # Fuscia
-reset=$(tput sgr0)
+_is_git_branch() {
+    git status > /dev/null 2>&1
+    return $?
+}
 
 _parse_git_branch() {
-  git branch --no-color 2> /dev/null | sed -e '/^[^*]/d' -e "s/* \(.*\)/ (\1)/"
+  git branch --no-color 2> /dev/null | sed -e '/^[^*]/d' -e "s/* \(.*\)/.\1/"
 }
 
 _dirty_git_branch() {
@@ -14,12 +16,14 @@ _dirty_git_branch() {
 }
 
 _git_branch_color() {
-  if _dirty_git_branch; then
-    tput setaf 210 # Red
-  else
-    tput setaf 120 # Green
-  fi
+    if _is_git_branch; then
+        if _dirty_git_branch; then
+            echo -ne '\033[0;31m'
+        else
+            echo -ne '\033[0;32m'
+        fi
+    fi
 }
 
-export PS1="$LAMBDA [\[$hostname\]:\h\[$reset\]] \w\[\$(_git_branch_color)\]\$(_parse_git_branch)\[$reset\]: "
+export PS1="\$(_git_branch_color)\h\$(_parse_git_branch)=>\033[0m "
 export PS2=";; "
