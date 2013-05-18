@@ -22,6 +22,8 @@
         clojure-mode
         clojure-test-mode
         nrepl
+        ac-nrepl
+        nrepl-ritz
 
         ;; Prolog
         prolog
