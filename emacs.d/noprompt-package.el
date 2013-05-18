@@ -9,6 +9,7 @@
 
 (setq noprompt-package-list
       '(;; Standard packages
+	starter-kit
         evil
         evil-paredit
         key-chord

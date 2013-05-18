@@ -18,7 +18,7 @@
 (remove-hook 'prog-mode-hook 'esk-turn-on-hl-line-mode)
 
 ;; Color theme
-(load-theme 'sanityinc-tomorrow-night t)
+;;(load-theme 'sanityinc-tomorrow-night t)
 
 (require 'exec-path-from-shell)
 (exec-path-from-shell-initialize)
@@ -102,6 +102,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Paredit
+(require 'paredit)
 
 (defun define-paredit-keys ()
   (progn
@@ -173,6 +174,7 @@
 
 (add-hook 'lisp-interaction-mode-hook
           (lambda ()
+	    (paredit-mode)
             (define-paredit-keys)
             (rainbow-delimiters-mode)))
 
@@ -181,6 +183,7 @@
 
 (add-hook 'emacs-lisp-mode-hook
           (lambda ()
+	    (paredit-mode)
             (define-paredit-keys)
             (nlmap ",e" 'eval-defun)
             (rainbow-delimiters-mode)))
