@@ -53,7 +53,8 @@
 ;; SEE: http://lists.gnu.org/archive/html/bug-gnu-emacs/2013-03/msg00668.html
 (defun kill-eshell-buffer ()
   "Force kills an eshell buffer."
-  (let ((inhibit-read-only t))
-    (kill-this-buffer)))
+  (with-current-buffer "*eshell*"
+    (let ((inhibit-read-only t))
+      (kill-this-buffer))))
 
 (provide 'noprompt-util)
