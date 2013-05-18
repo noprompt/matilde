@@ -19,6 +19,7 @@
         rainbow-mode
         exec-path-from-shell
         color-theme-sanityinc-tomorrow
+        maxframe
 
         ;; Clojure
         clojure-mode
