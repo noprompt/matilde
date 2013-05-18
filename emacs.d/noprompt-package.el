@@ -18,6 +18,7 @@
         rainbow-delimiters
         rainbow-mode
         exec-path-from-shell
+        color-theme-sanityinc-tomorrow
 
         ;; Clojure
         clojure-mode
