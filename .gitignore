@@ -3,3 +3,6 @@ lein/indices
 lein/repl-history
 .vim/.netrwhist
 .vim/bundle/.vundle
+emacs.d/elpa
+*.elc
+\#*
