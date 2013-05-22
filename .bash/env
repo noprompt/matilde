@@ -15,38 +15,47 @@ export HISTSIZE=4000
 export HISTFILESIZE=2000
 
 # Enable colors with the `ls` command
-export CLICOLOR=1
-export LSCOLORS=Gxfxcxdxbxegedabagacad
+#export CLICOLOR=1
+#export LSCOLORS=Gxfxcxdxbxegedabagacad
 
 # Use Vim as the default editor for everything.
 export VISUAL=vim
 export EDITOR=vim
 export FCEDIT=vim
 
+# Appends a value to the PATH variable.
+#
+# @param [String] $1 The path to append
+function add_to_path() {
+    export PATH="$PATH:$1"
+}
+
 # Node
-[ `which npm` ] \
-  && export NODE_PATH=`npm -g root`
+#[ `which npm` ] && export NODE_PATH=`npm -g root`
 
 # Personal binaries
-[ -d "$HOME/bin" ] \
-  && PERSONAL="$HOME/bin"
+[ -d "$HOME/bin" ] && add_to_path "$HOME/bin" 
 
 # Homebrew
-[ `which brew` ] \
-  && HOMEBREW="/usr/local/bin:$(brew --prefix coreutils)/libexec/gnubin"
+if [ `which brew` ]; then
+  add_to_path "/usr/local/bin:$(brew --prefix coreutils)/libexec/gnubin"
+fi
 
-# Ruby
-[ -d "$HOME/.rbenv" ] \
-  && RBENV="$HOME/.rbenv/bin" \
-  && eval "$($HOME/.rbenv/bin/rbenv init -)"
+# rbenv
+if [ -d "$HOME/.rbenv" ]; then
+    add_to_path "$HOME/.rbenv/bin"
+    eval "$($HOME/.rbenv/bin/rbenv init -)"
+else
+    if which rbenv > /dev/null; then
+        export RBENV_ROOT=/usr/local/var/rbenv
+        eval "$(rbenv init -)";
+    fi
+fi
 
 # Haskell
-[ -d "$HOME/.cabal" ] \
-  && CABAL="$HOME/.cabal/bin"
+[ -d "$HOME/.cabal" ] && add_to_path "$HOME/.cabal/bin"
 
 # VimClojure
 if [ -d "$HOME/lib/VimClojure" ]; then
   export VIMCLOJURE_SERVER_JAR="$(find "$HOME/lib/VimClojure" -name '*.jar' | tail -1)"
 fi
-
-export PATH="$PERSONAL:$HOMEBREW:$RBENV:$CABAL:$PATH"
