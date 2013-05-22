@@ -20,6 +20,7 @@
         exec-path-from-shell
         color-theme-sanityinc-tomorrow
         maxframe
+        ace-jump-mode
 
         ;; Clojure
         clojure-mode
