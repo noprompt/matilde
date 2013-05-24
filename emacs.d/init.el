@@ -122,7 +122,7 @@
 ;; Clojure/nREPL
 (require 'clojure-mode)
 
-(add-hook 'clojure-mode
+(add-hook 'clojure-mode-hook
   '(lambda ()
      (paredit-mode)
      (define-paredit-keys)
