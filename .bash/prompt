@@ -30,10 +30,9 @@ _parse_git_branch() {
 }
 
 _dirty_git_branch() {
-  git status --porcelain 2> /dev/null | grep -q "^M"
+  git status --porcelain 2> /dev/null | grep -q ".M"
   return $?
 }
-
 
 _git_branch_color() {
     if _is_git_branch; then
@@ -55,7 +54,6 @@ _git_branch_info() {
         fi
     fi
 }
-
 
 export PS1="{\[$SYM\]:exit\[$RESET\] \[$NUM\]\$?\[$RESET\], \[$SYM\]:dir\[$RESET\] \[$STR\]\"\w\"\[$RESET\]\$(_parse_git_branch)\[\$(_git_branch_info)\]}\n\[$RESET\]\h.\u=> "
 export PS2=";; "
