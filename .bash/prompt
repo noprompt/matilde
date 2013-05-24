@@ -1,29 +1,61 @@
 # -*- mode: sh; -*-
 # vim:filetype=sh
 
+source ~/.matilde/.bash/colors
+
+# Color aliases.
+SYM=$YELLOW
+STR=$CYAN
+NUM=$GREEN
+
+_sym() {
+    echo -ne "$SYM:$1$RESET"
+}
+
+_str() {
+    echo -ne "$STR\"$1\"$RESET"
+}
+
+_num() {
+    echo -ne "$NUM$1$RESET"
+}
+
 _is_git_branch() {
     git status > /dev/null 2>&1
     return $?
 }
 
 _parse_git_branch() {
-  git branch --no-color 2> /dev/null | sed -e '/^[^*]/d' -e "s/* \(.*\)/.\1/"
+  git branch --no-color 2> /dev/null | sed -e '/^[^*]/d' -e "s/* \(.*\)/, $(_sym 'branch') $(echo -ne $STR)\"\1\"$(echo -ne $RESET)/"
 }
 
 _dirty_git_branch() {
-  git status --porcelain 2> /dev/null | grep -q "^ M "
+  git status --porcelain 2> /dev/null | grep -q "^M"
   return $?
 }
+
 
 _git_branch_color() {
     if _is_git_branch; then
         if _dirty_git_branch; then
-            echo -ne '\033[0;31m'
+            echo -ne $RED
         else
-            echo -ne '\033[0;32m'
+            echo -ne $GREEN
         fi
     fi
 }
 
-export PS1="\$(_git_branch_color)\h\$(_parse_git_branch)=>\033[0m "
+_git_branch_info() {
+    if _is_git_branch; then
+        echo -ne ", ${SYM}:status${RESET}"
+        if _dirty_git_branch; then
+            echo -ne " ${RED}dirty${RESET}"
+        else
+            echo -ne " ${GREEN}clean${RESET}"
+        fi
+    fi
+}
+
+
+export PS1="{\[$SYM\]:exit\[$RESET\] \[$NUM\]\$?\[$RESET\], \[$SYM\]:dir\[$RESET\] \[$STR\]\"\w\"\[$RESET\]\$(_parse_git_branch)\[\$(_git_branch_info)\]}\n\[$RESET\]\h.\u=> "
 export PS2=";; "
