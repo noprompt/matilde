@@ -16,6 +16,8 @@
 
 ;; Turn off line highlighting.
 (remove-hook 'prog-mode-hook 'esk-turn-on-hl-line-mode)
+;; Turn off idle highlight mode. It's annnoying.
+(remove-hook 'prog-mode-hook 'esk-turn-on-idle-highlight-mode)
 
 ;; Color theme
 (add-to-list 'custom-theme-load-path "~/.emacs.d/themes/")
