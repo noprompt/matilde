@@ -84,10 +84,18 @@
 ;;;; Insert state bindings
 
 (imap (kbd "C-j") 'next-line)
-(imap (kbd "C-n") 'next-line)
 (imap (kbd "C-k") 'previous-line)
-(imap (kbd "C-p") 'previous-line)
-(imap (kbd "TAB") 'smart-tab)
+;(imap (kbd "TAB") 'smart-tab)
+(imap (kbd "C-n") nil)
+(imap (kbd "C-p") nil)
+
+;;;; Escape
+
+(define-key minibuffer-local-map [escape] 'keyboard-escape-quit)
+(define-key minibuffer-local-ns-map [escape] 'keyboard-escape-quit)
+(define-key minibuffer-local-completion-map [escape] 'keyboard-escape-quit)
+(define-key minibuffer-local-must-match-map [escape] 'keyboard-escape-quit)
+(define-key minibuffer-local-isearch-map [escape] 'keyboard-escape-quit)
 
 ;;;; Keychord bindings
 
@@ -99,6 +107,31 @@
 
 ;; M-x emulation
 (key-chord-define-global "x," 'execute-extended-command)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Autocomplete
+(require 'auto-complete)
+(require 'auto-complete-config)
+(ac-config-default)
+(add-to-list 'ac-dictionary-directories "~/.emacs.d/elpa/auto-complete-1.4/dict")
+
+(defun set-auto-complete-as-completion-at-point-function ()
+  (setq completion-at-point-functions '(auto-complete)))
+
+(add-hook 'auto-complete-mode-hook 'set-auto-complete-as-completion-at-point-function)
+
+(define-key ac-mode-map (kbd "C-n") 'ac-next)
+(define-key ac-mode-map (kbd "C-p") 'ac-previous)
+
+(require 'thingatpt)
+(imap (kbd "TAB")
+      (lambda ()
+        (interactive)
+        (if (thing-at-point 'filename)
+            (ac-complete-filename)
+          (ac-complete))))
+
+(setq ac-quick-help-delay 1)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Paredit
@@ -157,18 +190,13 @@
 
 (add-hook 'clojure-mode-hook
           (lambda ()
+            (define-key nrepl-interaction-mode-map (kbd "C-c C-d") 'ac-nrepl-popup-doc)
             (define-key evil-normal-state-local-map ",e" 'nrepl-eval-expression-at-point)
             (define-key evil-normal-state-local-map ",l" 'nrepl-load-file)))
 
 ;; Javert
 (load-file "~/.emacs.d/javert/nrepl-inspect.el")
 (define-key nrepl-mode-map (kbd "C-c i") 'nrepl-inspect)
-
-(require 'nrepl-ritz)
-(define-key nrepl-interaction-mode-map (kbd "C-c C-j") 'nrepl-javadoc)
-(define-key nrepl-mode-map (kbd "C-c C-j") 'nrepl-javadoc)
-(define-key nrepl-interaction-mode-map (kbd "C-c C-a") 'nrepl-apropos)
-(define-key nrepl-mode-map (kbd "C-c C-a") 'nrepl-apropos)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Lisp interaction
@@ -219,3 +247,15 @@
         (swi "/usr/local/bin/swipl")
         (gnu "gprolog")
         (t "gprolog")))
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(custom-safe-themes (quote ("1affe85e8ae2667fb571fc8331e1e12840746dae5c46112d5abb0c3a973f5f5a" default))))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )

@@ -21,6 +21,8 @@
         color-theme-sanityinc-tomorrow
         maxframe
         ace-jump-mode
+        fuzzy
+        auto-complete
 
         ;; Clojure
         clojure-mode
