@@ -23,6 +23,7 @@
 ;; Color theme
 (add-to-list 'custom-theme-load-path "~/.emacs.d/themes/")
 (load-theme 'base16-railscasts t)
+(set-face-attribute 'font-lock-comment-face 'nil :slant 'italic)
 
 (require 'exec-path-from-shell)
 (exec-path-from-shell-initialize)
