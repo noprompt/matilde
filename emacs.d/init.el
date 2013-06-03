@@ -1,4 +1,5 @@
 (add-to-list 'load-path (expand-file-name "~/.emacs.d/"))
+(add-to-list 'load-path (expand-file-name "~/.emacs.d/non-elpa/"))
 (require 'noprompt-util)
 (require 'noprompt-package)
 
@@ -21,7 +22,7 @@
 
 ;; Color theme
 (add-to-list 'custom-theme-load-path "~/.emacs.d/themes/")
-(load-theme 'base16-default t)
+(load-theme 'base16-railscasts t)
 
 (require 'exec-path-from-shell)
 (exec-path-from-shell-initialize)
@@ -137,16 +138,26 @@
 ;; Paredit
 (require 'paredit)
 
+(defun paredit-wrap-quote ()
+  "Wrap the following sexp in double quotes."
+  (interactive)
+  (save-excursion
+    (insert "\"")
+    (forward-sexp)
+    (insert "\"")))
+
 (defun define-paredit-keys ()
   (progn
     (nlmap "W(" 'paredit-wrap-round)
     (nlmap "W[" 'paredit-wrap-square)
     (nlmap "W{" 'paredit-wrap-curly)
+    (nlmap "W\"" 'paredit-wrap-quote)
     (nlmap "(" 'paredit-backward-slurp-sexp)
     (nlmap ")" 'paredit-backward-barf-sexp)
     (nlmap "{" 'paredit-forward-barf-sexp)
     (nlmap "}" 'paredit-forward-slurp-sexp)
     (nlmap "S" 'paredit-splice-sexp)
+    (nlmap "s" 'paredit-split-sexp)
     (nlmap "T" 'transpose-sexps)
     (nlmap "t" 'clojure-test-run-test)
     (nlmap "D" 'paredit-kill)))
@@ -170,9 +181,12 @@
 
      (rainbow-delimiters-mode)))
 
+(define-key clojure-mode-map (kbd "C-:") 'toggle-clj-keyword-string)
+
 ;; nREPL
 (require 'nrepl)
 (setq nrepl-hide-special-buffers t)
+(setq nrepl-popup-stacktraces nil)
 (setq nrepl-popup-stacktraces-in-repl t)
 (setq nrepl-history-file "~/.emacs.d/nrepl-history")
 
@@ -204,6 +218,7 @@
 (add-hook 'lisp-interaction-mode-hook
           (lambda ()
 	    (paredit-mode)
+            (eldoc-mode)
             (define-paredit-keys)
             (rainbow-delimiters-mode)))
 
@@ -213,6 +228,7 @@
 (add-hook 'emacs-lisp-mode-hook
           (lambda ()
 	    (paredit-mode)
+            (eldoc-mode)
             (define-paredit-keys)
             (nlmap ",e" 'eval-defun)
             (rainbow-delimiters-mode)))
@@ -247,15 +263,28 @@
         (swi "/usr/local/bin/swipl")
         (gnu "gprolog")
         (t "gprolog")))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; JavaScript
+(add-hook 'js-mode-hook 'electric-indent-mode)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(custom-safe-themes (quote ("51bea7765ddaee2aac2983fac8099ec7d62dff47b708aa3595ad29899e9e9e44" "f41fd682a3cd1e16796068a2ca96e82cfd274e58b978156da0acce4d56f2b0d5" "1affe85e8ae2667fb571fc8331e1e12840746dae5c46112d5abb0c3a973f5f5a" default))))
+ '(custom-safe-themes (quote ("41b6698b5f9ab241ad6c30aea8c9f53d539e23ad4e3963abff4b57c0f8bf6730" "ae8d0f1f36460f3705b583970188e4fbb145805b7accce0adb41031d99bd2580" "51bea7765ddaee2aac2983fac8099ec7d62dff47b708aa3595ad29899e9e9e44" "f41fd682a3cd1e16796068a2ca96e82cfd274e58b978156da0acce4d56f2b0d5" "1affe85e8ae2667fb571fc8331e1e12840746dae5c46112d5abb0c3a973f5f5a" default)))
+ '(electric-indent-mode t))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  )
+
+
+
+

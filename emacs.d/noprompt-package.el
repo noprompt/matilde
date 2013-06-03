@@ -44,6 +44,9 @@
         ;; Sass
         sass-mode
         scss-mode
+
+        ;; JavaScript
+        js2-mode
         ))
 
 (dolist (package noprompt-package-list)
