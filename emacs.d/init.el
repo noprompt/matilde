@@ -28,6 +28,10 @@
 (require 'exec-path-from-shell)
 (exec-path-from-shell-initialize)
 
+;; Smooth scrolling.
+(setq scroll-step 1
+      scroll-conservatively 10000)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Evil/Keybindings
 (require 'ace-jump-mode)
