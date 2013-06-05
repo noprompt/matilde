@@ -37,8 +37,9 @@
 
 (require 'evil)
 (evil-mode t)
-(setq evil-shift-width 2)
-(setq evil-default-cursor t)
+
+(setq evil-shift-width 2
+      evil-default-cursor t)
 
 ;;;; Vim style functions
 
