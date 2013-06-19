@@ -9,7 +9,7 @@
 
 (let ((background "#272935")
       (current-line "#5a647e")
-      (selection "#d4cfc9")
+      (selection "#3D4052")
       (foreground "#f4f1ed")
       (comment "#d4cfc9")
       (cursor "#f4f1ed")
