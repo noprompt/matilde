@@ -276,9 +276,10 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Powerline
-(add-to-list 'load-path (expand-file-name "~/.emacs.d/non-elpa/powerline"))
-(require 'powerline)
-(powerline-center-evil-theme)
+;(add-to-list 'load-path (expand-file-name "~/.emacs.d/non-elpa/powerline"))
+;(require 'powerline)
+;(powerline-default-theme)
+;(powerline-center-evil-theme)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
