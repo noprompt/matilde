@@ -9,7 +9,7 @@
 
 (let ((background "#202020")
       (current-line "#505050")
-      (selection "#303060")
+      (selection "#303030")
       (foreground "#e0e0e0")
       (comment "#b0b0b0")
       (cursor "#e0e0e0")
@@ -33,7 +33,7 @@
 
    ;; Font-lock stuff
    `(font-lock-comment-face ((t (:foreground ,comment))))
-   `(font-lock-constant-face ((t (:foreground ,green))))
+   `(font-lock-constant-face ((t (:foreground ,orange))))
    `(font-lock-doc-string-face ((t (:foreground ,comment))))
    `(font-lock-function-name-face ((t (:foreground ,blue))))
    `(font-lock-keyword-face ((t (:foreground ,purple))))

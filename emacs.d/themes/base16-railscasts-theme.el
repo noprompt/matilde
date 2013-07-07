@@ -33,7 +33,7 @@
 
    ;; Font-lock stuff
    `(font-lock-comment-face ((t (:foreground ,comment))))
-   `(font-lock-constant-face ((t (:foreground ,green))))
+   `(font-lock-constant-face ((t (:foreground ,purple))))
    `(font-lock-doc-string-face ((t (:foreground ,comment))))
    `(font-lock-function-name-face ((t (:foreground ,blue))))
    `(font-lock-keyword-face ((t (:foreground ,purple))))
