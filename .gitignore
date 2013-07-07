@@ -1,7 +1,6 @@
 lein/self-installs
 lein/indices
 lein/repl-history
-vim/.netrwhist
 vim/bundle/.vundle
 vim/bundle
 emacs.d/elpa
@@ -17,3 +16,4 @@ emacs.d/\*Backtrace\*
 *.elc
 \#*
 *.DS_Store
+*.netrwhist
