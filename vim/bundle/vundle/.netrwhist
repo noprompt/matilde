@@ -1,0 +1,5 @@
+let g:netrw_dirhistmax  =10
+let g:netrw_dirhist_cnt =3
+let g:netrw_dirhist_1='/Users/choldbrooks/Code/json'
+let g:netrw_dirhist_2='/Users/choldbrooks/git/node.couchapp.js/tests/config/modules'
+let g:netrw_dirhist_3='/Users/choldbrooks/git/base16-builder'
