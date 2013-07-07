@@ -1,8 +1,6 @@
 # -*- mode: sh; -*-
 # vim:filetype=sh
 
-source ~/.matilde/.bash/colors
-
 # Color aliases.
 SYM=$YELLOW
 STR=$CYAN
