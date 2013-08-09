@@ -178,12 +178,19 @@
      (define-paredit-keys)
 
      (define-clojure-indent
+       ;; clojure.test
+       (are 'defun)
+       ;; Garden
+       (css 'defun)
+       ;; Korma
        (select 'defun)
        (insert 'defun)
-       (create-table 'defun)
-       (drop-table 'defun)
+       ;; Compojure
        (GET 'defun)
-       (POST 'defun))
+       (POST 'defun)
+       ;; Persephone/Seraph
+       (start 'defun)
+       (start* 'defun))
 
      (rainbow-delimiters-mode)))
 
