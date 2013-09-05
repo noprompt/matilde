@@ -49,11 +49,11 @@
 
         ;; JavaScript
         js2-mode
+        skewer-mode
 
         ;; Other cool stuff
         multi-term
-        apache-mode
-        ))
+        apache-mode))
 
 (dolist (package noprompt-package-list)
   (when (not (package-installed-p package))
