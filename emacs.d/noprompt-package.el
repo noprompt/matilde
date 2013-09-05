@@ -49,6 +49,10 @@
 
         ;; JavaScript
         js2-mode
+
+        ;; Other cool stuff
+        multi-term
+        apache-mode
         ))
 
 (dolist (package noprompt-package-list)
