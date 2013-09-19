@@ -51,6 +51,10 @@ alias timestamp="date +%s"
 alias grep="grep --color"
 alias be="bundle exec"
 
+# Leiningen
+[ `which lein` ] \
+    && alias lein-sample='lein sample | view - -c "set ft=clojure"'
+
 # Emacs
 if test -f /Applications/Emacs.app/Contents/MacOS/Emacs; then
     alias emacs="/Applications/Emacs.app/Contents/MacOS/Emacs -nw"
