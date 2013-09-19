@@ -182,13 +182,15 @@
        (are 'defun)
        ;; Garden
        (css 'defun)
+       (at-media 1)
+       (at-keyframes 1)
        ;; Korma
        (select 'defun)
        (insert 'defun)
        ;; Compojure
        (GET 'defun)
        (POST 'defun)
-       ;; Persephone/Seraph
+       ;; Persephone
        (start 'defun)
        (start* 'defun))
 
