@@ -1,6 +1,7 @@
 (add-to-list 'load-path (expand-file-name "~/.emacs.d/"))
 (require 'noprompt-util)
 (require 'noprompt-package)
+(require 'noprompt-multi-shell)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; General settings
