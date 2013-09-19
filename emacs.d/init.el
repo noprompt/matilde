@@ -6,7 +6,7 @@
 ;; General settings
 (when (display-graphic-p)
   (progn
-    (set-face-attribute 'default nil :font "Inconsolata" :height 160)
+    (set-face-attribute 'default nil :font "Oxygen Mono" :height 140)
     (global-set-key (kbd "s-<return>") 'maximize-frame)
     (global-set-key (kbd "s-=") 'increase-font-height)
     (global-set-key (kbd "s--") 'decrease-font-height)))
