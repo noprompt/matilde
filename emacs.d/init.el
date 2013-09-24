@@ -172,6 +172,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Clojure/nREPL
 (require 'clojure-mode)
+(add-to-list 'auto-mode-alist '("\\.cljx$" . clojure-mode))
 
 (add-hook 'clojure-mode-hook
   '(lambda ()
