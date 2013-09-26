@@ -228,6 +228,23 @@
 (load-file "~/.emacs.d/javert/nrepl-inspect.el")
 (define-key nrepl-mode-map (kbd "C-c i") 'nrepl-inspect)
 
+;; Scratch buffers
+
+(defun clj-scratch ()
+  "Create/retrieve a Clojure scratch buffer and switch to it.."
+  (interactive)
+  (let ((buf (get-buffer-create "*clj-scratch*")))
+    (switch-to-buffer buf)
+    (clojure-mode)))
+
+(defun cljs-scratch ()
+  "Create/retrieve a ClojureScript scratch buffer and switch to it.."
+  (interactive)
+  (let ((buf (get-buffer-create "*cljs-scratch*")))
+    (switch-to-buffer buf)
+    (clojurescript-mode)))
+
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Lisp interaction
 
