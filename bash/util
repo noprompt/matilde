@@ -1,45 +1,26 @@
 # -*- mode: sh; -*-
 # vim:filetype=sh
 
-# Returns true if the result of reading a string begins with 'y', otherwise
-# it returns false.
-confirm() {
-  read answer
-  case "$answer" in
-    y*) return 0;;
-    *) return 1;;
-  esac
-}
-
-# Ask a yes or no question with a prompt.
-inquire() {
-  local white=$(tput setaf 255)
-  local reset=$(tput sgr0)
-
-  echo "$@"
-  echo -n "[${white}y n${reset}]: "
-  confirm
-}
-
-would_like() {
-  inquire "Would you like $@?"
+# A poor man's require.
+function require() {
+    source $HOME/.matilde/bash/lib/"$1.sh"
 }
 
 # Pretty print path.
 function ppp() {
-  echo $PATH | sed -e 's/:\{1,\}/ /g' | tr ' ' '\n'
+    echo $PATH | sed -e 's/:\{1,\}/ /g' | tr ' ' '\n'
 }
 
 # Pushes a path on to $PATH.
 function pushp() {
-  if [ -n "$1" ]; then
-    export PATH="$PATH:$1"
-  fi
-  ppp
+    if [ -n "$1" ]; then
+        export PATH="$PATH:$1"
+    fi
+    ppp
 }
 
 # Pop a path from $PATH.
 function popp() {
-  export PATH="$(ppp | init | tr '\n' ':' | sed -e "s/:$//")"
-  ppp
+    export PATH="$(ppp | init | tr '\n' ':' | sed -e "s/:$//")"
+    ppp
 }
