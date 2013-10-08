@@ -52,7 +52,8 @@
         ;; Other cool stuff
         multi-term
         apache-mode
-        jujube-theme))
+        jujube-theme
+        soothe-theme))
 
 (dolist (package noprompt-package-list)
   (when (not (package-installed-p package))
