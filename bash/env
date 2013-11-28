@@ -59,3 +59,16 @@ fi
 if [ -d "$HOME/lib/VimClojure" ]; then
   export VIMCLOJURE_SERVER_JAR="$(find "$HOME/lib/VimClojure" -name '*.jar' | tail -1)"
 fi
+
+# VirtualEnv
+if [ -e "/usr/local/bin/virtualenvwrapper.sh" ]; then
+    export WORKON_HOME="$HOME/Envs"
+
+    if [ -d "$WORKON_HOME" ]; then
+        source /usr/local/bin/virtualenvwrapper.sh
+    else
+        mkdir -p $WORKON_HOME
+        source /usr/local/bin/virtualenvwrapper.sh
+    fi
+    
+fi
