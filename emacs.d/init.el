@@ -1,344 +1,130 @@
 (add-to-list 'load-path (expand-file-name "~/.emacs.d/"))
 (require 'noprompt-util)
 (require 'noprompt-package)
-(require 'noprompt-multi-shell)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; General settings
 
-(when (display-graphic-p)
-  (progn
-    (global-set-key (kbd "s-<return>") 'maximize-frame)
-    (global-set-key (kbd "s-=") 'increase-font-height)
-    (global-set-key (kbd "s--") 'decrease-font-height)))
+;; Disable the splash screen
+(setq inhibit-startup-message t)
 
-;; Turn off the annoying visual bell.
+(menu-bar-mode -1)
+
+;; Turn off scroll bars.
+(when (fboundp 'scroll-bar-mode)
+  (scroll-bar-mode -1))
+
+;; Turn off the tool bar.
+(when (fboundp 'tool-bar-mode)
+  (tool-bar-mode -1))
+
+;; Turn off the visual bell.
 (setq visible-bell nil)
 
-;; Turn off line highlighting.
-(remove-hook 'prog-mode-hook 'esk-turn-on-hl-line-mode)
-;; Turn off idle highlight mode. It's annnoying.
-(remove-hook 'prog-mode-hook 'esk-turn-on-idle-highlight-mode)
-
-;; Color theme
-(add-to-list 'custom-theme-load-path "~/.emacs.d/themes/")
-(load-theme 'soothe t)
-;; Override everyone else's opinions.
-(setq default-font-family "Liberation Mono")
-(setq default-font-size 140)
-(setq mode-line-font-family "Menlo")
-(setq mode-line-font-size 120)
-(set-face-attribute 'default nil :font default-font-family :height default-font-size)
-(set-face-attribute 'font-lock-comment-face nil :slant 'italic)
-(set-face-attribute 'font-lock-doc-face nil :slant 'italic)
-(set-face-attribute 'font-lock-doc-string-face nil :slant 'italic)
-(set-face-attribute 'mode-line nil :font mode-line-font-family :height mode-line-font-size)
-(set-face-attribute 'mode-line-inactive nil :slant 'italic :height mode-line-font-size)
-(set-face-attribute 'modeline-highlight nil :height mode-line-font-size)
-
-(require 'exec-path-from-shell)
-(exec-path-from-shell-initialize)
+;; Highlight matching brackets.
+(show-paren-mode 1)
 
 ;; Smooth scrolling.
 (setq scroll-step 1
       scroll-conservatively 10000)
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Evil/Keybindings
-(require 'ace-jump-mode)
+(package-require 'ido-ubiquitous)
+(require 'ido)
 
-(require 'key-chord)
-(key-chord-mode 1)
+(ido-mode t)
+(setq ido-enable-flex-matching t)
+(ido-ubiquitous)
 
-(require 'evil)
-(evil-mode t)
+(package-require 'smex)
+(require 'smex)
+(smex-initialize)
+(smex-initialize-ido)
 
-(setq evil-shift-width 2
-      evil-default-cursor t)
+(require 'uniquify)
+(setq uniquify-buffer-name-style 'forward)
 
-;;;; Vim style functions
+(require 'saveplace)
+(setq-default save-place t)
 
-(defun gui (face &rest options)
-  "Shorthand for set-face-attribute for FACE."
+;; Turn on idle highlight mode.
+(package-require 'idle-highlight-mode)
+(require 'idle-highlight-mode)
+(add-hook 'prog-mode-hook 'idle-highlight-mode)
+
+(setq x-select-enable-clipboard t
+      x-select-enable-primary t
+      save-interprogram-paste-before-kill t
+      apropos-do-all t
+      mouse-yank-at-point t
+      save-place-file (concat user-emacs-directory "places")
+      backup-directory-alist `(("." . ,(concat user-emacs-directory
+					       "backups"))))
+
+;; Color theme
+(add-to-list 'custom-theme-load-path "~/.emacs.d/themes/")
+
+(ac-config-default)
+(defun noprompt/init-graphics-theme ()
+  (load-theme 'soothe t)
+  ;; Override everyone else's opinions.
+  (setq default-font-family "Andale Mono"
+        default-font-size 140
+        mode-line-font-family "Liberation Mono"
+        mode-line-font-size 120)
+
+  (set-face-attribute
+   'default nil :font default-font-family :height default-font-size)
+
+  (set-face-attribute
+   'font-lock-comment-face nil :slant 'italic)
+
+  ;;(set-face-attribute 'font-lock-doc-face nil :slant 'italic)
+  ;;(set-face-attribute 'font-lock-doc-string-face nil :slant 'italic)
+  (set-face-attribute
+   'mode-line nil :font mode-line-font-family :height mode-line-font-size)
+
+  (set-face-attribute
+   'mode-line-inactive nil :slant 'italic :height mode-line-font-size)
+
+  (set-face-attribute
+   'modeline-highlight nil :height mode-line-font-size))
+
+(defun noprompt/init-shell-theme ()
+  (load-theme 'noctilux t))
+
+(if (display-graphic-p)
   (progn
-    (eval (append '(set-face-attribute face nil) options))))
+    (global-set-key (kbd "s-<return>") 'maximize-frame)
+    (global-set-key (kbd "s-=") 'increase-font-height)
+    (global-set-key (kbd "s--") 'decrease-font-height)
+    (noprompt/init-graphics-theme))
+  (noprompt/init-shell-theme))
 
-(defun guibg (face color)
-  "Set face background for FACE to COLOR."
-  (set-face-background face color))
+(package-require 'exec-path-from-shell)
+(require 'exec-path-from-shell)
+(exec-path-from-shell-initialize)
 
-(defun guifg (face color)
-  "Set face foreground for FACE to COLOR."
-  (set-face-foreground face color))
-
-(defun nmap (key def)
-  "Define an Evil normal state sequence."
-  (define-key evil-normal-state-map key def))
-
-(defun nlmap (key def)
-  "Define a local Evil normal state sequence."
-  (define-key evil-normal-state-local-map key def))
-
-(defun imap (key def)
-  "Define an Evil insert state sequence."
-  (define-key evil-insert-state-map key def))
-
-(defun ilmap (key def)
-  "Define a local Evil insert state sequence."
-  (define-key evil-insert-state-local-map key def))
-
-;;;; Normal state bindings
-
-(nmap (kbd "C-j") 'evil-scroll-page-down)
-(nmap (kbd "C-k") 'evil-scroll-page-up)
-(nmap (kbd "C-f") 'find-file)
-
-(nmap "zo" 'evil-toggle-fold)
-(nmap "zc" 'evil-toggle-fold)
-
-(nmap (kbd "SPC") 'ace-jump-mode)
-(nmap (kbd "S-SPC") 'ace-jump-mode-pop-mark)
-
-;;;; Insert state bindings
-
-(imap (kbd "C-j") 'next-line)
-(imap (kbd "C-k") 'previous-line)
-;(imap (kbd "TAB") 'smart-tab)
-(imap (kbd "C-n") nil)
-(imap (kbd "C-p") nil)
-
-;;;; Escape
-
-(define-key minibuffer-local-map [escape] 'keyboard-escape-quit)
-(define-key minibuffer-local-ns-map [escape] 'keyboard-escape-quit)
-(define-key minibuffer-local-completion-map [escape] 'keyboard-escape-quit)
-(define-key minibuffer-local-must-match-map [escape] 'keyboard-escape-quit)
-(define-key minibuffer-local-isearch-map [escape] 'keyboard-escape-quit)
+;; Always start a shell.
+(require 'noprompt-multi-shell)
+(multi-shell)
 
 ;;;; Keychord bindings
 
-;; Toggle evil-mode
-(key-chord-define-global "GH" 'evil-mode)
-(key-chord-define evil-insert-state-map ",e" 'evil-normal-state)
-(key-chord-define evil-normal-state-map ",s" 'switch-to-buffer)
-(key-chord-define evil-normal-state-map "xk" 'kill-buffer)
-
-;; M-x emulation
-(key-chord-define-global "x," 'execute-extended-command)
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Autocomplete
-(require 'auto-complete)
-(require 'auto-complete-config)
-(ac-config-default)
-(add-to-list 'ac-dictionary-directories "~/.emacs.d/elpa/auto-complete-1.4/dict")
-
-(defun set-auto-complete-as-completion-at-point-function ()
-  (setq completion-at-point-functions '(auto-complete)))
-
-(add-hook 'auto-complete-mode-hook 'set-auto-complete-as-completion-at-point-function)
-
-(define-key ac-mode-map (kbd "C-n") 'ac-next)
-(define-key ac-mode-map (kbd "C-p") 'ac-previous)
-
-(defun set-auto-complete-as-completion-at-point-function ()
-  (setq completion-at-point-functions '(auto-complete)))
-
-(add-hook 'auto-complete-mode-hook 'set-auto-complete-as-completion-at-point-function)
-(add-hook 'nrepl-mode-hook 'set-auto-complete-as-completion-at-point-function)
-(add-hook 'nrepl-interaction-mode-hook 'set-auto-complete-as-completion-at-point-function)
-
-(setq ac-quick-help-delay 1)
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Paredit
-(require 'paredit)
-
-(defun paredit-wrap-quote ()
-  "Wrap the following sexp in double quotes."
-  (interactive)
-  (save-excursion
-    (insert "\"")
-    (forward-sexp)
-    (insert "\"")))
-
-(defun define-paredit-keys ()
-  (progn
-    (nlmap "W(" 'paredit-wrap-round)
-    (nlmap "W[" 'paredit-wrap-square)
-    (nlmap "W{" 'paredit-wrap-curly)
-    (nlmap "W\"" 'paredit-wrap-quote)
-    (nlmap "(" 'paredit-backward-slurp-sexp)
-    (nlmap ")" 'paredit-backward-barf-sexp)
-    (nlmap "{" 'paredit-forward-barf-sexp)
-    (nlmap "}" 'paredit-forward-slurp-sexp)
-    (nlmap "S" 'paredit-splice-sexp)
-    (nlmap "s" 'paredit-split-sexp)
-    (nlmap "T" 'transpose-sexps)
-    (nlmap "t" 'clojure-test-run-test)
-    (nlmap "D" 'paredit-kill)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Clojure/nREPL
-(require 'clojure-mode)
-(add-to-list 'auto-mode-alist '("\\.cljx$" . clojure-mode))
-
-(add-hook 'clojure-mode-hook
-  '(lambda ()
-     (paredit-mode)
-     (define-paredit-keys)
-
-     (define-clojure-indent
-       ;; clojure.core
-       (apply 1)
-       ;; clojure.test
-       (are 'defun)
-       ;; Garden
-       (css 'defun)
-       (at-media 1)
-       (at-keyframes 1)
-       ;; Korma
-       (select 'defun)
-       (insert 'defun)
-       ;; Compojure
-       (GET 'defun)
-       (POST 'defun)
-       (context 2)
-       ;; Persephone
-       (start 'defun)
-       (start* 'defun))
-
-     (rainbow-delimiters-mode)))
-
-(define-key clojure-mode-map (kbd "C-:") 'toggle-clj-keyword-string)
-
-;; nREPL
-(require 'nrepl)
-(setq nrepl-hide-special-buffers t)
-(setq nrepl-popup-stacktraces nil)
-(setq nrepl-popup-stacktraces-in-repl t)
-(setq nrepl-history-file "~/.emacs.d/nrepl-history")
-
-;; Auto completion for nREPL
-(require 'ac-nrepl)
-
-(eval-after-load "auto-complete"
-  '(add-to-list 'ac-modes 'nrepl-mode))
-
-(add-hook 'nrepl-connected-hook 'nrepl-enable-on-existing-clojure-buffers)
-(add-hook 'nrepl-interaction-mode-hook 'nrepl-turn-on-eldoc-mode)
-(add-hook 'nrepl-mode-hook 'ac-nrepl-setup)
-(add-hook 'nrepl-mode-hook 'rainbow-delimiters-mode)
-
-(add-hook 'clojure-mode-hook
-          (lambda ()
-            (define-key nrepl-interaction-mode-map (kbd "C-c C-d") 'ac-nrepl-popup-doc)
-            (define-key evil-normal-state-local-map ",e" 'nrepl-eval-expression-at-point)
-            (define-key evil-normal-state-local-map ",l" 'nrepl-load-file)))
-
-;; Javert
-(load-file "~/.emacs.d/javert/nrepl-inspect.el")
-(define-key nrepl-mode-map (kbd "C-c i") 'nrepl-inspect)
-
-;; Scratch buffers
-
-(defun clj-scratch ()
-  "Create/retrieve a Clojure scratch buffer and switch to it.."
-  (interactive)
-  (let ((buf (get-buffer-create "*clj-scratch*")))
-    (switch-to-buffer buf)
-    (clojure-mode)))
-
-(defun cljs-scratch ()
-  "Create/retrieve a ClojureScript scratch buffer and switch to it.."
-  (interactive)
-  (let ((buf (get-buffer-create "*cljs-scratch*")))
-    (switch-to-buffer buf)
-    (clojurescript-mode)))
-
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Lisp interaction
-
-(add-hook 'lisp-interaction-mode-hook
-          (lambda ()
-	    (paredit-mode)
-            (eldoc-mode)
-            (define-paredit-keys)
-            (rainbow-delimiters-mode)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Emacs lisp
-
-(add-hook 'emacs-lisp-mode-hook
-          (lambda ()
-	    (paredit-mode)
-            (eldoc-mode)
-            (define-paredit-keys)
-            (nlmap ",e" 'eval-defun)
-            (rainbow-delimiters-mode)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Ruby
-(require 'ruby-mode)
-(require 'ruby-end)
-(setq ruby-end-insert-newline nil)
-
-(defun ruby-mode-hook-for-fixing-ruby-electric ()
-  (require 'ruby-electric)
-  (ruby-electric-mode)
-  (ruby-electric-mode -1))
-
-(remove-hook 'ruby-mode-hook 'ruby-electric-mode)
-(add-hook 'ruby-mode-hook 'ruby-mode-hook-for-fixing-ruby-electric)
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Prolog
-(add-to-list 'auto-mode-alist '("\\.pl$" . prolog-mode))
-
-(setq prolog-system 'swi)
-
-(setq prolog-program-name
-      '(((getenv "EPROLOG")
-         (eval
-          (getenv "EPROLOG")))
-        (eclipse "eclipse")
-        (mercury nil)
-        (sicstus "sicstus")
-        (swi "/usr/local/bin/swipl")
-        (gnu "gprolog")
-        (t "gprolog")))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; JavaScript
-;;(add-hook 'js-mode-hook 'electric-indent-mode)
-(require 'js2-mode)
-(add-to-list 'auto-mode-alist '("\\.js$" . js2-mode))
-(setq-default js2-basic-offset 2)
-
-;; Prevents funky characters at the REPL.
-(setenv "NODE_NO_READLINE" "1")
-
-(defun nodejs-repl ()
-  (interactive)
-  (pop-to-buffer (make-comint "nodejs" "node")))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; MarkDown
-(require 'markdown-mode)
-(add-to-list 'auto-mode-alist '("\\.md$" . markdown-mode))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Powerline
-;(add-to-list 'load-path (expand-file-name "~/.emacs.d/non-elpa/powerline"))
-;(require 'powerline)
-;(powerline-default-theme)
-;(powerline-center-evil-theme)
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Multi-Term
-(require 'multi-term)
-(setq multi-term-program "/bin/bash")
+(require 'noprompt-key-bindings)
+(require 'noprompt-auto-complete)
+(require 'noprompt-elisp)
+(require 'noprompt-lisp-interaction)
+(require 'noprompt-nrepl)
+(require 'noprompt-clojure)
+(require 'noprompt-ruby)
+(require 'noprompt-javascript)
+(require 'noprompt-css)
+(require 'noprompt-markdown)
+(require 'noprompt-prolog)
+(require 'noprompt-go)
+(require 'noprompt-erlang)
+(require 'noprompt-python)
+(require 'noprompt-factor)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
