@@ -14,6 +14,20 @@
 
 (key-chord-mode t)
 
+;;; Functions
+
+(defun kcnmap (key def)
+  "Define an Evil normal state key-chord sequence."
+  (key-chord-define evil-normal-state-map key def))
+
+(defun kcimap (key def)
+  "Define an Evil insert state key-chord sequence."
+  (key-chord-define evil-insert-state-map key def))
+
+(defun ido-recentf ()
+  (interactive)
+  (find-file (ido-completing-read "Find recent file: " recentf-list)))
+
 ;; Evil normal state bindings
 
 (nmap (kbd "C-j") 'evil-scroll-page-down)
@@ -31,7 +45,7 @@
 (imap (kbd "C-n") nil)
 (imap (kbd "C-p") nil)
 
-;;;; Escape
+;; Escape
 
 (define-key minibuffer-local-map [escape] 'keyboard-escape-quit)
 (define-key minibuffer-local-ns-map [escape] 'keyboard-escape-quit)
@@ -42,11 +56,13 @@
 ;;;; Key-chord bindings
 
 (key-chord-define-global "GH" 'evil-mode) ; Toggle evil-mode
-(key-chord-define evil-insert-state-map ",e" 'evil-normal-state)
-(key-chord-define evil-normal-state-map ",s" 'switch-to-buffer)
-(key-chord-define evil-normal-state-map "xk" 'kill-buffer)
+(kcimap ",e" 'evil-normal-state)
+(kcnmap ",s" 'ido-switch-buffer)
+(kcnmap ",r" 'ido-recentf)
+(kcnmap "xk" 'kill-buffer)
 
 ;; M-x emulation
 (key-chord-define-global "x," 'smex)
+
 
 (provide 'noprompt-key-bindings)

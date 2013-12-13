@@ -1,11 +1,12 @@
 (require 'package)
 
-(add-to-list 'package-archives '("marmalade" . "http://marmalade-repo.org/packages/") t)
-;(add-to-list 'package-archives '("melpa" . "http://melpa.milkbox.net/packages/") t)
+(dolist (source '(("marmalade" . "http://marmalade-repo.org/packages/")
+		  ("melpa" . "http://melpa.milkbox.net/packages/")))
+  (add-to-list 'package-archives source t))
 
 (package-initialize)
 
-(when (not package-archive-contents)
+(unless package-archive-contents
   (package-refresh-contents))
 
 (let ((packages '(magit
@@ -16,9 +17,10 @@
                   jujube-theme
                   soothe-theme
                   ;; Miscelleaneous
-                  apache-mode)))
+                  apache-mode
+		  dash-at-point)))
   (dolist (package packages)
-    (when (not (package-installed-p package))
+    (unless (package-installed-p package)
       (package-install package))))
 
 (provide 'noprompt-package)

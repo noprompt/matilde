@@ -46,4 +46,8 @@
   "Define a local Evil insert state sequence."
   (define-key evil-insert-state-local-map key def))
 
+;;;; Hooks
+
+(add-hook 'prog-mode-hook 'evil-close-folds)
+
 (provide 'noprompt-evil)
