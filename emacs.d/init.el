@@ -26,9 +26,6 @@
 (setq scroll-step 1
       scroll-conservatively 10000)
 
-;; Save sessions
-(desktop-save-mode t)
-
 ;; Ask for y/n instead of yes/no.
 (defalias 'yes-or-no-p 'y-or-n-p)
 
