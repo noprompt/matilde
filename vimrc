@@ -69,11 +69,23 @@ call pathogen#infect()
 " }}}
 " Vundle {{{
 
-set rtp+=~/.vim/bundle/vundle
-call vundle#rc()
+if has('vim_starting')
+  set runtimepath+=~/.vim/bundle/vundle
+  set runtimepath+=~/.vim/bundle/neobundle.vim/
+endif
 
+
+call vundle#rc()
+call neobundle#rc(expand('~/.vim/bundle/'))
+
+filetype plugin indent on
 " Required
 Bundle "gmarik/vundle"
+NeoBundleFetch 'Shougo/neobundle.vim'
+NeoBundle "shougo/vimproc"
+NeoBundle "shougo/vimshell"
+NeoBundle "wgibbs/vim-irblack.git"
+NeoBundleCheck
 
 " Clojure {{{
 Bundle 'guns/vim-clojure-static'
@@ -122,7 +134,8 @@ Bundle 'Rykka/galaxy.vim'
 " Color scheme {{{
 
 if (&t_Co == 256 || &t_Co == 88) || has('gui_running')
-  colorscheme galaxy
+  " colorscheme galaxy
+  colorscheme ir_black
   hi Comment gui=italic
 endif
 
