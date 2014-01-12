@@ -48,6 +48,6 @@
 
 ;;;; Hooks
 
-(add-hook 'prog-mode-hook 'evil-close-folds)
+;(add-hook 'prog-mode-hook 'evil-close-folds)
 
 (provide 'noprompt-evil)
