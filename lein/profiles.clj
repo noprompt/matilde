@@ -1,5 +1,6 @@
 {:user {:plugins  [[lein-clojars "0.9.1"]
-                   [lein-kibit "0.0.8"]]
+                   [lein-kibit "0.0.8"]
+                   [lein-environ "0.4.0"]]
         :dependencies [[javert "0.2.0-SNAPSHOT"]
                        [clj-stacktrace "0.2.7"]
                        [ritz/ritz-nrepl-middleware "0.7.0"]
