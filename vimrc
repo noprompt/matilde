@@ -70,64 +70,62 @@ call pathogen#infect()
 " Vundle {{{
 
 if has('vim_starting')
-  set runtimepath+=~/.vim/bundle/vundle
   set runtimepath+=~/.vim/bundle/neobundle.vim/
 endif
 
 
-call vundle#rc()
 call neobundle#rc(expand('~/.vim/bundle/'))
 
 filetype plugin indent on
 " Required
-Bundle "gmarik/vundle"
 NeoBundleFetch 'Shougo/neobundle.vim'
 NeoBundle "shougo/vimproc"
 NeoBundle "shougo/vimshell"
 NeoBundle "wgibbs/vim-irblack.git"
-NeoBundleCheck
 
 " Clojure {{{
-Bundle 'guns/vim-clojure-static'
-Bundle 'dgrnbrg/vim-redl'
-Bundle 'tpope/vim-fireplace'
-Bundle 'tpope/vim-classpath'
+NeoBundle 'guns/vim-clojure-static'
+NeoBundle 'dgrnbrg/vim-redl'
+NeoBundle 'tpope/vim-fireplace'
+NeoBundle 'tpope/vim-classpath'
 "Bundle 'vim-scripts/VimClojure'
 " }}}
 " CoffeeScript {{{
-Bundle 'kchmck/vim-coffee-script'
+NeoBundle 'kchmck/vim-coffee-script'
 " }}}
 " JavaScript {{{
-Bundle 'pangloss/vim-javascript'
+NeoBundle 'pangloss/vim-javascript'
 " }}}
 " LiveScript {{{
-Bundle 'gkz/vim-ls'
+NeoBundle 'gkz/vim-ls'
 " }}}
 " Markdown {{{
-Bundle 'tpope/vim-markdown'
+NeoBundle 'tpope/vim-markdown'
 " }}}
 " Racket {{{
-Bundle 'wlangstroth/vim-racket'
+NeoBundle 'wlangstroth/vim-racket'
 " }}}
 " Ruby {{{
-Bundle 'noprompt/vim-yardoc'
-Bundle 'tpope/vim-rails'
-Bundle 'vim-ruby/vim-ruby'
+NeoBundle 'noprompt/vim-yardoc'
+NeoBundle 'tpope/vim-rails'
+NeoBundle 'vim-ruby/vim-ruby'
 " }}}
 " Vim {{{
-"Bundle 'Lokaltog/vim-powerline'
-Bundle 'ervandew/screen'
-Bundle 'godlygeek/tabular'
-Bundle 'jpalardy/vim-slime'
-Bundle 'ctrlp.vim'
-Bundle 'rainbow_parentheses.vim'
-Bundle 'majutsushi/tagbar'
-Bundle 'noprompt/lite-brite'
-Bundle 'tpope/vim-fugitive'
-Bundle 'tpope/vim-surround'
-Bundle 'Rykka/colorv.vim'
-Bundle 'Rykka/galaxy.vim'
+"NeoBundle 'Lokaltog/vim-powerline'
+"NeoBundle 'ervandew/screen'
+NeoBundle 'godlygeek/tabular'
+"NeoBundle 'jpalardy/vim-slime'
+NeoBundle 'ctrlp.vim'
+NeoBundle 'rainbow_parentheses.vim'
+"NeoBundle 'majutsushi/tagbar'
+NeoBundle 'noprompt/lite-brite'
+NeoBundle 'tpope/vim-fugitive'
+NeoBundle 'tpope/vim-surround'
+"NeoBundle 'Rykka/colorv.vim'
+"NeoBundle 'Rykka/galaxy.vim'
 " }}}
+
+NeoBundleCheck
 
 " }}}
 " }}}
