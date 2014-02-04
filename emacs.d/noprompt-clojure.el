@@ -9,10 +9,16 @@
 (package-require 'clojure-test-mode)
 (package-require 'clojurescript-mode)
 (package-require 'cider)
+(package-require 'ac-nrepl)
+(package-require 'clj-refactor)
 
 (require 'clojure-mode)
 (require 'clojurescript-mode)
+(require 'cider)
 (require 'noprompt-paredit)
+(require 'ac-nrepl)
+(require 'clj-refactor)
+(require 'noprompt-key-bindings)
 
 ;;;; Settings
 
@@ -43,13 +49,20 @@
 (put 'defcomponent 'clojure-backtracking-indent '(4 (2)))
 (put-clojure-indent 'defcomponent 1)
 
+;; Cider settings
+
+(setq cider-interactive-eval-result-prefix ";; => ")
+(setq cider-repl-use-clojure-font-lock nil)
+
 (setq nrepl-hide-special-buffers t)
 ;; Stop the error buffer from popping up while working in buffers
 ;; other than the REPL
-(setq cider-popup-stacktraces nil)
+;(setq cider-popup-stacktraces nil)
+
+(setq cider-popup-stacktraces t)
 (setq cider-repl-popup-stacktraces t)
 ;; Do not auto-select the error buffer when it's displayed.
-(setq cider-auto-select-error-buffer nil)
+(setq cider-auto-select-error-buffer t)
 
 ;;;; Functions
 
@@ -111,12 +124,6 @@
 (add-hook 'clojure-mode-hook 'paredit-mode)
 (add-hook 'clojure-mode-hook 'noprompt/define-paredit-keys)
 (add-hook 'clojure-mode-hook 'rainbow-delimiters-mode)
-(add-hook 'clojure-mode-hook
-          (lambda ()
-            (define-key nrepl-interaction-mode-map (kbd "C-c C-d")
-	      'ac-nrepl-popup-doc)
-            (nlmap ",e" 'nrepl-eval-expression-at-point)
-            (nlmap ",l" 'nrepl-load-file)))
 
 ;; Cider
 
@@ -124,9 +131,35 @@
 (add-hook 'cider-repl-mode-hook 'subword-mode)
 (add-hook 'cider-repl-mode-hook 'rainbow-delimiters-mode)
 
+;; ac-nrepl
+
+(add-hook 'clojure-mode-hook 'ac-nrepl-setup)
+(add-hook 'cider-mode-hook 'ac-nrepl-setup)
+
+(eval-after-load "auto-complete"
+  '(add-to-list 'ac-modes 'cider-repl-mode))
+
+(eval-after-load "cider"
+  '(define-key nrepl-interaction-mode-map (kbd "C-c C-d")
+     'ac-nrepl-popup-doc))
+
 ;;;; Keybindings
 
 (define-key clojure-mode-map (kbd "C-:") 'toggle-clj-keyword-string)
 (define-key clojure-mode-map (kbd "C-;") 'cider-eval-expression-at-point-in-repl)
+
+(add-hook 'clojure-mode-hook
+	  (lambda ()
+	    (kcimap ",s" 'yas-expand)
+	    (nlmap ",e" 'cider-eval-expression-at-point)
+	    (nlmap ",l" 'cider-load-file)))
+
+(add-hook 'clojure-mode-hook (lambda ()
+			       (clj-refactor-mode 1)))
+
+(add-hook 'clojure-mode-hook (lambda ()
+			       (yas-minor-mode t)))
+
+(cljr-add-keybindings-with-prefix "C-c C-m")
 
 (provide 'noprompt-clojure)

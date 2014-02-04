@@ -37,6 +37,8 @@
 (nmap "zc" 'evil-toggle-fold)
 (nmap (kbd "SPC") 'ace-jump-mode)
 (nmap (kbd "S-SPC") 'ace-jump-mode-pop-mark)
+(nmap (kbd "s-[") 'evil-prev-buffer)
+(nmap (kbd "s-]") 'evil-next-buffer)
 
 ;; Evil insert state bindings
 
