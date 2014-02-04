@@ -1,6 +1,9 @@
 # -*- mode: sh; -*-
 # vim:filetype=sh
 
+# No prompt command.
+PROMPT_COMMAND=""
+
 # Color aliases.
 SYM=$YELLOW
 STR=$CYAN
