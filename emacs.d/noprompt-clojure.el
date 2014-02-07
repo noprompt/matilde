@@ -69,7 +69,7 @@
 ;; Commandeered from https://github.com/halgari/clojure-conj-2013-core.async-examples#usage
 (defun cider-eval-expression-at-point-in-repl ()
   (interactive)
-  (let ((form (nrepl-expression-at-point)))
+  (let ((form (cider-defun-at-point)))
     ;; Strip excess whitespace
     (while (string-match "\\`\s+\\|\n+\\'" form)
       (setq form (replace-match "" t t form)))
