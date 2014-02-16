@@ -24,6 +24,11 @@
   (paredit-backward)
   (paredit-backward))
 
+(defun noprompt/paredit-insert ()
+  (interactive)
+  (paredit-kill)
+  (evil-insert-state))
+
 (defun noprompt/define-paredit-keys ()
   (progn
     (nlmap "W("          'paredit-wrap-round)
@@ -45,6 +50,7 @@
     (nlmap "T"           'noprompt/backward-transpose-sexps)
     (nlmap "t"           'noprompt/forward-transpose-sexps)
     (nlmap "Y"           'paredit-copy-as-kill)
+    (nlmap "C"           'noprompt/paredit-insert)
     (nlmap "D"           'paredit-kill)))
 
 (provide 'noprompt-paredit)

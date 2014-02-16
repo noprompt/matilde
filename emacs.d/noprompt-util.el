@@ -10,6 +10,20 @@
   "Comment out one or more s-expressions."
   nil)
 
+;; Threading macros from Clojure
+;; SEE: http://www.emacswiki.org/emacs/ThreadMacroFromClojure
+
+(defmacro -> (&rest body)
+  (let ((result (pop body)))
+    (dolist (form body result)
+      (setq result (append (list (car form) result)
+			   (cdr form))))))
+
+(defmacro ->> (&rest body)
+      (let ((result (pop body)))
+        (dolist (form body result)
+          (setq result (append form (list result))))))
+
 (defun current-font-height ()
   "Get the current global font height."
   (cdr (assoc :height (face-all-attributes 'default))))
@@ -44,17 +58,6 @@
         (indent-for-tab-command)))))
 
 
-(comment
- (defun evil-eval (&optional prefix)
-   (interactive "P")
-   (progn (goto-char (+ (point) 1))
-          (if prefix 
-              (progn (insert " ")
-                     (nrepl-eval-last-expression prefix))
-            (nrepl-eval-last-expression))
-          (goto-char (- (point) 1)))))
-
-
 ;; Function to force kill an eshell buffer.
 ;; SEE: http://lists.gnu.org/archive/html/bug-gnu-emacs/2013-03/msg00668.html
 (defun kill-eshell-buffer ()
@@ -63,8 +66,6 @@
     (let ((inhibit-read-only t))
       (kill-this-buffer))))
 
-;; Toggle between strings and keyword.
-;; SEE: http://java.dzone.com/articles/emacs-lisp-toggle-between
 (defun char-at-point ()
   (interactive)
   (buffer-substring-no-properties (point) (+ 1 (point))))
