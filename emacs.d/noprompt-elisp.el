@@ -7,6 +7,7 @@
 (package-require 'rainbow-delimiters)
 
 (require 'noprompt-paredit)
+(require 'noprompt-lisp)
 
 ;;;; Hooks
 
@@ -17,6 +18,10 @@
 (add-hook 'emacs-lisp-mode-hook
 	  (lambda ()
 	    (nlmap ",e" 'eval-defun)
-	    (nlmap ",l" 'eval-buffer)))
+	    (nlmap ",l" 'eval-buffer)
+	    (define-key emacs-lisp-mode-map
+	      (kbd "C-c C-d") 'lispy-describe-inline)
+	    (define-key emacs-lisp-mode-map
+	      (kbd "C-c D") 'lispy-describe)))
 
 (provide 'noprompt-elisp)

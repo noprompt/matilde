@@ -26,6 +26,10 @@
 (setq scroll-step 1
       scroll-conservatively 10000)
 
+;; Mouse scrolling
+(setq mouse-wheel-scroll-amount '(1 ((shift) . 1) ((control) . nil)))
+(setq mouse-wheel-progressive-speed nil)
+
 ;; Ask for y/n instead of yes/no.
 (defalias 'yes-or-no-p 'y-or-n-p)
 
@@ -89,10 +93,17 @@
 (defun noprompt/init-graphics-theme ()
   (load-theme 'twilight-anti-bright t)
   ;; Override everyone else's opinions.
-  (setq default-font-family "Liberation Mono"
-        default-font-size 140
-        mode-line-font-family "Liberation Mono"
-        mode-line-font-size 120)
+  (comment
+   (setq default-font-family "Liberation Mono"
+	 default-font-size 140
+	 mode-line-font-family "Liberation Mono"
+	 mode-line-font-size 120))
+
+
+   (setq default-font-family "Inconsolata"
+	 default-font-size 140
+	 mode-line-font-family "Inconsolata"
+	 mode-line-font-size 120)
 
   (set-face-attribute
    'default nil :font default-font-family :height default-font-size)
@@ -131,7 +142,6 @@
 (multi-shell)
 
 (require 'noprompt-key-bindings)
-(require 'noprompt-auto-complete)
 (require 'noprompt-elisp)
 (require 'noprompt-lisp-interaction)
 (require 'noprompt-nrepl)
@@ -146,6 +156,7 @@
 (require 'noprompt-python)
 ;(require 'noprompt-factor)
 (require 'noprompt-haskell)
+(require 'noprompt-auto-complete)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

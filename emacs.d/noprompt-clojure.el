@@ -15,10 +15,11 @@
 (require 'clojure-mode)
 (require 'clojurescript-mode)
 (require 'cider)
-(require 'noprompt-paredit)
 (require 'ac-nrepl)
 (require 'clj-refactor)
+(require 'noprompt-paredit)
 (require 'noprompt-key-bindings)
+(require 'noprompt-lisp)
 
 ;;;; Settings
 
@@ -45,9 +46,6 @@
   ;; Persephone
   (start 'defun)
   (start* 'defun))
-
-(put 'defcomponent 'clojure-backtracking-indent '(4 (2)))
-(put-clojure-indent 'defcomponent 1)
 
 ;; Cider settings
 
@@ -133,20 +131,27 @@
 
 ;; ac-nrepl
 
-(add-hook 'clojure-mode-hook 'ac-nrepl-setup)
-(add-hook 'cider-mode-hook 'ac-nrepl-setup)
+(comment
+ (add-hook 'clojure-mode-hook 'ac-nrepl-setup)
+ (add-hook 'cider-mode-hook 'ac-nrepl-setup)
 
-(eval-after-load "auto-complete"
-  '(add-to-list 'ac-modes 'cider-repl-mode))
+ (eval-after-load "auto-complete"
+   '(add-to-list 'ac-modes 'cider-repl-mode)))
 
 (eval-after-load "cider"
-  '(define-key nrepl-interaction-mode-map (kbd "C-c C-d")
-     'ac-nrepl-popup-doc))
+  '(progn 
+     (define-key nrepl-interaction-mode-map
+	(kbd "C-c D") 'lispy-describe)
+     (define-key nrepl-interaction-mode-map
+       (kbd "C-c C-d") 'lispy-describe-inline)))
 
 ;;;; Keybindings
 
-(define-key clojure-mode-map (kbd "C-:") 'toggle-clj-keyword-string)
-(define-key clojure-mode-map (kbd "C-;") 'cider-eval-expression-at-point-in-repl)
+(define-key clojure-mode-map
+  (kbd "C-:") 'toggle-clj-keyword-string)
+
+(define-key clojure-mode-map
+  (kbd "C-;") 'cider-eval-expression-at-point-in-repl)
 
 (add-hook 'clojure-mode-hook
 	  (lambda ()
