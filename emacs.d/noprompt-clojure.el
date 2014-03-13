@@ -122,6 +122,9 @@
 (add-hook 'clojure-mode-hook 'paredit-mode)
 (add-hook 'clojure-mode-hook 'noprompt/define-paredit-keys)
 (add-hook 'clojure-mode-hook 'rainbow-delimiters-mode)
+(add-hook 'clojurescript-mode-hook 'paredit-mode)
+(add-hook 'clojurescript-mode-hook 'noprompt/define-paredit-keys)
+(add-hook 'clojurescript-mode-hook 'rainbow-delimiters-mode)
 
 ;; Cider
 
@@ -131,14 +134,14 @@
 
 ;; ac-nrepl
 
-(comment
- (add-hook 'clojure-mode-hook 'ac-nrepl-setup)
- (add-hook 'cider-mode-hook 'ac-nrepl-setup)
+(add-hook 'clojure-mode-hook 'auto-complete-mode)
+(add-hook 'clojure-mode-hook 'ac-nrepl-setup)
+(add-hook 'cider-mode-hook 'ac-nrepl-setup)
 
- (eval-after-load "auto-complete"
-   '(add-to-list 'ac-modes 'cider-repl-mode)))
+(eval-after-load 'auto-complete
+  '(add-to-list 'ac-modes 'cider-repl-mode))
 
-(eval-after-load "cider"
+(eval-after-load 'cider
   '(progn 
      (define-key nrepl-interaction-mode-map
 	(kbd "C-c D") 'lispy-describe)
@@ -159,11 +162,10 @@
 	    (nlmap ",e" 'cider-eval-expression-at-point)
 	    (nlmap ",l" 'cider-load-file)))
 
-(add-hook 'clojure-mode-hook (lambda ()
-			       (clj-refactor-mode 1)))
-
-(add-hook 'clojure-mode-hook (lambda ()
-			       (yas-minor-mode t)))
+(add-hook 'clojure-mode-hook (lambda () (clj-refactor-mode 1)))
+(add-hook 'clojure-mode-hook (lambda () (yas-minor-mode t)))
+(add-hook 'clojurescript-mode-hook (lambda () (clj-refactor-mode 1)))
+(add-hook 'clojurescript-mode-hook (lambda () (yas-minor-mode t)))
 
 (cljr-add-keybindings-with-prefix "C-c C-m")
 

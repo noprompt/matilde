@@ -6,16 +6,23 @@
 
 (package-require 'lispy)
 (require 'lispy)
-
+(require 'highlight-sexp)
 (require 'color)
 
 ;;;; Settings
 
+(defun noprompt/setup-lisp-mode ()
+  (paredit-mode)
+  (rainbow-delimiters-mode)
+  (eldoc-mode)
+  (noprompt/define-paredit-keys))
+
 ;; Highlight sexp
 
-(setq hl-sexp-background-color
-      (-> (face-attribute 'highlight :background)
-	  (color-lighten-name 2)))
+(comment
+ (setq hl-sexp-background-color
+       (-> (face-attribute 'highlight :background)
+	   (color-lighten-name 2))))
 
 (provide 'noprompt-lisp)
 

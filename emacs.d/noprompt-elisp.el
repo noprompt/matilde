@@ -8,20 +8,29 @@
 
 (require 'noprompt-paredit)
 (require 'noprompt-lisp)
-
 ;;;; Hooks
 
-(add-hook 'emacs-lisp-mode-hook 'paredit-mode)
-(add-hook 'emacs-lisp-mode-hook 'rainbow-delimiters-mode)
-(add-hook 'emacs-lisp-mode-hook 'eldoc-mode)
-(add-hook 'emacs-lisp-mode-hook 'noprompt/define-paredit-keys)
-(add-hook 'emacs-lisp-mode-hook
-	  (lambda ()
-	    (nlmap ",e" 'eval-defun)
-	    (nlmap ",l" 'eval-buffer)
-	    (define-key emacs-lisp-mode-map
-	      (kbd "C-c C-d") 'lispy-describe-inline)
-	    (define-key emacs-lisp-mode-map
-	      (kbd "C-c D") 'lispy-describe)))
+(defun ac-emacs-lisp-mode ()
+  (setq ac-sources '(ac-source-symbols
+		     ac-source-abbrev
+		     ac-source-variables
+		     ac-source-functions)))
+
+(defun setup-elisp-mode ()
+  (noprompt/setup-lisp-mode)
+
+  (auto-complete-mode)
+  (ac-emacs-lisp-mode)
+
+  (nlmap ",e" 'eval-defun)
+  (nlmap ",l" 'eval-buffer)
+
+  (define-key emacs-lisp-mode-map
+    (kbd "C-c C-d") 'lispy-describe-inline)
+
+  (define-key emacs-lisp-mode-map
+    (kbd "C-c D") 'lispy-describe))
+
+(add-hook 'emacs-lisp-mode-hook 'setup-elisp-mode)
 
 (provide 'noprompt-elisp)

@@ -28,10 +28,12 @@
 (add-hook 'nrepl-interaction-mode-hook 'nrepl-turn-on-eldoc-mode)
 ;;(add-hook 'nrepl-mode-hook 'ac-nrepl-setup)
 (add-hook 'nrepl-mode-hook 'rainbow-delimiters-mode)
-(add-hook 'nrepl-mode-hook
-	  'set-auto-complete-as-completion-at-point-function)
-(add-hook 'nrepl-interaction-mode-hook
-	  'set-auto-complete-as-completion-at-point-function)
+
+(comment
+ (add-hook 'nrepl-mode-hook
+	   'set-auto-complete-as-completion-at-point-function)
+ (add-hook 'nrepl-interaction-mode-hook
+	   'set-auto-complete-as-completion-at-point-function))
 
 ;;;; Javert
 

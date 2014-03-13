@@ -18,7 +18,9 @@
                   soothe-theme
                   ;; Miscelleaneous
                   apache-mode
-		  dash-at-point)))
+		  dash-at-point
+		  grandshell-theme
+		  assemblage-theme)))
   (dolist (package packages)
     (unless (package-installed-p package)
       (package-install package))))
