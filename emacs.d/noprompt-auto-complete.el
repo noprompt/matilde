@@ -5,6 +5,7 @@
 (package-require 'company)
 (package-require 'company-cider)
 
+(require 'company)
 (require 'color)
 
 ;;;; Settings
@@ -16,10 +17,6 @@
 
 (require 'auto-complete)
 (require 'auto-complete-config)
-
-(add-hook 'auto-complete-mode-hook
-	  'set-auto-complete-as-completion-at-point-function)
-
 (define-key ac-mode-map (kbd "C-n") 'ac-next)
 (define-key ac-mode-map (kbd "C-p") 'ac-previous)
 (setq ac-auto-show-menu 0.5)

@@ -105,7 +105,7 @@
 
 (defun toggle-clj-keyword-string ()
   (interactive)
-  (save-excursion 
+  (save-excursion
     (if (equal 1 (point))
         (message "Beginning of file reached, this was probably a mistake.")
       (cond
@@ -142,7 +142,7 @@
   '(add-to-list 'ac-modes 'cider-repl-mode))
 
 (eval-after-load 'cider
-  '(progn 
+  '(progn
      (define-key nrepl-interaction-mode-map
 	(kbd "C-c D") 'lispy-describe)
      (define-key nrepl-interaction-mode-map

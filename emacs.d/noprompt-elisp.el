@@ -8,6 +8,7 @@
 
 (require 'noprompt-paredit)
 (require 'noprompt-lisp)
+
 ;;;; Hooks
 
 (defun ac-emacs-lisp-mode ()

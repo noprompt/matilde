@@ -83,7 +83,7 @@
       save-place-file (concat user-emacs-directory "places")
       backup-directory-alist `(("." . ,(concat user-emacs-directory "backups"))))
 
-;;;; Theme settings 
+;;;; Theme settings
 
 (package-require 'twilight-anti-bright-theme)
 (package-require 'noctilux-theme)
