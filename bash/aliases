@@ -58,6 +58,7 @@ alias be="bundle exec"
 # Emacs
 if test -f /Applications/Emacs.app/Contents/MacOS/Emacs; then
     alias emacs="/Applications/Emacs.app/Contents/MacOS/Emacs -nw"
+    alias gemacs='/Applications/Emacs.app/Contents/MacOS/Emacs'
 fi
 
 # Cat with syntax highlighting.
@@ -65,20 +66,20 @@ fi
   && alias ccat="pygmentize -O style=rrt -f console256 -g"
 
 function ..() {
-  case $# in
-    0) cd .. ;;
+    case $# in
+	0) cd .. ;;
 
-    *) n=$1;
-       dir='.';
+	*) n=$1;
+	    dir='.';
 
-       while [ $n -gt 0 ]; do
-         dir="$dir/.."
-         n=$(($n - 1))
-       done
+	    while [ $n -gt 0 ]; do
+		dir="$dir/.."
+		n=$(($n - 1))
+	    done
 
-       cd $dir
-       ;;
-   esac
-   pwd
+	    cd $dir
+	    ;;
+    esac
+    pwd
 }
 
