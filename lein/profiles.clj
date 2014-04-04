@@ -6,7 +6,8 @@
         :dependencies [[javert "0.2.0-SNAPSHOT"]
                        [clj-stacktrace "0.2.7"]
                        [ritz/ritz-nrepl-middleware "0.7.0"]
-                       [org.clojure/tools.namespace "0.2.4"]]
+                       [org.clojure/tools.namespace "0.2.4"]
+                       [slamhound "1.5.2"]]
         :injections [(let [orig (ns-resolve (doto 'clojure.stacktrace require)
                                             'print-cause-trace)
                            new (ns-resolve (doto 'clj-stacktrace.repl require)
