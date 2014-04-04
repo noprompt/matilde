@@ -1,4 +1,4 @@
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;----------------------------------------------------------------------
 ;; Clojure
 
 ;;;; Required packages
@@ -12,6 +12,9 @@
 (package-require 'ac-nrepl)
 (package-require 'clj-refactor)
 
+(add-to-list 'load-path 
+  (expand-file-name "~/.emacs.d/non-elpa/slamhound/"))
+
 (require 'clojure-mode)
 (require 'clojurescript-mode)
 (require 'cider)
@@ -20,6 +23,7 @@
 (require 'noprompt-paredit)
 (require 'noprompt-key-bindings)
 (require 'noprompt-lisp)
+(require 'slamhound)
 
 ;;;; Settings
 
@@ -45,7 +49,10 @@
   (context 2)
   ;; Persephone
   (start 'defun)
-  (start* 'defun))
+  (start* 'defun)
+  ;; core.logic
+  (run* 1)
+  (fresh 1))
 
 ;; Cider settings
 
