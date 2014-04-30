@@ -1,5 +1,6 @@
 ;;----------------------------------------------------------------------
 ;; Theme settings
+(require 'noprompt-util)
 
 (package-require 'twilight-anti-bright-theme)
 (package-require 'noctilux-theme)
@@ -23,16 +24,16 @@
 
 (when-graphics
 
- (setq default-font-family "Menlo"
+ (setq default-font-family "Cousine"
        default-font-size 140
-       mode-line-font-family "Menlo"
+       mode-line-font-family "Cousine"
        mode-line-font-size 120)
 
  (global-set-key (kbd "s-<return>") 'maximize-frame)
  (global-set-key (kbd "s-=") 'increase-font-height)
  (global-set-key (kbd "s--") 'decrease-font-height)
 
- (load-theme 'granger t)
+ (load-theme 'junio t)
 
  (set-face-attribute 'default nil
 		     :font default-font-family
@@ -44,8 +45,9 @@
  (set-face-attribute 'font-lock-doc-face nil
 		     :slant 'italic)
 
- (set-face-attribute 'font-lock-doc-string-face nil
-		     :slant 'italic)
+ (comment
+  (set-face-attribute 'font-lock-doc-string-face nil
+		      :slant 'italic))
 
  (set-face-attribute 'mode-line nil
 		     :font mode-line-font-family
