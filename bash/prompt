@@ -49,9 +49,9 @@ _git_branch_info() {
     if _is_git_branch; then
         echo -ne ", ${SYM}:status${RESET}"
         if _dirty_git_branch; then
-            echo -ne " ${RED}dirty${RESET}"
+            echo -ne " ${SYM}:dirty${RESET}"
         else
-            echo -ne " ${GREEN}clean${RESET}"
+            echo -ne " ${SYM}:clean${RESET}"
         fi
     fi
 }
