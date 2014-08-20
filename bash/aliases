@@ -58,7 +58,7 @@ alias be="bundle exec"
 # Emacs
 if test -f /Applications/Emacs.app/Contents/MacOS/Emacs; then
     alias emacs="/Applications/Emacs.app/Contents/MacOS/Emacs -nw"
-    alias gemacs='/Applications/Emacs.app/Contents/MacOS/Emacs'
+    alias gemacs='/Applications/Emacs.app/Contents/MacOS/Emacs &'
 fi
 
 # Cat with syntax highlighting.
