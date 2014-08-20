@@ -25,7 +25,7 @@
 (require 'ac-cider)
 ;(require 'ac-nrepl)
 ;(require 'ac-cider-compliment)
-(require 'clj-refactor)
+;(require 'clj-refactor)
 (require 'noprompt-paredit)
 (require 'noprompt-key-bindings)
 (require 'noprompt-lisp)
@@ -188,6 +188,6 @@
 (nmmap cider-docview-mode-map "q" 'quit-window)
 (nmmap cider-stacktrace-mode-map "q" 'quit-window)
 
-(cljr-add-keybindings-with-prefix "C-c C-m")
+;(cljr-add-keybindings-with-prefix "C-c C-m")
 
 (provide 'noprompt-clojure)
