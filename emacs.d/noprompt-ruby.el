@@ -1,4 +1,4 @@
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; ---------------------------------------------------------------------
 ;; Ruby
 
 ;;;; Required packages
@@ -8,10 +8,16 @@
 (package-require 'ruby-end)
 (package-require 'ruby-test-mode)
 (package-require 'ruby-tools)
+(package-require 'ruby-electric)
 
 (require 'ruby-mode)
 (require 'ruby-end)
+(require 'ruby-electric)
 (require 'noprompt-key-bindings)
+
+;(add-to-list 'load-path "/usr/local/var/rbenv/versions/1.9.3-p448/share/emacs/site-lisp")
+;(require 'el4r)
+;(el4r-boot)
 
 ;;;; Settings
 
@@ -28,7 +34,6 @@
 ;;;; Functions
 
 (defun ruby-mode-hook-for-fixing-ruby-electric ()
-  (require 'ruby-electric)
   (ruby-electric-mode)
   (ruby-electric-mode -1))
 
@@ -48,6 +53,5 @@
 	  (lambda ()
 	    (nlmap ",b" 'ruby-send-buffer)
 	    (nlmap ",l" 'ruby-send-line)))
-
 
 (provide 'noprompt-ruby)

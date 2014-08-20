@@ -1,39 +1,49 @@
-;;----------------------------------------------------------------------
+;; =====================================================================
 ;; Clojure
 
-;;;; Required packages
+;; ---------------------------------------------------------------------
+;; Packages
 
 (package-require 'paredit)
 (package-require 'rainbow-delimiters)
 (package-require 'clojure-mode)
-(package-require 'clojure-test-mode)
 (package-require 'clojurescript-mode)
-(package-require 'cider)
-(package-require 'ac-nrepl)
-(package-require 'clj-refactor)
+;(package-require 'cider)
+(package-require 'ac-cider-compliment)
+(package-require 'ac-cider)
+;(package-require 'clj-refactor)
 
-(add-to-list 'load-path 
+(add-to-list 'load-path
   (expand-file-name "~/.emacs.d/non-elpa/slamhound/"))
+
+(add-to-list 'load-path
+  (expand-file-name "~/.emacs.d/non-elpa/cider"))
 
 (require 'clojure-mode)
 (require 'clojurescript-mode)
 (require 'cider)
-(require 'ac-nrepl)
+(require 'ac-cider)
+;(require 'ac-nrepl)
+;(require 'ac-cider-compliment)
 (require 'clj-refactor)
 (require 'noprompt-paredit)
 (require 'noprompt-key-bindings)
 (require 'noprompt-lisp)
 (require 'slamhound)
 
-;;;; Settings
+;; ---------------------------------------------------------------------
+;; Settings
 
 (add-to-list 'auto-mode-alist '("\\.cljx$" . clojure-mode))
 
 (define-clojure-indent
   ;; clojure.core
   (apply 1)
+  (as-> 'defun)
   ;; clojure.test
   (are 'defun)
+  ;; clojure.test.check
+  (for-all 'defun)
   ;; clojure.core.async
   (go-loop 1)
   ;; Garden
@@ -54,22 +64,13 @@
   (run* 1)
   (fresh 1))
 
-;; Cider settings
+;; ---------------------------------------------------------------------
+;; Functions
 
-(setq cider-interactive-eval-result-prefix ";; => ")
-(setq cider-repl-use-clojure-font-lock nil)
-
-(setq nrepl-hide-special-buffers t)
-;; Stop the error buffer from popping up while working in buffers
-;; other than the REPL
-;(setq cider-popup-stacktraces nil)
-
-(setq cider-popup-stacktraces t)
-(setq cider-repl-popup-stacktraces t)
-;; Do not auto-select the error buffer when it's displayed.
-(setq cider-auto-select-error-buffer t)
-
-;;;; Functions
+(defun toggle-clojure-defun-style-indent ()
+  (interactive)
+  (let ((b clojure-defun-style-default-indent))
+    (setq clojure-defun-style-default-indent (not b))))
 
 ;; Commandeered from https://github.com/halgari/clojure-conj-2013-core.async-examples#usage
 (defun cider-eval-expression-at-point-in-repl ()
@@ -124,55 +125,68 @@
             (backward-char)
             (toggle-clj-keyword-string)))))))
 
-;;;; Hooks
+;; ---------------------------------------------------------------------
+;; Hooks
 
 (add-hook 'clojure-mode-hook 'paredit-mode)
 (add-hook 'clojure-mode-hook 'noprompt/define-paredit-keys)
 (add-hook 'clojure-mode-hook 'rainbow-delimiters-mode)
+
 (add-hook 'clojurescript-mode-hook 'paredit-mode)
 (add-hook 'clojurescript-mode-hook 'noprompt/define-paredit-keys)
 (add-hook 'clojurescript-mode-hook 'rainbow-delimiters-mode)
 
-;; Cider
+;; ---------------------------------------------------------------------
+;; Cider settings
+;;
 
 (add-hook 'cider-mode-hook 'cider-turn-on-eldoc-mode)
 (add-hook 'cider-repl-mode-hook 'subword-mode)
 (add-hook 'cider-repl-mode-hook 'rainbow-delimiters-mode)
 
-;; ac-nrepl
 
-(add-hook 'clojure-mode-hook 'auto-complete-mode)
-(add-hook 'clojure-mode-hook 'ac-nrepl-setup)
-(add-hook 'cider-mode-hook 'ac-nrepl-setup)
+(setq cider-interactive-eval-result-prefix ";; => ")
+(setq cider-repl-use-clojure-font-lock nil)
 
-(eval-after-load 'auto-complete
-  '(add-to-list 'ac-modes 'cider-repl-mode))
+(setq nrepl-hide-special-buffers t)
+;; Stop the error buffer from popping up while working in buffers
+;; other than the REPL
+(setq cider-popup-stacktraces nil)
+(setq cider-repl-popup-stacktraces nil)
+;; Do not auto-select the error buffer when it's displayed.
+(setq cider-auto-select-error-buffer nil)
+(setq cider-repl-use-clojure-font-lock t)
+(setq cider-repl-use-pretty-printing nil)
+(setq cider-show-error-buffer t)
 
-(eval-after-load 'cider
-  '(progn
-     (define-key nrepl-interaction-mode-map
+(comment
+ (eval-after-load 'cider
+   '(progn
+      (define-key nrepl-interaction-mode-map
 	(kbd "C-c D") 'lispy-describe)
-     (define-key nrepl-interaction-mode-map
-       (kbd "C-c C-d") 'lispy-describe-inline)))
+      (define-key nrepl-interaction-mode-map
+	(kbd "C-c C-d") 'lispy-describe-inline))))
 
-;;;; Keybindings
+;; ---------------------------------------------------------------------
+;; Keybindings
 
 (define-key clojure-mode-map
   (kbd "C-:") 'toggle-clj-keyword-string)
 
-(define-key clojure-mode-map
+(define-key cider-mode-map
   (kbd "C-;") 'cider-eval-expression-at-point-in-repl)
 
-(add-hook 'clojure-mode-hook
-	  (lambda ()
-	    (kcimap ",s" 'yas-expand)
-	    (nlmap ",e" 'cider-eval-expression-at-point)
-	    (nlmap ",l" 'cider-load-file)))
+(define-key cider-mode-map
+  (kbd "C-c C-d") 'cider-doc)
 
-(add-hook 'clojure-mode-hook (lambda () (clj-refactor-mode 1)))
-(add-hook 'clojure-mode-hook (lambda () (yas-minor-mode t)))
-(add-hook 'clojurescript-mode-hook (lambda () (clj-refactor-mode 1)))
-(add-hook 'clojurescript-mode-hook (lambda () (yas-minor-mode t)))
+(add-hook 'cider-mode-hook
+	  (lambda () (clj-refactor-mode 1)))
+
+(nmmap cider-mode-map ",e" 'cider-eval-defun-at-point)
+(nmmap cider-mode-map ",l" 'cider-load-file)
+(nmmap cider-mode-map ",d" 'cider-doc)
+(nmmap cider-docview-mode-map "q" 'quit-window)
+(nmmap cider-stacktrace-mode-map "q" 'quit-window)
 
 (cljr-add-keybindings-with-prefix "C-c C-m")
 

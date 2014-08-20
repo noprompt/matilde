@@ -1,4 +1,4 @@
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; ---------------------------------------------------------------------
 ;; Utility functions and macros
 
 (defun package-require (pkg)
@@ -9,6 +9,17 @@
 (defmacro comment (&rest body)
   "Comment out one or more s-expressions."
   nil)
+
+(defmacro if-let (bindings if-true if-false)
+  (let ((sym (car bindings))
+	(test (cadr bindings)))
+    `(let ((,sym ,test))
+       (if ,test
+	   ,if-true
+	 ,if-false))))
+
+(defmacro when-let (bindings & body)
+  `(if-let ,bindings (progn ,@body)))
 
 ;; Threading macros from Clojure
 ;; SEE: http://www.emacswiki.org/emacs/ThreadMacroFromClojure

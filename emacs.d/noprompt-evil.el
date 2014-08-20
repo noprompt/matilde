@@ -34,6 +34,10 @@
   "Define an Evil normal state sequence."
   (define-key evil-normal-state-map key def))
 
+(defun nmmap (keymap key def)
+  "Define an Evil normal state sequence for a mode."
+  (evil-define-key 'normal keymap key def))
+
 (defun nlmap (key def)
   "Define a local Evil normal state sequence."
   (define-key evil-normal-state-local-map key def))
