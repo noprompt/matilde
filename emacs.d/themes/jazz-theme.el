@@ -1,0 +1,1 @@
+../non-elpa/jazz-theme/jazz-theme.el
