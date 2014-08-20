@@ -3,7 +3,7 @@
 main() {
   local directory=${1:-"."}
 
-  find "$directory" -name '.DS_Store' -print -exec rm '{}' \;
+  find "$directory" -name '.DS_Store' -print -delete
 }
 
 main $@
