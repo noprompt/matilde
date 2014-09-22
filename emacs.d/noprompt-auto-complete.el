@@ -22,7 +22,7 @@
 
   (define-key ac-mode-map (kbd "C-n") 'ac-next)
   (define-key ac-mode-map (kbd "C-p") 'ac-previous)
-  (setq ac-auto-show-menu 1))
+  (setq ac-auto-show-menu 1.5))
 
 ;; ---------------------------------------------------------------------
 ;; Company

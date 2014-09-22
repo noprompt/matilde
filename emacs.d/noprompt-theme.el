@@ -24,10 +24,17 @@
 (add-to-list 'custom-theme-load-path "~/.emacs.d/themes/")
 (powerline-default-theme)
 
-(setq default-font-family "Consolas"
-      default-font-size 160
-      mode-line-font-family "Consolas"
+(setq default-font-family "Input Mono"
+      default-font-size 130
+      mode-line-font-family "Input Mono"
       mode-line-font-size 120)
+
+(defun get-random-element (list)
+  "Returns a random element of LIST."
+  (if (and list (listp list))
+      (nth (random (1- (1+ (length list)))) list)
+    (error "Argument to get-random-element not a list or the list is empty")))
+
 
 ;; Company's default styling makes my eyes bleed.
 (defun set-company-faces ()
@@ -45,7 +52,7 @@
  (global-set-key (kbd "s-=") 'increase-font-height)
  (global-set-key (kbd "s--") 'decrease-font-height)
 
- (load-theme 'jazz t)
+ (load-theme (get-random-element '(barf boron bespin cyberpunk glacier jazz krtheme made-of-code)) t)
 
  ;; Some themes like to mess with linum-format. Shame on them.
  (setq linum-format 'dynamic)

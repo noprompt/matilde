@@ -11,7 +11,6 @@
 ;(package-require 'cider)
 (package-require 'ac-cider-compliment)
 (package-require 'ac-cider)
-;(package-require 'clj-refactor)
 
 (add-to-list 'load-path
   (expand-file-name "~/.emacs.d/non-elpa/slamhound/"))
@@ -23,9 +22,7 @@
 (require 'clojurescript-mode)
 (require 'cider)
 (require 'ac-cider)
-;(require 'ac-nrepl)
 ;(require 'ac-cider-compliment)
-;(require 'clj-refactor)
 (require 'noprompt-paredit)
 (require 'noprompt-key-bindings)
 (require 'noprompt-lisp)
@@ -62,7 +59,8 @@
   (start* 'defun)
   ;; core.logic
   (run* 1)
-  (fresh 1))
+  (fresh 1)
+  (specify! 'defun))
 
 ;; ---------------------------------------------------------------------
 ;; Functions
@@ -168,6 +166,15 @@
 	(kbd "C-c C-d") 'lispy-describe-inline))))
 
 ;; ---------------------------------------------------------------------
+;; AC settings
+
+(add-hook 'cider-mode-hook 'ac-flyspell-workaround)
+(add-hook 'cider-mode-hook 'ac-cider-setup)
+(add-hook 'cider-repl-mode-hook 'ac-cider-setup)
+(eval-after-load "auto-complete"
+  '(add-to-list 'ac-modes 'cider-mode))
+
+;; ---------------------------------------------------------------------
 ;; Keybindings
 
 (define-key clojure-mode-map
@@ -179,15 +186,10 @@
 (define-key cider-mode-map
   (kbd "C-c C-d") 'cider-doc)
 
-(add-hook 'cider-mode-hook
-	  (lambda () (clj-refactor-mode 1)))
-
 (nmmap cider-mode-map ",e" 'cider-eval-defun-at-point)
 (nmmap cider-mode-map ",l" 'cider-load-file)
 (nmmap cider-mode-map ",d" 'cider-doc)
 (nmmap cider-docview-mode-map "q" 'quit-window)
 (nmmap cider-stacktrace-mode-map "q" 'quit-window)
-
-;(cljr-add-keybindings-with-prefix "C-c C-m")
 
 (provide 'noprompt-clojure)
