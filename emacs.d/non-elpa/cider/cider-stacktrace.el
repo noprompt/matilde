@@ -1,6 +1,6 @@
 ;;; cider-stacktrace.el --- Stacktrace navigator -*- lexical-binding: t -*-
 
-;; Copyright © 2014 Jeff Valk
+;; Copyright © 2014-2015 Jeff Valk
 
 ;; Author: Jeff Valk <jv@jeffvalk.com>
 
@@ -29,6 +29,8 @@
 (require 'button)
 (require 'dash)
 (require 'easymenu)
+(require 'cider-util)
+(require 'cider-client)
 
 ;; Variables
 
@@ -50,6 +52,32 @@ If nil, messages will not be wrapped.  If truthy but non-numeric,
   :type 'list
   :group 'cider-stacktrace
   :package-version '(cider . "0.6.0"))
+
+(defcustom cider-stacktrace-print-length 50
+  "Set the maximum length of sequences in displayed cause data.
+
+This sets the value of Clojure's `*print-length*` when pretty printing the
+`ex-data` map for exception causes in the stacktrace that are instances of
+`IExceptionInfo`.
+
+Be advised that setting this to `nil` will cause the attempted printing of
+infinite data structures."
+  :type '(choice integer (const nil))
+  :group 'cider-stacktrace
+  :package-version '(cider . "0.9.0"))
+
+(defcustom cider-stacktrace-print-level 50
+  "Set the maximum level of nesting in displayed cause data.
+
+This sets the value of Clojure's `*print-level*` when pretty printing the
+`ex-data` map for exception causes in the stacktrace that are instances of
+`IExceptionInfo`.
+
+Be advised that setting this to `nil` will cause the attempted printing of
+cyclical data structures."
+  :type '(choice integer (const nil))
+  :group 'cider-stacktrace
+  :package-version '(cider . "0.8.0"))
 
 (defvar cider-stacktrace-detail-max 2
   "The maximum detail level for causes.")
@@ -120,24 +148,24 @@ If nil, messages will not be wrapped.  If truthy but non-numeric,
 
 (defvar cider-stacktrace-mode-map
   (let ((map (make-sparse-keymap)))
-    (define-key map (kbd "M-p") 'cider-stacktrace-previous-cause)
-    (define-key map (kbd "M-n") 'cider-stacktrace-next-cause)
-    (define-key map (kbd "M-.") 'cider-stacktrace-jump)
-    (define-key map "q" 'cider-popup-buffer-quit-function)
-    (define-key map "j" 'cider-stacktrace-toggle-java)
-    (define-key map "c" 'cider-stacktrace-toggle-clj)
-    (define-key map "r" 'cider-stacktrace-toggle-repl)
-    (define-key map "t" 'cider-stacktrace-toggle-tooling)
-    (define-key map "d" 'cider-stacktrace-toggle-duplicates)
-    (define-key map "a" 'cider-stacktrace-toggle-all)
-    (define-key map "1" 'cider-stacktrace-cycle-cause-1)
-    (define-key map "2" 'cider-stacktrace-cycle-cause-2)
-    (define-key map "3" 'cider-stacktrace-cycle-cause-3)
-    (define-key map "4" 'cider-stacktrace-cycle-cause-4)
-    (define-key map "5" 'cider-stacktrace-cycle-cause-5)
-    (define-key map "0" 'cider-stacktrace-cycle-all-causes)
-    (define-key map [tab] 'cider-stacktrace-cycle-current-cause)
-    (define-key map [backtab] 'cider-stacktrace-cycle-all-causes)
+    (define-key map (kbd "M-p") #'cider-stacktrace-previous-cause)
+    (define-key map (kbd "M-n") #'cider-stacktrace-next-cause)
+    (define-key map (kbd "M-.") #'cider-stacktrace-jump)
+    (define-key map "q" #'cider-popup-buffer-quit-function)
+    (define-key map "j" #'cider-stacktrace-toggle-java)
+    (define-key map "c" #'cider-stacktrace-toggle-clj)
+    (define-key map "r" #'cider-stacktrace-toggle-repl)
+    (define-key map "t" #'cider-stacktrace-toggle-tooling)
+    (define-key map "d" #'cider-stacktrace-toggle-duplicates)
+    (define-key map "a" #'cider-stacktrace-toggle-all)
+    (define-key map "1" #'cider-stacktrace-cycle-cause-1)
+    (define-key map "2" #'cider-stacktrace-cycle-cause-2)
+    (define-key map "3" #'cider-stacktrace-cycle-cause-3)
+    (define-key map "4" #'cider-stacktrace-cycle-cause-4)
+    (define-key map "5" #'cider-stacktrace-cycle-cause-5)
+    (define-key map "0" #'cider-stacktrace-cycle-all-causes)
+    (define-key map [tab] #'cider-stacktrace-cycle-current-cause)
+    (define-key map [backtab] #'cider-stacktrace-cycle-all-causes)
     (easy-menu-define cider-stacktrace-mode-menu map
       "Menu for CIDER's stacktrace mode"
       '("Stacktrace"
@@ -162,7 +190,7 @@ If nil, messages will not be wrapped.  If truthy but non-numeric,
         ["Show/hide all frames" cider-stacktrace-toggle-all]))
     map))
 
-(define-derived-mode cider-stacktrace-mode fundamental-mode "Stacktrace"
+(define-derived-mode cider-stacktrace-mode special-mode "Stacktrace"
   "Major mode for filtering and navigating CIDER stacktraces.
 
 \\{cider-stacktrace-mode-map}"
@@ -184,7 +212,7 @@ Find buttons with a 'filter property; if filter is a member of FILTERS, or
 if filter is nil ('show all') and the argument list is non-nil, fontify the
 button as disabled.  Upon finding text with a 'hidden-count property, stop
 searching and update the hidden count text."
-  (with-current-buffer (get-buffer cider-error-buffer)
+  (with-current-buffer cider-error-buffer
     (save-excursion
       (goto-char (point-min))
       (let ((inhibit-read-only t)
@@ -214,7 +242,7 @@ searching and update the hidden count text."
 Update `cider-stacktrace-hidden-frame-count' and indicate filters applied.
 Currently collapsed stacktraces are ignored, and do not contribute to the
 hidden count."
-  (with-current-buffer (get-buffer cider-error-buffer)
+  (with-current-buffer cider-error-buffer
     (save-excursion
       (goto-char (point-min))
       (let ((inhibit-read-only t)
@@ -231,7 +259,7 @@ hidden count."
 
 (defun cider-stacktrace-apply-cause-visibility ()
   "Apply `cider-stacktrace-cause-visibility' to causes and reapply filters."
-  (with-current-buffer (get-buffer cider-error-buffer)
+  (with-current-buffer cider-error-buffer
     (save-excursion
       (goto-char (point-min))
       (cl-flet ((next-detail (end)
@@ -261,17 +289,16 @@ hidden count."
 (defun cider-stacktrace-previous-cause ()
   "Move point to the previous exception cause, if one exists."
   (interactive)
-  (with-current-buffer (get-buffer cider-error-buffer)
+  (with-current-buffer cider-error-buffer
     (-when-let (pos (previous-single-property-change (point) 'cause))
       (goto-char pos))))
 
 (defun cider-stacktrace-next-cause ()
   "Move point to the next exception cause, if one exists."
   (interactive)
-  (with-current-buffer (get-buffer cider-error-buffer)
+  (with-current-buffer cider-error-buffer
     (-when-let (pos (next-single-property-change (point) 'cause))
       (goto-char pos))))
-
 
 (defun cider-stacktrace-cycle-cause (num &optional level)
   "Update element NUM of `cider-stacktrace-cause-visibility', optionally to LEVEL.
@@ -284,7 +311,7 @@ it wraps to 0."
 (defun cider-stacktrace-cycle-all-causes ()
   "Cycle the visibility of all exception causes."
   (interactive)
-  (with-current-buffer (get-buffer cider-error-buffer)
+  (with-current-buffer cider-error-buffer
     (save-excursion
       ;; Find nearest cause.
       (unless (get-text-property (point) 'cause)
@@ -301,7 +328,7 @@ it wraps to 0."
 (defun cider-stacktrace-cycle-current-cause ()
   "Cycle the visibility of current exception at point, if any."
   (interactive)
-  (with-current-buffer (get-buffer cider-error-buffer)
+  (with-current-buffer cider-error-buffer
     (-when-let (num (get-text-property (point) 'cause))
       (cider-stacktrace-cycle-cause num))))
 
@@ -389,25 +416,26 @@ it wraps to 0."
 
 (defun cider-stacktrace-navigate (button)
   "Navigate to the stack frame source represented by the BUTTON."
-  (let ((var (button-get button 'var))
-        (class (button-get button 'class))
-        (method (button-get button 'method))
-        (line (button-get button 'line)))
-    (-if-let* ((info (if var
-                         (cider-var-info var)
-                       (cider-member-info class method)))
-               (file (cadr (assoc "file" info)))
-               (buffer (cider-find-file file)))
-        (cider-jump-to buffer line)
-      (message "No source info"))))
+  (let* ((var (button-get button 'var))
+         (class (button-get button 'class))
+         (method (button-get button 'method))
+         (info (or (and var (cider-var-info var))
+                   (and class method (cider-member-info class method))
+                   (nrepl-dict)))
+         ;; stacktrace returns more accurate line numbers
+         (info (nrepl-dict-put info "line" (button-get button 'line)))
+         ;; give priority to `info` files as `info` returns full paths.
+         (info (nrepl-dict-put info "file" (or (nrepl-dict-get info "file")
+                                               (button-get button 'file)))))
+    (cider--jump-to-loc-from-info info t)))
 
-(defun cider-stacktrace-jump ()
-  "Like `cider-jump', but uses the stack frame source at point, if available."
-  (interactive)
+(defun cider-stacktrace-jump (&optional arg)
+  "Like `cider-find-var', but uses the stack frame source at point, if available."
+  (interactive "P")
   (let ((button (button-at (point))))
     (if (and button (button-get button 'line))
         (cider-stacktrace-navigate button)
-      (call-interactively 'cider-jump))))
+      (cider-find-var arg))))
 
 
 ;; Rendering
@@ -431,12 +459,12 @@ it wraps to 0."
   (with-current-buffer buffer
     (insert "  Show: ")
     (dolist (filter filters)
-      (insert-text-button (first filter)
-                          'filter (second filter)
+      (insert-text-button (car filter)
+                          'filter (cadr filter)
                           'follow-link t
                           'action 'cider-stacktrace-filter
                           'help-echo (format "Toggle %s stack frames"
-                                             (first filter)))
+                                             (car filter)))
       (insert " "))
     (let ((hidden "(0 frames hidden)"))
       (put-text-property 0 (length hidden) 'hidden-count t hidden)
@@ -454,8 +482,8 @@ This associates text properties to enable filtering and source navigation."
                                     (if (member 'clj flags) ns class)
                                     (if (member 'clj flags) fn method))
                             'var var 'class class 'method method
-                            'name name 'line line 'flags flags
-                            'follow-link t
+                            'name name 'file file 'line line
+                            'flags flags 'follow-link t
                             'action 'cider-stacktrace-navigate
                             'help-echo "View source at this location"
                             'face 'cider-stacktrace-face)
@@ -464,8 +492,8 @@ This associates text properties to enable filtering and source navigation."
                 (p1 (search-backward " "))
                 (p2 (search-forward "/"))
                 (p3 (search-forward-regexp "[^/$]+")))
-            (put-text-property p1 p4 'face 'cider-stacktrace-ns-face)
-            (put-text-property p2 p3 'face 'cider-stacktrace-fn-face)))
+            (put-text-property p1 p4 'font-lock-face 'cider-stacktrace-ns-face)
+            (put-text-property p2 p3 'font-lock-face 'cider-stacktrace-fn-face)))
         (newline)))))
 
 (defun cider-stacktrace-render-cause (buffer cause num note)
@@ -479,13 +507,13 @@ This associates text properties to enable filtering and source navigation."
           ;; Detail level 0: exception class
           (cider-propertize-region '(detail 0)
             (insert (format "%d. " num)
-                    (propertize note 'face 'font-lock-comment-face) " "
-                    (propertize class 'face class-face))
+                    (propertize note 'font-lock-face 'font-lock-comment-face) " "
+                    (propertize class 'font-lock-face class-face))
             (newline))
           ;; Detail level 1: message + ex-data
           (cider-propertize-region '(detail 1)
             (cider-stacktrace-emit-indented
-             (propertize (or message "(No message)") 'face message-face) indent t)
+             (propertize (or message "(No message)") 'font-lock-face message-face) indent t)
             (newline)
             (when data
               (cider-stacktrace-emit-indented
@@ -497,7 +525,7 @@ This associates text properties to enable filtering and source navigation."
                   (bg `(:background ,cider-stacktrace-frames-background-color)))
               (dolist (frame stacktrace)
                 (cider-stacktrace-render-frame buffer frame))
-              (overlay-put (make-overlay beg (point)) 'face bg)))
+              (overlay-put (make-overlay beg (point)) 'font-lock-face bg)))
           ;; Add line break between causes, even when collapsed.
           (cider-propertize-region '(detail 0)
             (newline)))))))
@@ -506,21 +534,26 @@ This associates text properties to enable filtering and source navigation."
   "Set and apply CAUSES initial visibility, filters, and cursor position."
   ;; Partially display outermost cause if it's a compiler exception (the
   ;; description reports reader location of the error).
-  (nrepl-dbind-response (first causes) (class)
+  (nrepl-dbind-response (car causes) (class)
     (when (equal class "clojure.lang.Compiler$CompilerException")
       (cider-stacktrace-cycle-cause (length causes) 1)))
   ;; Fully display innermost cause. This also applies visibility/filters.
   (cider-stacktrace-cycle-cause 1 cider-stacktrace-detail-max)
-  ;; Move point to first stacktrace frame in displayed cause.
-  (goto-char (point-min))
-  (while (cider-stacktrace-next-cause))
-  (goto-char (next-single-property-change (point) 'flags)))
+  ;; Move point to first stacktrace frame in displayed cause.  If the error
+  ;; buffer is visible in a window, ensure that window is selected while moving
+  ;; point, so as to move both the buffer's and the window's point.
+  (with-selected-window (or (get-buffer-window cider-error-buffer)
+                            (selected-window))
+    (with-current-buffer cider-error-buffer
+      (goto-char (point-min))
+      (while (cider-stacktrace-next-cause))
+      (goto-char (next-single-property-change (point) 'flags)))))
 
 (defun cider-stacktrace-render (buffer causes)
   "Emit into BUFFER useful stacktrace information for the CAUSES."
   (with-current-buffer buffer
-    (cider-stacktrace-mode)
     (let ((inhibit-read-only t))
+      (erase-buffer)
       (newline)
       ;; Stacktrace filters
       (cider-stacktrace-render-filters
