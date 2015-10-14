@@ -1,5 +1,10 @@
 # -*- mode: sh; -*-
 # vim:filetype=sh
+source $MATILDE_ROOT/bash/util
+require "file"
+require "path"
+
+ulimit -n 10240
 
 # Command history file location.
 export HISTFILE="$HOME/.bash_history"
@@ -23,48 +28,45 @@ export VISUAL=vim
 export EDITOR=vim
 export FCEDIT=vim
 
-# Appends a value to the PATH variable.
-#
-# @param [String] $1 The path to append
-function add_to_path() {
-    export PATH="$PATH:$1"
-}
-
 # Node
 #[ `which npm` ] && export NODE_PATH=`npm -g root`
 
 # Personal binaries
-[ -d "$HOME/bin" ] && add_to_path "$HOME/bin" 
-
-# Homebrew
-if [ `which brew` ]; then
-  add_to_path "/usr/local/bin:$(brew --prefix coreutils)/libexec/gnubin"
+if file.directory? "$HOME/bin"; then
+    path.push "$HOME/bin"
 fi
 
+# Homebrew
+#if [ `which brew` ]; then
+  #path.push "/usr/local/bin:$(brew --prefix coreutils)/libexec/gnubin"
+#fi
+
 # rbenv
-if [ -d "$HOME/.rbenv" ]; then
-    add_to_path "$HOME/.rbenv/bin"
+if file.directory? "$HOME/.rbenv/bin"; then
+    path.push "$HOME/.rbenv/bin"
     eval "$($HOME/.rbenv/bin/rbenv init -)"
 else
-    if which rbenv > /dev/null; then
+    if file.exists? "/usr/local/var/rbenv"; then
         export RBENV_ROOT=/usr/local/var/rbenv
         eval "$(rbenv init -)";
     fi
 fi
 
 # Haskell
-[ -d "$HOME/.cabal" ] && add_to_path "$HOME/.cabal/bin"
+if file.directory? "$HOME/.cabal"; then
+    path.push "$HOME/.cabal/bin"
+fi
 
 # VimClojure
-if [ -d "$HOME/lib/VimClojure" ]; then
+if file.directory? "$HOME/lib/VimClojure"; then
   export VIMCLOJURE_SERVER_JAR="$(find "$HOME/lib/VimClojure" -name '*.jar' | tail -1)"
 fi
 
 # VirtualEnv
-if [ -e "/usr/local/bin/virtualenvwrapper.sh" ]; then
+if file.exists? "/usr/local/bin/virtualenvwrapper.sh"; then
     export WORKON_HOME="$HOME/Envs"
 
-    if [ -d "$WORKON_HOME" ]; then
+    if file.directory? "$WORKON_HOME"; then
         source /usr/local/bin/virtualenvwrapper.sh
     else
         mkdir -p $WORKON_HOME
@@ -72,3 +74,10 @@ if [ -e "/usr/local/bin/virtualenvwrapper.sh" ]; then
     fi
     
 fi
+
+# less
+[ `which hilite` ] || brew install hilite
+export LESSOPEN="|/usr/local/bin/src-hilite-lesspipe.sh %s"
+export LESSOPEN="|/usr/local/bin/src-hilite-lesspipe.sh %s"
+export LESS="-R -s -F -X"
+export PAGER="less -s -F -X"

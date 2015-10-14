@@ -79,6 +79,32 @@
        (-> (face-attribute 'highlight :background)
 	   (color-lighten-name 2))))
 
+;; ---------------------------------------------------------------------
+;; Emacs lisp
+
+(defun elisp-eval-expression-at-point-in-ielm ()
+  "Eval the current sexpr in ielm."
+  (interactive)
+  (let ((form (save-excursion
+		(end-of-defun)
+		(let ((end-point (point))
+		      (form-str ""))
+		  (beginning-of-defun)
+		  (while (not (= (point) end-point))
+		    (setq sform (concat form-str (char-at-point)))
+		    (forward-char))
+		  form-str)))
+	(buff (window-buffer))
+	(ielm-buff (get-buffer "*ielm*")))
+    (if (not ielm-buff)
+	(error "ielm not started")
+      (progn
+	(switch-to-buffer-other-window ielm-buff)
+	(goto-char (point-max))
+	(insert form)
+	(ielm-return)
+	(switch-to-buffer-other-frame buff)))))
+
 (provide 'noprompt-lisp)
 
 

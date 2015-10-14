@@ -4,10 +4,15 @@
 # No prompt command.
 PROMPT_COMMAND=""
 
+GREEN='\033[0;32m'
+YELLOW='\033[0;33m'
+CYAN='\033[0;36m'
+
 # Color aliases.
 SYM=$YELLOW
 STR=$CYAN
 NUM=$GREEN
+RESET='\033[0m'
 
 _sym() {
     echo -ne "$SYM:$1$RESET"
@@ -56,5 +61,10 @@ _git_branch_info() {
     fi
 }
 
-export PS1="{\[$SYM\]:exit\[$RESET\] \[$NUM\]\$?\[$RESET\], \[$SYM\]:dir\[$RESET\] \[$STR\]\"\w\"\[$RESET\]\$(_parse_git_branch)\[\$(_git_branch_info)\]}\n\[$RESET\]\h.\u=> "
+if [[ -n $INSIDE_EMACS ]]; then
+    export PS1="{:! \!, :exit \$?, :dir \"\w\"}\n\h.\u=> "
+else
+    export PS1="{\[$SYM\]:!\[$RESET\] \[$NUM\]\!\[$RESET\], \[$SYM\]:exit\[$RESET\] \[$NUM\]\$?\[$RESET\], \[$SYM\]:dir\[$RESET\] \[$STR\]\"\w\"\[$RESET\]\$(_parse_git_branch)\[\$(_git_branch_info)\]}\n\[$RESET\]\h.\u=> "
+fi
+
 export PS2=";; "

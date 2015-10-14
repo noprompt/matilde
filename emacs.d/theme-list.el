@@ -1,0 +1,1 @@
+(noctilux sanityinc-tomorrow-night sanityinc-tomorrow-bright wombat jazz airline-wombat gotham spacegray cyberpunk tronesque sanityinc-solarized-light sanityinc-solarized-dark seti lush ir-black)

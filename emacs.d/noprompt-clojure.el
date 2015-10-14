@@ -12,55 +12,198 @@
 (package-require 'ac-cider-compliment)
 (package-require 'ac-cider)
 
-(add-to-list 'load-path
-  (expand-file-name "~/.emacs.d/non-elpa/slamhound/"))
-
-(add-to-list 'load-path
-  (expand-file-name "~/.emacs.d/non-elpa/cider"))
+(add-to-list 'load-path (expand-file-name "~/.emacs.d/non-elpa/cider"))
 
 (require 'clojure-mode)
 (require 'clojurescript-mode)
 (require 'cider)
-(require 'ac-cider)
+;(require 'ac-cider)
 ;(require 'ac-cider-compliment)
 (require 'noprompt-paredit)
 (require 'noprompt-key-bindings)
 (require 'noprompt-lisp)
-(require 'slamhound)
 
 ;; ---------------------------------------------------------------------
 ;; Settings
 
 (add-to-list 'auto-mode-alist '("\\.cljx$" . clojure-mode))
 
+;;; Indention
+
 (define-clojure-indent
   ;; clojure.core
   (apply 1)
   (as-> 'defun)
+  (add-watch 'defun)
+
   ;; clojure.test
   (are 'defun)
+
   ;; clojure.test.check
   (for-all 'defun)
+
   ;; clojure.core.async
   (go-loop 1)
+
   ;; Garden
   (css 'defun)
   (at-media 1)
   (at-keyframes 1)
+
   ;; Korma
   (select 'defun)
   (insert 'defun)
+
   ;; Compojure
   (GET 'defun)
   (POST 'defun)
   (context 2)
+
   ;; Persephone
   (start 'defun)
   (start* 'defun)
+
   ;; core.logic
   (run* 1)
   (fresh 1)
-  (specify! 'defun))
+
+  ;; cljs.core
+  (specify! 'defun)
+  (specify 'defun)
+  (this-as 'defun)
+
+  ;; midje
+  (fact 'defun)
+  (facts 'defun)
+  )
+
+(dolist (html-tag '(a
+		    abbr
+		    address
+		    area
+		    article
+		    aside
+		    audio
+		    b
+		    base
+		    bdi
+		    bdo
+		    big
+		    blockquote
+		    body
+		    br
+		    button
+		    canvas
+		    caption
+		    cite
+		    code
+		    col
+		    colgroup
+		    data
+		    datalist
+		    dd
+		    del
+		    dfn
+		    div
+		    dl
+		    dt
+		    em
+		    embed
+		    fieldset
+		    figcaption
+		    figure
+		    footer
+		    form
+		    h1
+		    h2
+		    h3
+		    h4
+		    h5
+		    h6
+		    head
+		    header
+		    hr
+		    html
+		    i
+		    iframe
+		    img
+		    input
+		    ins
+		    kbd
+		    keygen
+		    label
+		    legend
+		    li
+		    link
+		    main
+		    ;;map
+		    mark
+		    menu
+		    menuitem
+		    meta
+		    meter
+		    nav
+		    noscript
+		    object
+		    ol
+		    optgroup
+		    option
+		    output
+		    p
+		    param
+		    pre
+		    progress
+		    q
+		    rp
+		    rt
+		    ruby
+		    s
+		    samp
+		    script
+		    section
+		    select
+		    small
+		    source
+		    span
+		    strong
+		    style
+		    sub
+		    summary
+		    sup
+		    table
+		    tbody
+		    td
+		    tfoot
+		    th
+		    thead
+		    time
+		    title
+		    tr
+		    track
+		    u
+		    ul
+		    var
+		    video
+		    wbr
+		     
+		    ;; svg
+		    circle
+		    ellipse
+		    g
+		    line
+		    path
+		    polyline
+		    rect
+		    svg
+		    text
+		    defs
+		    linearGradient
+		    polygon
+		    radialGradient
+		    stop
+		    tspan))
+  (put-clojure-indent html-tag 'defun))
+
 
 ;; ---------------------------------------------------------------------
 ;; Functions
@@ -70,17 +213,18 @@
   (let ((b clojure-defun-style-default-indent))
     (setq clojure-defun-style-default-indent (not b))))
 
-;; Commandeered from https://github.com/halgari/clojure-conj-2013-core.async-examples#usage
 (defun cider-eval-expression-at-point-in-repl ()
   (interactive)
-  (let ((form (cider-defun-at-point)))
+  (let ((form (cider-defun-at-point))
+	(buff (window-buffer)))
     ;; Strip excess whitespace
     (while (string-match "\\`\s+\\|\n+\\'" form)
       (setq form (replace-match "" t t form)))
-    (set-buffer (cider-find-or-create-repl-buffer))
+    (cider-switch-to-repl-buffer)
     (goto-char (point-max))
     (insert form)
-    (cider-repl-return)))
+    (cider-repl-return)
+    (switch-to-buffer-other-frame buff)))
 
 (defun clj-scratch ()
   "Create/retrieve a Clojure scratch buffer and switch to it.."
@@ -123,28 +267,25 @@
             (backward-char)
             (toggle-clj-keyword-string)))))))
 
+
 ;; ---------------------------------------------------------------------
 ;; Hooks
 
 (add-hook 'clojure-mode-hook 'paredit-mode)
 (add-hook 'clojure-mode-hook 'noprompt/define-paredit-keys)
 (add-hook 'clojure-mode-hook 'rainbow-delimiters-mode)
-
 (add-hook 'clojurescript-mode-hook 'paredit-mode)
 (add-hook 'clojurescript-mode-hook 'noprompt/define-paredit-keys)
 (add-hook 'clojurescript-mode-hook 'rainbow-delimiters-mode)
 
+
 ;; ---------------------------------------------------------------------
 ;; Cider settings
-;;
 
 (add-hook 'cider-mode-hook 'cider-turn-on-eldoc-mode)
 (add-hook 'cider-repl-mode-hook 'subword-mode)
 (add-hook 'cider-repl-mode-hook 'rainbow-delimiters-mode)
-
-
 (setq cider-interactive-eval-result-prefix ";; => ")
-(setq cider-repl-use-clojure-font-lock nil)
 
 (setq nrepl-hide-special-buffers t)
 ;; Stop the error buffer from popping up while working in buffers
@@ -155,7 +296,9 @@
 (setq cider-auto-select-error-buffer nil)
 (setq cider-repl-use-clojure-font-lock t)
 (setq cider-repl-use-pretty-printing nil)
-(setq cider-show-error-buffer t)
+;; This can cause a lot of problems with ClojureScript errors so it's
+;; turned off right now.
+(setq cider-show-error-buffer nil)
 
 (comment
  (eval-after-load 'cider
@@ -186,10 +329,32 @@
 (define-key cider-mode-map
   (kbd "C-c C-d") 'cider-doc)
 
-(nmmap cider-mode-map ",e" 'cider-eval-defun-at-point)
-(nmmap cider-mode-map ",l" 'cider-load-file)
-(nmmap cider-mode-map ",d" 'cider-doc)
-(nmmap cider-docview-mode-map "q" 'quit-window)
-(nmmap cider-stacktrace-mode-map "q" 'quit-window)
+(define-key cider-mode-map
+  (kbd "C-c C-j") 'cider-jump-to-var)
+
+(evil-define-key
+  'normal cider-popup-buffer-mode-map
+  (kbd "q") 'quit-window)
+
+(evil-define-key
+  'normal cider-docview-mode-map
+  (kbd "q") 'quit-window)
+
+(evil-define-key
+  'normal cider-stacktrace-mode-map
+  (kbd "q") 'quit-window)
+
+(evil-define-key
+  'normal cider-mode-map
+  (kbd ",e") 'cider-eval-defun-at-point)
+
+(evil-define-key
+  'normal cider-mode-map
+  (kbd ",l") 'cider-load-file)
+
+(evil-define-key
+  'normal cider-mode-map
+  (kbd ",d") 'cider-doc)
+
 
 (provide 'noprompt-clojure)

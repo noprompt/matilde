@@ -9,3 +9,7 @@ function http.POST() {
 function http.simple-server {
     python -m SimpleHTTPServer $1
 }
+
+function http.head {
+    curl -XHEAD $@
+}
