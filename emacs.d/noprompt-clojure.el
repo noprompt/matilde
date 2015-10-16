@@ -9,7 +9,7 @@
 (package-require 'clojure-mode)
 (package-require 'clojurescript-mode)
 ;(package-require 'cider)
-(package-require 'ac-cider-compliment)
+;(package-require 'ac-cider-compliment)
 (package-require 'ac-cider)
 
 (add-to-list 'load-path (expand-file-name "~/.emacs.d/non-elpa/cider"))
