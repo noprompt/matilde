@@ -1,14 +1,17 @@
 ;; =====================================================================
-;; Ag
+;; MarkDown
+
 
 ;; ---------------------------------------------------------------------
-;; Packages
-(package-require 'ag)
-(require 'ag)
+;; Required packages
+
+(package-require 'markdown-mode)
+(require 'markdown-mode)
+
 
 ;; ---------------------------------------------------------------------
-;; Keybindings
+;; Settings
 
-(define-key ag-mode-map (kbd "k") 'evil-previous-line)
-;(bound-and-true-p evil-mode)
-(provide 'noprompt-ag)
+(add-to-list 'auto-mode-alist '("\\.md$" . markdown-mode))
+
+(provide 'init-markdown)

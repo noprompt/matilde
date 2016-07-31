@@ -1,4 +1,4 @@
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; ---------------------------------------------------------------------
 ;; JavaScript
 
 ;;;; Required packages
@@ -28,4 +28,4 @@
   (interactive)
   (pop-to-buffer (make-comint "nodejs" "node")))
 
-(provide 'noprompt-javascript)
+(provide 'init-javascript)

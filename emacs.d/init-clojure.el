@@ -11,6 +11,7 @@
 ;(package-require 'cider)
 ;(package-require 'ac-cider-compliment)
 (package-require 'ac-cider)
+(package-require 'clj-refactor)
 
 (add-to-list 'load-path (expand-file-name "~/.emacs.d/non-elpa/cider"))
 
@@ -19,9 +20,9 @@
 (require 'cider)
 ;(require 'ac-cider)
 ;(require 'ac-cider-compliment)
-(require 'noprompt-paredit)
-(require 'noprompt-key-bindings)
-(require 'noprompt-lisp)
+(require 'init-paredit)
+(require 'init-key-bindings)
+(require 'init-lisp)
 
 ;; ---------------------------------------------------------------------
 ;; Settings
@@ -185,7 +186,7 @@
 		    var
 		    video
 		    wbr
-		     
+
 		    ;; svg
 		    circle
 		    ellipse
@@ -320,8 +321,16 @@
 ;; ---------------------------------------------------------------------
 ;; Keybindings
 
+(defun ~/cider-repl-clear-buffer ()
+  (interactive)
+  (let ((buffer (cider-get-repl-buffer)))
+    (when buffer
+      (with-current-buffer buffer
+	(cider-repl-clear-buffer)))))
+
 (define-key clojure-mode-map
-  (kbd "C-:") 'toggle-clj-keyword-string)
+  (kbd "C-c M-b")
+  '~/cider-repl-clear-buffer)
 
 (define-key cider-mode-map
   (kbd "C-;") 'cider-eval-expression-at-point-in-repl)
@@ -331,6 +340,10 @@
 
 (define-key cider-mode-map
   (kbd "C-c C-j") 'cider-jump-to-var)
+
+(evil-define-key
+  'normal clojure-mode-map
+  (kbd ",:") 'toggle-clj-keyword-string)
 
 (evil-define-key
   'normal cider-popup-buffer-mode-map
@@ -346,7 +359,7 @@
 
 (evil-define-key
   'normal cider-mode-map
-  (kbd ",e") 'cider-eval-defun-at-point)
+  (kbd ",e") 'cider-eval-expression-at-point-in-repl)
 
 (evil-define-key
   'normal cider-mode-map
@@ -356,5 +369,4 @@
   'normal cider-mode-map
   (kbd ",d") 'cider-doc)
 
-
-(provide 'noprompt-clojure)
+(provide 'init-clojure)

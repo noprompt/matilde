@@ -9,7 +9,7 @@ else
 fi
 alias lsa="ls -a"
 alias lsA="ls -A"
-alias l="ls -l"
+alias l="ls -lah"
 alias ll="ls -l"
 alias la="l -a"
 alias lA="l -A"
@@ -45,11 +45,18 @@ alias tarx="tar -xzvf"
 
 # Miscellaneous
 alias so="source"
-alias pbc="pbcopy"
-alias pbp="pbpaste"
 alias timestamp="date +%s"
 alias grep="grep --color"
 alias be="bundle exec"
+
+# OS X applications
+
+if [ `uname` = Darwin ]; then
+   alias chrome="open -a Google\ Chrome.app"
+   alias safari="open -a Safari.app"
+   alias sourcetree="open -a SourceTree.app"
+fi
+
 
 # Leiningen
 [ `which lein` ] \
@@ -58,7 +65,7 @@ alias be="bundle exec"
 # Emacs
 if test -f /Applications/Emacs.app/Contents/MacOS/Emacs; then
     alias emacs="/Applications/Emacs.app/Contents/MacOS/Emacs -nw"
-    alias gemacs='/Applications/Emacs.app/Contents/MacOS/Emacs &'
+    alias gemacs='/Applications/Emacs.app/Contents/MacOS/Emacs & disown'
 fi
 
 # Cat with syntax highlighting.
@@ -70,16 +77,20 @@ function ..() {
 	0) cd .. ;;
 
 	*) n=$1;
-	    dir='.';
+	   dir='.';
 
-	    while [ $n -gt 0 ]; do
-		dir="$dir/.."
-		n=$(($n - 1))
-	    done
+	   while [ $n -gt 0 ]; do
+	       dir="$dir/.."
+	       n=$(($n - 1))
+	   done
 
-	    cd $dir
-	    ;;
+	   cd $dir
+	   ;;
     esac
     pwd
 }
 
+
+function postman() {
+    man -t $1 | open -f -a Preview.app
+}

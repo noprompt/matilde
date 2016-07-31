@@ -35,27 +35,6 @@
         (dolist (form body result)
           (setq result (append form (list result))))))
 
-
-;;; Tab
-
-;; Function to implement a smarter TAB (EmacsWiki)
-(defun smart-tab ()
-  "This smart tab is minibuffer compliant: it acts as usual in
-   the minibuffer. Else, if mark is active, indents region. Else if
-   point is at the end of a symbol, expands it. Else indents the
-   current line."
-  (interactive)
-  (if (minibufferp)
-      (unless (minibuffer-complete)
-        (hippie-expand nil))
-    (if mark-active
-        (indent-region (region-beginning)
-                       (region-end))
-      (if (looking-at "\\_>")
-         (hippie-expand nil)
-        (indent-for-tab-command)))))
-
-
 ;;; Lists
 
 (defun util/get-random-element (list)
@@ -64,9 +43,7 @@
       (nth (random (1- (1+ (length list)))) list)
     (error "Argument to get-random-element not a list or the list is empty")))
 
-
 ;;; File
-
 
 (defun util/read-string-from-file (file-name)
   (with-temp-buffer
@@ -136,4 +113,4 @@ direction."
 (global-set-key (kbd "s-R") 'noprompt-rotate-windows)
 
 
-(provide 'noprompt-util)
+(provide 'init-util)

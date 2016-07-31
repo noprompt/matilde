@@ -38,7 +38,7 @@ fi
 
 # Homebrew
 #if [ `which brew` ]; then
-  #path.push "/usr/local/bin:$(brew --prefix coreutils)/libexec/gnubin"
+#path.push "/usr/local/bin:$(brew --prefix coreutils)/libexec/gnubin"
 #fi
 
 # rbenv
@@ -52,32 +52,23 @@ else
     fi
 fi
 
-# Haskell
+# Haskell binaries
 if file.directory? "$HOME/.cabal"; then
-    path.push "$HOME/.cabal/bin"
+    path.unshift "$HOME/.cabal/bin"
 fi
 
-# VimClojure
-if file.directory? "$HOME/lib/VimClojure"; then
-  export VIMCLOJURE_SERVER_JAR="$(find "$HOME/lib/VimClojure" -name '*.jar' | tail -1)"
+# Rust binaries
+if file.directory? "$HOME/.cargo"; then
+    path.unshift "$HOME/.cargo/bin"
 fi
 
-# VirtualEnv
-if file.exists? "/usr/local/bin/virtualenvwrapper.sh"; then
-    export WORKON_HOME="$HOME/Envs"
+[ `which highlight` ] || brew install highlight
+export LESSOPEN="| $(which highlight) %s --out-format=xterm256 --line-numbers --quiet --force --style=moria"
+export LESS=" -R -F -X"
 
-    if file.directory? "$WORKON_HOME"; then
-        source /usr/local/bin/virtualenvwrapper.sh
-    else
-        mkdir -p $WORKON_HOME
-        source /usr/local/bin/virtualenvwrapper.sh
-    fi
-    
+
+
+if [ `which autojump` ]; then
+    [[ -s $(brew --prefix)/etc/profile.d/autojump.sh ]] && \
+	. $(brew --prefix)/etc/profile.d/autojump.sh
 fi
-
-# less
-[ `which hilite` ] || brew install hilite
-export LESSOPEN="|/usr/local/bin/src-hilite-lesspipe.sh %s"
-export LESSOPEN="|/usr/local/bin/src-hilite-lesspipe.sh %s"
-export LESS="-R -s -F -X"
-export PAGER="less -s -F -X"

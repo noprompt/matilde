@@ -1,11 +1,13 @@
-;; ---------------------------------------------------------------------
+;; =====================================================================
 ;; Prolog
 
-;;; Required packages
+;; ---------------------------------------------------------------------
+;; Required packages
 
 (package-require 'prolog)
 
-;;; Settings
+;; ---------------------------------------------------------------------
+;; Settings
 
 (add-to-list 'auto-mode-alist '("\\.pl$" . prolog-mode))
 
@@ -21,4 +23,4 @@
         (gnu "gprolog")
         (t "gprolog")))
 
-(provide 'noprompt-prolog)
+(provide 'init-prolog)

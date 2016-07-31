@@ -20,11 +20,11 @@
 ;; ---------------------------------------------------------------------
 ;; Settings
 
-(defun noprompt/setup-lisp-mode ()
+(defun ~/setup-lisp-mode ()
   (paredit-mode)
   (rainbow-delimiters-mode)
   (eldoc-mode)
-  (noprompt/define-paredit-keys))
+  (~/define-paredit-keys))
 
 (defun insert-lisp-comment-header (&optional title)
   (interactive)
@@ -46,7 +46,7 @@
 ;; Racket 
 
 (defun setup-racket-mode ()
-  (noprompt/setup-lisp-mode)
+  (~/setup-lisp-mode)
   (geiser-mode))
 
 (add-hook 'racket-mode-hook 'setup-racket-mode)
@@ -55,7 +55,7 @@
 ;; Guile 
 
 (defun setup-guile-mode ()
-  (noprompt/setup-lisp-mode)
+  (~/setup-lisp-mode)
   (geiser-mode)
   (geiser-mode))
 
@@ -65,7 +65,7 @@
 ;; Shen 
 
 (defun setup-shen-mode ()
-  (noprompt/setup-lisp-mode)
+  (~/setup-lisp-mode)
   (nlmap ",e" 'shen-eval-defun)
   (nlmap ",l" 'shen-load-fille))
 
@@ -105,6 +105,6 @@
 	(ielm-return)
 	(switch-to-buffer-other-frame buff)))))
 
-(provide 'noprompt-lisp)
+(provide 'init-lisp)
 
 

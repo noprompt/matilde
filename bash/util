@@ -7,20 +7,49 @@ function require() {
 }
 
 # Pretty print path.
-function ppp() {
+function pretty-print-path() {
     echo $PATH | sed -e 's/:\{1,\}/ /g' | tr ' ' '\n'
 }
 
-# Pushes a path on to $PATH.
+# Add a path on the end of $PATH.
 function pushp() {
     if [ -n "$1" ]; then
         export PATH="$PATH:$1"
     fi
-    ppp
+    pretty-print-path
 }
 
-# Pop a path from $PATH.
+# Add a path to the beginning of $PATH.
+#function unshiftp() {
+#    if [ -n "$1" ]; then
+#        export PATH="$1:$PATH"
+#    fi
+#    pretty-print-path
+#}
+
+# Remove a path from the end $PATH.
 function popp() {
-    export PATH="$(ppp | init | tr '\n' ':' | sed -e "s/:$//")"
-    ppp
+    export PATH="$(pretty-print-path | init | tr '\n' ':' | sed -e "s/:$//")"
+    pretty-print-path
+}
+
+# Remove a path from the beginning of $PATH.
+function shiftp() {
+    export PATH="$(pretty-print-path | init | tr '\n' ':' | sed -e "s/:$//")"
+    pretty-print-path
+}
+
+
+# Like `cd` but creates the directory if it does not exist. Uses
+# `mkdir -p` to create the directory.
+function in-dir () {
+    local dir=$1
+    shift
+    if [ -d $dir ]; then
+      cd $dir
+    else
+      mkdir -p $dir
+      cd $dir
+      eval "$@"
+    fi
 }

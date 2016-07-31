@@ -1,8 +1,9 @@
 # -*- mode: sh; -*-
 # vim:filetype=sh
 
-# No prompt command.
-PROMPT_COMMAND=""
+if [ `which autojump` ]; then
+    export PROMPT_COMMAND="${PROMPT_COMMAND:+$PROMPT_COMMAND ;} history -a"
+fi
 
 GREEN='\033[0;32m'
 YELLOW='\033[0;33m'
@@ -61,10 +62,6 @@ _git_branch_info() {
     fi
 }
 
-if [[ -n $INSIDE_EMACS ]]; then
-    export PS1="{:! \!, :exit \$?, :dir \"\w\"}\n\h.\u=> "
-else
-    export PS1="{\[$SYM\]:!\[$RESET\] \[$NUM\]\!\[$RESET\], \[$SYM\]:exit\[$RESET\] \[$NUM\]\$?\[$RESET\], \[$SYM\]:dir\[$RESET\] \[$STR\]\"\w\"\[$RESET\]\$(_parse_git_branch)\[\$(_git_branch_info)\]}\n\[$RESET\]\h.\u=> "
-fi
+export PS1="{\[$SYM\]:!\[$RESET\] \[$NUM\]\!\[$RESET\], \[$SYM\]:exit\[$RESET\] \[$NUM\]\$?\[$RESET\], \[$SYM\]:dir\[$RESET\] \[$STR\]\"\w\"\[$RESET\]\$(_parse_git_branch)\[\$(_git_branch_info)\]}\n\[$RESET\]\h.\u=> "
 
 export PS2=";; "

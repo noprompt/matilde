@@ -1,10 +1,18 @@
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; =====================================================================
 ;; Paredit
+
+
+;; ---------------------------------------------------------------------
+;; Required packages
 
 (package-require 'paredit)
 (require 'paredit)
 
-(defun noprompt/paredit-wrap-quote ()
+
+;; ---------------------------------------------------------------------
+;; Functions
+
+(defun ~/paredit-wrap-quote ()
   "Wrap the following sexp in double quotes."
   (interactive)
   (save-excursion
@@ -12,29 +20,29 @@
     (forward-sexp)
     (insert "\"")))
 
-(defun noprompt/forward-transpose-sexps ()
+(defun ~/forward-transpose-sexps ()
   (interactive)
   (paredit-forward)
   (transpose-sexps 1)
   (paredit-backward))
 
-(defun noprompt/backward-transpose-sexps ()
+(defun ~/backward-transpose-sexps ()
   (interactive)
   (transpose-sexps 1)
   (paredit-backward)
   (paredit-backward))
 
-(defun noprompt/paredit-insert ()
+(defun ~/paredit-insert ()
   (interactive)
   (paredit-kill)
   (evil-insert-state))
 
-(defun noprompt/define-paredit-keys ()
+(defun ~/define-paredit-keys ()
   (progn
     (nlmap "W("          'paredit-wrap-round)
     (nlmap "W["          'paredit-wrap-square)
     (nlmap "W{"          'paredit-wrap-curly)
-    (nlmap "W\""         'noprompt/paredit-wrap-quote)
+    (nlmap "W\""         '~/paredit-wrap-quote)
     (nlmap "("           'paredit-backward-slurp-sexp)
     (nlmap ")"           'paredit-backward-barf-sexp)
     (ilmap (kbd "C-(")   'paredit-backward-slurp-sexp)
@@ -45,12 +53,17 @@
     ;; to work.
     (ilmap (kbd "C-[")   'paredit-forward-barf-sexp)
     (ilmap (kbd "C-]")   'paredit-forward-slurp-sexp)
+    (nlmap (kbd "C-S-r") 'paredit-raise-sexp)
     (nlmap "S"           'paredit-splice-sexp)
     (nlmap "s"           'paredit-split-sexp)
-    (nlmap "T"           'noprompt/backward-transpose-sexps)
-    (nlmap "t"           'noprompt/forward-transpose-sexps)
+    (nlmap "T"           '~/backward-transpose-sexps)
+    (nlmap "t"           '~/forward-transpose-sexps)
     (nlmap "Y"           'paredit-copy-as-kill)
-    (nlmap "C"           'noprompt/paredit-insert)
+    (nlmap "C"           '~/paredit-insert)
     (nlmap "D"           'paredit-kill)))
 
-(provide 'noprompt-paredit)
+(defun ~/define-paredit-keys-for-evil-mode ()
+  (interactive)
+  (~/define-paredit-keys))
+
+(provide 'init-paredit)

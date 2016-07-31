@@ -6,4 +6,4 @@
 
 (add-to-list 'auto-mode-alist '("\\.factor$" . factor-mode))
 
-(provide 'noprompt-factor)
+(provide 'init-factor)
