@@ -1,11 +1,10 @@
 (add-to-list 'load-path (expand-file-name "~/.emacs.d/"))
 (require 'init-util)
-(require 'init-package)
 
 ;; ---------------------------------------------------------------------
-;; General settings
+;; GENERAL SETTINGS
 
-;; Disable the splash screen
+;; Disable the splash screen.
 (setq inhibit-startup-message t)
 
 ;; Turn on column numbers.
@@ -23,8 +22,8 @@
 (show-paren-mode 1)
 
 ;; Smooth scrolling.
-(setq scroll-step 1
-      scroll-conservatively 10000)
+(setq scroll-step 1)
+(setq scroll-conservatively 10000)
 
 ;; Mouse scrolling
 (setq mouse-wheel-scroll-amount '(1 ((shift) . 1) ((control) . nil)))
@@ -33,118 +32,888 @@
 ;; Ask for y/n instead of yes/no.
 (defalias 'yes-or-no-p 'y-or-n-p)
 
-
-;;;; recentf
-
 (require 'recentf)
+
 (recentf-mode t)
+
 (setq recentf-max-menu-items 25)
 
-;;;; ido
-
-(package-require 'ido-ubiquitous)
-(package-require 'ido-vertical-mode)
-(require 'ido)
-
-(ido-mode t)
-(ido-vertical-mode t)
-(setq ido-vertical-define-keys 'C-n-and-C-p-only)
-(setq ido-enable-flex-matching t)
-(ido-ubiquitous)
-(setq ido-use-virtual-buffers t)
-
-;;;; smex
-
-(package-require 'smex)
-(require 'smex)
-(smex-initialize)
-(smex-initialize-ido)
-
-;;;; uniquify
-
 (require 'uniquify)
+
 (setq uniquify-buffer-name-style 'forward)
 
 (require 'saveplace)
+
 (setq-default save-place t)
 
-;;;; Idle highlight
-
-(package-require 'idle-highlight-mode)
-(require 'idle-highlight-mode)
-(add-hook 'prog-mode-hook 'idle-highlight-mode)
-
-(comment
- (package-require 'yasnippet)
- (when (require 'yasnippet nil 'noerror)
-   (progn
-     (yas/load-directory "~/.emacs.d/snippets"))))
-
-;;;; Linum
-
+;; Enable line numbering for prog-mode.
 (add-hook 'prog-mode-hook 'linum-mode)
-
-;;;; FCI
-
-;(package-require 'fill-column-indicator)
-;(require 'fill-column-indicator)
-
-(comment
- (setq x-select-enable-clipboard t
-       x-select-enable-primary t
-       save-interprogram-paste-before-kill t
-       apropos-do-all t
-       mouse-yank-at-point t
-       save-place-file (concat user-emacs-directory "places")
-       backup-directory-alist `(("." . ,(concat user-emacs-directory "backups")))))
-
-(setq backup-directory-alist `(("." . ,(concat user-emacs-directory "backups"))))
-
-;;;; YAML
-
-(package-require 'yaml-mode)
 
 ;; Do not truncate (wrap) lines by default.
 (set-default 'truncate-lines t)
 
+;; Backup configuration.
+(setq backup-directory-alist
+      `(("." . ,(concat user-emacs-directory "backups"))))
+
 ;; ---------------------------------------------------------------------
-;; Misc
+;; PACKAGE CONFIGURATION
 
-(package-require 'highlight-indentation)
+(require 'package)
 
-(package-require 'exec-path-from-shell)
-(exec-path-from-shell-initialize)
+(setq package-archives '(("gnu" . "http://elpa.gnu.org/packages/")
+			 ("marmalade" . "http://marmalade-repo.org/packages/")
+			 ("melpa" . "http://melpa.org/packages/")))
 
-(package-require 'beacon)
+(package-initialize)
+
+(unless package-archive-contents
+  (package-refresh-contents))
+
+
+;; ---------------------------------------------------------------------
+;; UTILITY FUNCTIONS
+
+(defun ~/package-require (pkg)
+  "Install a package only if it's not already installed."
+  (when (not (package-installed-p pkg))
+    (package-install pkg)))
+
+
+;; DATE AND TIME FUNCTIONS
+
+(defun ~/insert-date ()
+  "Insert the current date using the format `%Y-%m-%d'."
+  (interactive)
+  (insert (format-time-string "%Y-%m-%d")))
+
+(defun ~/insert-timestamp ()
+  "Inser the current date usint the foramt `%Y-%m-%dT%H:%M:%S'."
+  (interactive)
+  (insert (format-time-string "%Y-%m-%dT%H:%M:%S")))
+
+;; ---------------------------------------------------------------------
+;; AG
+
+(package-require 'ag)
+(require 'ag)
+
+(define-key ag-mode-map (kbd "k") 'evil-previous-line)
+
+;; ---------------------------------------------------------------------
+;; BEACON
+
+(~/package-require 'beacon)
+
 (beacon-mode t)
+
+
+;; ---------------------------------------------------------------------
+;; IDLE HIGHLIGHT
+
+(~/package-require 'idle-highlight-mode)
+
+(require 'idle-highlight-mode)
+
+(add-hook 'prog-mode-hook 'idle-highlight-mode)
+
+
+;; ---------------------------------------------------------------------
+;; IDO
+
+(require 'ido)
+
+(~/package-require 'ido-ubiquitous)
+(~/package-require 'ido-vertical-mode)
+
+(ido-mode t)
+(ido-ubiquitous t)
+(ido-vertical-mode t)
+(setq ido-enable-flex-matching t)
+
+(setq ido-use-virtual-buffers t)
+(setq ido-vertical-define-keys 'C-n-and-C-p-only)
+
+(defun ~/ido/recentf ()
+  (interactive)
+  (find-file (ido-completing-read "Find recent file: " recentf-list)))
+
+
+;; ---------------------------------------------------------------------
+;; SMEX
+
+(~/package-require 'smex)
+
+(require 'smex)
+
+(smex-initialize)
+(smex-initialize-ido)
+
+;; ---------------------------------------------------------------------
+;; KEYBOARD CONFIGURATION
+
+;; EVIL
+
+(~/package-require 'evil)
+(~/package-require 'evil-paredit)
+(~/package-require 'evil-mc)
+
+(require 'evil)
+
+(evil-mode t)
+
+(setq evil-shift-width 2)
+(setq evil-default-cursor t)
+
+;; ACE JUMP
+
+(~/package-require 'ace-jump-mode)
+(require 'ace-jump-mode)
+
+;; KEY-CHORD
+
+(~/package-require 'key-chord)
+
+(require 'key-chord)
+
+(key-chord-mode t)
+
+(key-chord-define-global ",x" 'smex) ;; M-x
+(key-chord-define-global ",f" 'find-file)
+(key-chord-define evil-normal-state-map ",k" 'kill-buffer)
+(key-chord-define evil-normal-state-map ",r" '~/ido/recentf)
+(key-chord-define evil-normal-state-map ",s" 'ido-switch-buffer)
+
+;; Fixes borked electric-indent in Emacs 24.
+(define-key evil-insert-state-map [remap newline] 'evil-ret-and-indent)
+
+;; Escape
+(define-key minibuffer-local-map [escape] 'keyboard-escape-quit)
+(define-key minibuffer-local-ns-map [escape] 'keyboard-escape-quit)
+(define-key minibuffer-local-completion-map [escape] 'keyboard-escape-quit)
+(define-key minibuffer-local-must-match-map [escape] 'keyboard-escape-quit)
+(define-key minibuffer-local-isearch-map [escape] 'keyboard-escape-quit)
+
+;; Evil normal state bindings.
+(define-key evil-normal-state-map
+  (kbd "C-j") 'evil-scroll-page-down)
+
+(define-key evil-normal-state-map
+  (kbd "C-k") 'evil-scroll-page-up)
+
+(define-key evil-normal-state-map
+  (kbd "C-f") 'find-file)
+
+(define-key evil-normal-state-map
+  "zo" 'evil-toggle-fold)
+
+(define-key evil-normal-state-map
+  "zc" 'evil-toggle-fold)
+
+(define-key evil-normal-state-map
+  (kbd "SPC") 'ace-jump-mode)
+
+(define-key evil-normal-state-map
+  (kbd "S-SPC") 'ace-jump-mode-pop-mark)
+
+(define-key evil-normal-state-map
+  (kbd "s-[") 'evil-prev-buffer)
+
+(define-key evil-normal-state-map
+  (kbd "s-]") 'evil-next-buffer)
+
+;; Evil insert state bindings.
+(define-key evil-insert-state-map
+  (kbd "C-j") 'next-line)
+
+(define-key evil-insert-state-map
+  (kbd "C-k") 'previous-line)
+
+(define-key evil-insert-state-map
+  (kbd "C-n") nil)
+
+(define-key evil-insert-state-map
+  (kbd "C-p") nil)
+
+;; ---------------------------------------------------------------------
+;; COMPANY
+
+(~/package-require 'company)
+(require 'company)
+
+(define-key company-mode-map [remap indent-for-tab-command]
+  'company-indent-for-tab-command)
+
+(setq tab-always-indent 'complete)
+
+(define-key company-mode-map (kbd "<C-tab>") 'company-complete)
+(define-key company-mode-map (kbd "C-n") 'company-select-next)
+(define-key company-mode-map (kbd "C-p") 'company-select-previous)
+
+;; ---------------------------------------------------------------------
+;; PAREDIT
+
+(~/package-require 'paredit)
+(require 'paredit)
+
+(defun ~/paredit/wrap-quote ()
+  "Wrap the following sexp in double quotes."
+  (interactive)
+  (save-excursion
+    (insert "\"")
+    (forward-sexp)
+    (insert "\"")))
+
+(defun ~/paredit/forward-transpose-sexps ()
+  (interactive)
+  (paredit-forward)
+  (transpose-sexps 1)
+  (paredit-backward))
+
+(defun ~/paredit/backward-transpose-sexps ()
+  (interactive)
+  (transpose-sexps 1)
+  (paredit-backward)
+  (paredit-backward))
+
+(defun ~/paredit/forward-kill-and-insert ()
+  (interactive)
+  (paredit-kill)
+  (evil-insert-state))
+
+(defun ~/paredit/define-evil-keys ()
+  ;; Normal state
+  (define-key evil-normal-state-local-map
+    "W(" 'paredit-wrap-round)
+  (define-key evil-normal-state-local-map
+    "W[" 'paredit-wrap-square)
+  (define-key evil-normal-state-local-map
+    "W{" 'paredit-wrap-curly)
+  (define-key evil-normal-state-local-map
+    "W\"" '~/paredit/wrap-quote)
+  (define-key evil-normal-state-local-map
+    "(" 'paredit-backward-slurp-sexp)
+  (define-key evil-normal-state-local-map
+    ")" 'paredit-backward-barf-sexp)
+  (define-key evil-normal-state-local-map
+    "{" 'paredit-forward-barf-sexp)
+  (define-key evil-normal-state-local-map
+    "}" 'paredit-forward-slurp-sexp)
+  (define-key evil-normal-state-local-map
+    (kbd "C-S-r") 'paredit-raise-sexp)
+  (define-key evil-normal-state-local-map
+    "S" 'paredit-splice-sexp)
+  (define-key evil-normal-state-local-map
+    "s" 'paredit-split-sexp)
+  (define-key evil-normal-state-local-map
+    "T" '~/paredit/backward-transpose-sexps)
+  (define-key evil-normal-state-local-map
+    "t" '~/paredit/forward-transpose-sexps)
+  (define-key evil-normal-state-local-map
+    "Y" 'paredit-copy-as-kill)
+  (define-key evil-normal-state-local-map
+    "C" '~/paredit/forward-kill-and-insert)
+  (define-key evil-normal-state-local-map
+    "D" 'paredit-kill)
+
+  ;; Insert state
+  (define-key evil-insert-state-local-map
+    (kbd "C-(") 'paredit-backward-slurp-sexp)
+  (define-key evil-insert-state-local-map
+    (kbd "C-)") 'paredit-backward-barf-sexp)
+  ;; I don't like the inconsistency here but C-{ and C-} don't seem to
+  ;; work.
+  (define-key evil-insert-state-local-map
+    (kbd "C-[") 'paredit-forward-barf-sexp)
+  (define-key evil-insert-state-local-map
+    (kbd "C-]") 'paredit-forward-slurp-sexp))
+
+(defun ~/paredit-mode ()
+  (paredit-mode)
+  (~/paredit/define-evil-keys))
+
+;; ---------------------------------------------------------------------
+;; LISP
+
+(~/package-require 'highlight-sexp)
+(require 'highlight-sexp)
+
+(defvar ~/lisp/imenu-section
+  '((nil "^;; +\\([A-Z ]+\\)$" 1)))
+
+(defun ~/lisp/setup-imenu ()
+  (setq imenu-generic-expression ~/lisp/imenu-section)
+  (imenu-add-menubar-index))
+
+(defun ~/lisp/insert-comment-header (&optional title)
+  (interactive)
+  (insert ";; ---------------------------------------------------------------------\n")
+  (insert ";;")
+  (when (stringp title)
+    (insert " ")
+    (insert title)))
+
+(defun ~/lisp-mode ()
+  (~/paredit-mode)
+  (rainbow-delimiters-mode)
+  (eldoc-mode))
+
+
+;; EMACS LISP
+
+(defun ~/emacs-lisp/eval-expression-at-point-in-ielm ()
+  "Eval the current sexpr in ielm."
+  (interactive)
+  (let ((form (save-excursion
+		(end-of-defun)
+		(let ((end-point (point))
+		      (form-str ""))
+		  (beginning-of-defun)
+		  (while (not (= (point) end-point))
+		    (setq sform (concat form-str (char-at-point)))
+		    (forward-char))
+		  form-str)))
+	(buff (window-buffer))
+	(ielm-buff (get-buffer "*ielm*")))
+    (if (not ielm-buff)
+	(error "ielm not started")
+      (progn
+	(switch-to-buffer-other-window ielm-buff)
+	(goto-char (point-max))
+	(insert form)
+	(ielm-return)
+	(switch-to-buffer-other-frame buff)))))
+
+(defun ~/emacs-lisp/define-keys ()
+  (define-key emacs-lisp-mode-map (kbd "C-;")
+    '~/emacs-lisp/eval-expression-at-point-in-ielm)
+
+  (define-key evil-normal-state-map
+    ",e" 'eval-defun)
+
+  (define-key evil-normal-state-map
+    ",l" 'eval-buffer)
+
+  (define-key emacs-lisp-mode-map
+    (kbd "C-c C-d") 'lispy-describe-inline)
+
+  (define-key emacs-lisp-mode-map
+    (kbd "C-c D") 'lispy-describe)
+
+  (define-key emacs-lisp-mode-map (kbd "C-;")
+    'elisp-eval-expression-at-point-in-ielm))
+
+
+(defun ~/emacs-lisp-mode ()
+  (~/lisp/setup-imenu)
+  (~/lisp-mode)
+  (~/emacs-lisp/define-keys))
+
+(add-hook 'emacs-lisp-mode-hook '~/emacs-lisp-mode)
+
+;; CLOJURE
+
+(~/package-require 'clojure-mode)
+(~/package-require 'clojurescript-mode)
+(~/package-require 'clj-refactor)
+
+(require 'clojure-mode)
+(require 'clojurescript-mode)
+
+;; Support for CLJX files.
+(add-to-list 'auto-mode-alist '("\\.cljx$" . clojure-mode))
+
+;; CLOJURE CIDER
+
+(add-to-list 'load-path (expand-file-name "~/.emacs.d/non-elpa/cider"))
+(require 'cider)
+
+
+(add-hook 'cider-mode-hook 'cider-turn-on-eldoc-mode)
+(add-hook 'cider-repl-mode-hook 'subword-mode)
+(add-hook 'cider-repl-mode-hook 'rainbow-delimiters-mode)
+
+(setq cider-interactive-eval-result-prefix ";; => ")
+;; Stop the error buffer from popping up while working in buffers
+;; other than the REPL
+(setq cider-popup-stacktraces nil)
+(setq cider-repl-popup-stacktraces nil)
+;; Do not auto-select the error buffer when it's displayed.
+(setq cider-auto-select-error-buffer nil)
+(setq cider-repl-use-clojure-font-lock t)
+(setq cider-repl-use-pretty-printing nil)
+;; This can cause a lot of problems with ClojureScript errors so it's
+;; turned off right now.
+(setq cider-show-error-buffer nil)
+
+;; CLOJURE MODE FUNCTIONS
+
+(defun ~/clojure/toggle-defun-style-indent ()
+  (interactive)
+  (let ((b clojure-defun-style-default-indent))
+    (setq clojure-defun-style-default-indent (not b))))
+
+(defun ~/clojure/cider-eval-expression-at-point-in-repl ()
+  (interactive)
+  (let ((form (cider-defun-at-point))
+	(buff (window-buffer)))
+    ;; Strip excess whitespace
+    (while (string-match "\\`\s+\\|\n+\\'" form)
+      (setq form (replace-match "" t t form)))
+    (cider-switch-to-repl-buffer)
+    (goto-char (point-max))
+    (insert form)
+    (cider-repl-return)
+    (switch-to-buffer-other-frame buff)))
+
+(defun ~/clojure/scratch ()
+  "Create/retrieve a Clojure scratch buffer and switch to it.."
+  (interactive)
+  (let ((buf (get-buffer-create "*clj-scratch*")))
+    (switch-to-buffer buf)
+    (clojure-mode)))
+
+(defun ~/clojure/string-name (s)
+  (substring s 1 -1))
+
+(defun ~/clojure/keyword-name (s)
+  (substring s 1))
+
+(defun ~/clojure/delete-and-extract-sexp ()
+  (let* ((begin (point)))
+    (forward-sexp)
+    (let* ((result (buffer-substring-no-properties begin (point))))
+      (delete-region begin (point))
+      result)))
+
+(defun ~/clojure/toggle-keyword-string ()
+  (interactive)
+  (save-excursion
+    (if (equal 1 (point))
+        (message "Beginning of file reached, this was probably a mistake.")
+      (cond
+       ((equal "\"" (char-at-point))
+        (insert ":" (~/clojure/string-name
+		     (~/clojure/delete-and-extract-sexp))))
+       ((equal ":" (char-at-point))
+        (insert "\"" (~/clojure/keyword-name
+		      (~/clojure/delete-and-extract-sexp)) "\""))
+       (t (progn
+            (backward-char)
+
+            (~/clojure/toggle-keyword-string)))))))
+
+(defun ~/clojure/cider-repl-clear-buffer ()
+  (interactive)
+  (let ((buffer (cider-get-repl-buffer)))
+    (when buffer
+      (with-current-buffer buffer
+	(cider-repl-clear-buffer)))))
+
+
+;; CLOJURE INDENTATION
+
+(define-clojure-indent
+  ;; clojure.core
+  (apply 1)
+  (as-> 'defun)
+  (add-watch 'defun)
+
+  ;; clojure.test
+  (are 'defun)
+
+  ;; clojure.test.check
+  (for-all 'defun)
+
+  ;; clojure.core.async
+  (go-loop 1)
+
+  ;; Garden
+  (css 'defun)
+  (at-media 1)
+  (at-keyframes 1)
+
+  ;; Korma
+  (select 'defun)
+  (insert 'defun)
+
+  ;; Compojure
+  (GET 'defun)
+  (POST 'defun)
+  (context 2)
+
+  ;; Persephone
+  (start 'defun)
+  (start* 'defun)
+
+  ;; core.logic
+  (run* 1)
+  (fresh 1)
+
+  ;; cljs.core
+  (specify! 'defun)
+  (specify 'defun)
+  (this-as 'defun)
+
+  ;; midje
+  (fact 'defun)
+  (facts 'defun))
+
+(dolist (html-tag '(a
+		    abbr
+		    address
+		    area
+		    article
+		    aside
+		    audio
+		    b
+		    base
+		    bdi
+		    bdo
+		    big
+		    blockquote
+		    body
+		    br
+		    button
+		    canvas
+		    caption
+		    cite
+		    code
+		    col
+		    colgroup
+		    data
+		    datalist
+		    dd
+		    del
+		    dfn
+		    div
+		    dl
+		    dt
+		    em
+		    embed
+		    fieldset
+		    figcaption
+		    figure
+		    footer
+		    form
+		    h1
+		    h2
+		    h3
+		    h4
+		    h5
+		    h6
+		    head
+		    header
+		    hr
+		    html
+		    i
+		    iframe
+		    img
+		    input
+		    ins
+		    kbd
+		    keygen
+		    label
+		    legend
+		    li
+		    link
+		    main
+		    ;;map
+		    mark
+		    menu
+		    menuitem
+		    meta
+		    meter
+		    nav
+		    noscript
+		    object
+		    ol
+		    optgroup
+		    option
+		    output
+		    p
+		    param
+		    pre
+		    progress
+		    q
+		    rp
+		    rt
+		    ruby
+		    s
+		    samp
+		    script
+		    section
+		    select
+		    small
+		    source
+		    span
+		    strong
+		    style
+		    sub
+		    summary
+		    sup
+		    table
+		    tbody
+		    td
+		    tfoot
+		    th
+		    thead
+		    time
+		    title
+		    tr
+		    track
+		    u
+		    ul
+		    var
+		    video
+		    wbr
+
+		    ;; svg
+		    circle
+		    ellipse
+		    g
+		    line
+		    path
+		    polyline
+		    rect
+		    svg
+		    text
+		    defs
+		    linearGradient
+		    polygon
+		    radialGradient
+		    stop
+		    tspan))
+  (put-clojure-indent html-tag 'defun))
+
+;; CLOJURE KEY BINDINGS
+
+(define-key clojure-mode-map
+  (kbd "C-c M-b")
+  '~/clojure/cider-repl-clear-buffer)
+
+(define-key cider-mode-map
+  (kbd "C-;") '~/clojure/cider-eval-expression-at-point-in-repl)
+
+(define-key cider-mode-map
+  (kbd "C-c C-d") 'cider-doc)
+
+(define-key cider-mode-map
+  (kbd "C-c C-j") 'cider-jump-to-var)
+
+(evil-define-key
+  'normal clojure-mode-map
+  (kbd ",:") '~/clojure/toggle-keyword-string)
+
+(evil-define-key
+  'normal cider-popup-buffer-mode-map
+  (kbd "q") 'quit-window)
+
+(evil-define-key
+  'normal cider-docview-mode-map
+  (kbd "q") 'quit-window)
+
+(evil-define-key
+  'normal cider-stacktrace-mode-map
+  (kbd "q") 'quit-window)
+
+(evil-define-key
+  'normal cider-mode-map
+  (kbd ",e") '~/clojure/cider-eval-expression-at-point-in-repl)
+
+(evil-define-key
+  'normal cider-mode-map
+  (kbd ",l") 'cider-load-file)
+
+(evil-define-key
+  'normal cider-mode-map
+  (kbd ",d") 'cider-doc)
+
+(defun ~/clojure-mode ()
+  (~/lisp-mode))
+
+;; ---------------------------------------------------------------------
+;; YAML
+
+(~/package-require 'yaml-mode)
+
+;; ---------------------------------------------------------------------
+;; RUBY
+
+(~/package-require 'inf-ruby)
+(~/package-require 'ruby-end)
+(~/package-require 'ruby-test-mode)
+(~/package-require 'ruby-tools)
+(~/package-require 'feature-mode)
+(~/package-require 'yard-mode)
+(~/package-require 'rbenv)
+(~/package-require 'robe)
+
+(require 'ruby-mode)
+
+(setq ~/burdock-mode-source-path
+      (concat user-emacs-directory "lisp/burdock-mode/"))
+
+(add-to-list 'load-path ~/burdock-mode-source-path)
+
+(require 'burdock-mode)
+
+(setq burdock-ruby-source-directory
+      (concat ~/burdock-mode-source-path "ruby/"))
+
+(defun ~/define-evil-keys-for-burdock-mode ()
+  (interactive)
+  (define-key evil-normal-state-local-map "D" 'burdock-kill)
+  (define-key evil-normal-state-local-map ",e" 'burdock-evaluate-scope-at-point)
+  (define-key evil-normal-state-local-map "W(" 'burdock-structured-wrap-round)
+  (define-key evil-normal-state-local-map "W[" 'burdock-structured-wrap-square)
+  (define-key evil-normal-state-local-map "W{" 'burdock-structured-wrap-curly)
+  (define-key evil-normal-state-local-map "W\"" 'burdock-structured-wrap-double-quote)
+  (define-key evil-normal-state-local-map "W'" 'burdock-structured-wrap-single-quote)
+  (define-key evil-normal-state-local-map "Wl" 'burdock-structured-wrap-lambda)
+  (define-key evil-normal-state-local-map "WL" 'burdock-structured-wrap-lambda-call)
+  (define-key evil-normal-state-local-map [down] 'burdock-zip-down)
+  (define-key evil-normal-state-local-map [up] 'burdock-zip-up)
+  (define-key evil-normal-state-local-map [left] 'burdock-zip-left)
+  (define-key evil-normal-state-local-map [right] 'burdock-zip-right))
+
+(add-hook 'ruby-mode-hook 'burdock-mode)
+(add-hook 'burdock-mode-hook '~/define-evil-keys-for-burdock-mode)
+(add-hook 'burdock-mode-hook 'burdock-start)
+
+(setq ruby-end-insert-newline nil)
+(setq ruby-deep-indent-paren nil)
+(setq ruby-deep-arglist nil)
+
+(add-to-list 'auto-mode-alist '("\\.irbrc\\'" . ruby-mode))
+(add-to-list 'auto-mode-alist '("\\.pryrc\\'" . ruby-mode))
+(add-to-list 'auto-mode-alist '("\\.rake\\'" . ruby-mode))
+(add-to-list 'auto-mode-alist '("Rakefile\\'" . ruby-mode))
+(add-to-list 'auto-mode-alist '("\\.gemspec\\'" . ruby-mode))
+(add-to-list 'auto-mode-alist '("\\.ru\\'" . ruby-mode))
+(add-to-list 'auto-mode-alist '("Gemfile\\'" . ruby-mode))
+(add-to-list 'auto-mode-alist '("Guardfile\\'" . ruby-mode))
+(add-to-list 'auto-mode-alist '("Capfile\\'" . ruby-mode))
+(add-to-list 'auto-mode-alist '("Vagrantfile\\'" . ruby-mode))
+
+(eval-after-load "hideshow"
+  '(add-to-list 'hs-special-modes-alist
+                 `(ruby-mode
+		   ;; Block start
+                   ,(rx (or "def" "class" "module" "{" "["))
+		   ;; Block end
+                   ,(rx (or "}" "]" "end"))
+		   ;; Comment start
+                   ,(rx (or "#"))
+                   ruby-forward-sexp nil)))
+
+(setq rbenv-installation-dir "/usr/local/bin/")
+
+(when (not (boundp 'inf-ruby-implementations))
+  (setq inf-ruby-implementations nil))
+
+(defun ~/paths-to-root (file-name)
+  (let* ((path-parts (s-split "/" (file-name-directory file-name) t))
+	 (build-path (lambda (path-parts)
+		       (concat "/" (s-join "/" path-parts))))
+	 (paths (reduce (lambda (state _)
+			  (let* ((old-path-parts (cdr state))
+				 (new-path-parts (-butlast old-path-parts))
+				 (old-paths (car state))
+				 (new-paths (cons (funcall build-path new-path-parts) 
+						  old-paths)))
+			    `(,new-paths . ,new-path-parts)))
+			path-parts
+			:initial-value
+			`(,(list (funcall build-path path-parts))
+			  . ,path-parts))))
+    (car paths)))
+
+(defun ~/bundler-installed-p ()
+  (stringp (executable-find "bundle")))
+
+(defun ~/bundler-project-p ()
+  (-any-p 'file-exists-p
+	  (-map (lambda (path)
+		  (concat path "/Gemfile"))
+		(~/paths-to-root (buffer-file-name)))))
+
+(defun ~/rbenv-installed-p ()
+  (stringp (executable-find "rbenv")))
+
+(defun ~/pry-installed-p ()
+  (stringp (executable-find "pry")))
+
+(defun ~/rails-project-p ()
+  (-any-p 'file-exists-p
+	  (-map (lambda (path)
+		  (concat path "/bin/rails"))
+		(~/paths-to-root (buffer-file-name)))))
+
+(defun ~/conditionally-run-ruby ()
+  (interactive)
+  ;; This is what dying inside looks like...
+  (let* ((ruby-command (if (and (~/bundler-installed-p) (~/bundler-project-p))
+			   (if (~/rbenv-installed-p)
+			       (if (~/rails-project-p)
+				   "rbenv exec bundle exec rails console"
+				 "rbenv exec bundle console")
+			     "bundle console")
+			 (if (~/pry-installed-p)
+			     "pry"
+			   "irb --prompt default --noreadline -r irb/completion"))))
+    (setq inf-ruby-implementations
+	  (cons `("ruby" . ,ruby-command)
+		(delq (assoc "ruby" inf-ruby-implementations)
+		      inf-ruby-implementations)))
+    (setq inf-ruby-default-implementation "ruby")
+    (run-ruby)))
+
+(defun ~/ruby/scratch ()
+  "Create/retrieve a Clojure scratch buffer and switch to it.."
+  (interactive)
+  (let ((buf (get-buffer-create "*rb-scratch*")))
+    (switch-to-buffer buf)
+    (ruby-mode)))
+
+(defun ~/ruby/repl-clear-buffer ()
+  (interactive)
+  (let ((comint-buffer-maximum-size 0))
+    (comint-truncate-buffer)))
+
+(define-key ruby-mode-map (kbd "C-c M-j") '~/conditionally-run-ruby)
+(add-hook 'ruby-mode-hook 'yard-mode)
+(add-hook 'ruby-mode-hook 'highlight-indentation-mode)
+
+;; ---------------------------------------------------------------------
+;; MISCELLANEOUS
+
+(~/package-require 'highlight-indentation)
+(require 'highlight-indentation)
+
+(~/package-require 'exec-path-from-shell)
+
+(exec-path-from-shell-initialize)
 
 ;; ---------------------------------------------------------------------
 ;; Used configuration
 
-(require 'init-utilities)
-
-;;(require 'init-auto-complete)
-(require 'init-key-bindings)
-(require 'init-elisp)
-(require 'init-lisp-interaction)
-(require 'init-clojure)
-(require 'init-ruby)
-(require 'init-javascript)
-(require 'init-css)
-(require 'init-markdown)
-(require 'init-prolog)
+;;(require 'init-ruby)
+;;(require 'init-javascript)
+;;(require 'init-css)
+;;(require 'init-markdown)
+;;(require 'init-prolog)
 ;;(require 'init-erlang)
 ;;(require 'init-go)
-(require 'init-factor)
+;;(require 'init-factor)
 ;;(require 'init-python)
-(require 'init-haskell)
+;;(require 'init-haskell)
 (require 'init-theme)
-(require 'init-ag)
-(require 'init-elm)
+;;(require 'init-elm)
 ;;(require 'init-html)
-(require 'init-fsharp)
-(require 'init-rust)
-(require 'init-multi-shell)
+;;(require 'init-fsharp)
+;;(require 'init-rust)
+;;(require 'init-multi-shell)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
