@@ -50,7 +50,7 @@
 (add-hook 'prog-mode-hook 'linum-mode)
 
 ;; Do not truncate (wrap) lines by default.
-(set-default 'truncate-lines t)
+(setq-default truncate-lines nil)
 
 ;; Backup configuration.
 (setq backup-directory-alist
@@ -221,6 +221,9 @@
 
 (define-key evil-normal-state-map
   (kbd "s-]") 'evil-next-buffer)
+
+(define-key evil-normal-state-map
+  (kbd ",i") 'imenu)
 
 ;; Evil insert state bindings.
 (define-key evil-insert-state-map
@@ -732,6 +735,8 @@
 (defun ~/clojure-mode ()
   (~/lisp-mode))
 
+(add-hook 'clojure-mode-hook '~/clojure-mode)
+
 ;; ---------------------------------------------------------------------
 ;; YAML
 
@@ -750,6 +755,7 @@
 (~/package-require 'robe)
 
 (require 'ruby-mode)
+(require 'subr-x)
 
 (setq ~/burdock-mode-source-path
       (concat user-emacs-directory "lisp/burdock-mode/"))
@@ -878,12 +884,77 @@
 
 (defun ~/ruby/repl-clear-buffer ()
   (interactive)
-  (let ((comint-buffer-maximum-size 0))
-    (comint-truncate-buffer)))
+  (when (bufferp (get-buffer inf-ruby-buffer))
+    (with-current-buffer inf-ruby-buffer
+      (let ((comint-buffer-maximum-size 0))
+	(comint-truncate-buffer)))))
 
 (define-key ruby-mode-map (kbd "C-c M-j") '~/conditionally-run-ruby)
+(define-key ruby-mode-map (kbd "C-c M-b") '~/ruby/repl-clear-buffer)
+
 (add-hook 'ruby-mode-hook 'yard-mode)
 (add-hook 'ruby-mode-hook 'highlight-indentation-mode)
+
+;; ---------------------------------------------------------------------
+;; HASKELL
+
+(package-require 'ghc)
+(package-require 'intero)
+
+(add-to-list 'load-path "~/git/haskell/haskell-mode/")
+
+(require 'haskell-mode-autoloads)
+(add-to-list 'Info-default-directory-list "~/git/haskell/haskell-mode/")
+
+(setq auto-mode-alist (cons '("\.hs$" . haskell-mode) auto-mode-alist))
+
+;; Configuration from "Using Emacs for Haskell development"
+;; See: https://github.com/serras/emacs-haskell-tutorial/blob/master/tutorial.md
+
+(let ((my-cabal-path (expand-file-name "~/.cabal/bin")))
+  (setenv "PATH" (concat my-cabal-path path-separator (getenv "PATH")))
+  (add-to-list 'exec-path my-cabal-path))
+(custom-set-variables '(haskell-tags-on-save t))
+
+(custom-set-variables
+  '(haskell-process-suggest-remove-import-lines t)
+  '(haskell-process-auto-import-loaded-modules t)
+  '(haskell-process-log t)
+  '(haskell-process-type 'stack-ghci))
+
+(eval-after-load 'haskell-mode
+  '(progn
+     (define-key haskell-mode-map (kbd "C-c C-l") 'haskell-process-load-or-reload)
+     (define-key haskell-mode-map (kbd "C-c C-z") 'haskell-interactive-switch)
+     (define-key haskell-mode-map (kbd "C-c C-n C-t") 'haskell-process-do-type)
+     (define-key haskell-mode-map (kbd "C-c C-n C-i") 'haskell-process-do-info)
+     (define-key haskell-mode-map (kbd "C-c C-n C-c") 'haskell-process-cabal-build)
+     (define-key haskell-mode-map (kbd "C-c C-n c") 'haskell-process-cabal)
+     (define-key haskell-mode-map (kbd "C-c M-j") 'haskell-interactive-bring)
+     (define-key haskell-mode-map (kbd "SPC") 'haskell-mode-contextual-space)
+     ;; This should probably be a bit more sophisticated.
+     (define-key haskell-mode-map (kbd "TAB") 'haskell-indent-cycle)))
+
+(eval-after-load 'haskell-cabal
+  '(progn
+     (define-key haskell-cabal-mode-map (kbd "C-c C-z") 'haskell-interactive-switch)
+     (define-key haskell-cabal-mode-map (kbd "C-c C-k") 'haskell-interactive-mode-clear)
+     (define-key haskell-cabal-mode-map (kbd "C-c C-c") 'haskell-process-cabal-build)
+     (define-key haskell-cabal-mode-map (kbd "C-c c") 'haskell-process-cabal)))
+
+(add-hook 'haskell-mode-hook 'haskell-doc-mode)
+(add-hook 'haskell-mode-hook 'haskell-indent-mode)
+(add-hook 'haskell-mode-hook 'intero-mode)
+
+(when nil
+  (add-hook 'haskell-mode-hook
+	    (lambda ()
+	      ;; haskell-mode doesn't like evil ;_;
+	      ;;(setq evil-auto-indent nil)
+	      (setq tab-width 4)
+	      (ghc-init)
+	      ;;(flymake-mode)
+	      )))
 
 ;; ---------------------------------------------------------------------
 ;; MISCELLANEOUS

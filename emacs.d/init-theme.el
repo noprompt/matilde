@@ -143,6 +143,7 @@
 	(camingo-code . "Camingo Code")
 	(code-new-roman . "Code New Roman")
 	(consolas . "Consolas")
+	(computer-modern . "CMU Typewriter Text")
 	(courier . "Courier")
 	(courier-new . "Courier New")
 	(courier-prime-code . "Courier Prime Code")
@@ -173,7 +174,7 @@
  (global-set-key (kbd "s--") '~/decrease-font-height)
  (global-set-key (kbd "C-=") '~/text-scale-up)
  (global-set-key (kbd "C--") '~/text-scale-down)
- (~/set-fonts :default-font (~/get-font 'liberation))
+ (~/set-fonts :default-font (~/get-font 'computer-modern))
  (~/load-next-theme))
 
 (when (not (display-graphic-p))

@@ -1,1 +1,1 @@
-(wombat jazz ubuntu spacegray firebelly seti cyberpunk hamburg dracula atom-one-dark smyx eink)
+(smyx eink wombat jazz spacegray firebelly seti cyberpunk hamburg dracula atom-one-dark)

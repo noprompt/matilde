@@ -23,6 +23,8 @@
   '(haskell-process-log t)
   '(haskell-process-type 'stack-ghci))
 
+(define-key haskell-mode-map (kbd "TAB") 'haskell-indent-cycle)
+
 (eval-after-load 'haskell-mode
   '(progn
      (define-key haskell-mode-map (kbd "C-c C-l") 'haskell-process-load-or-reload)
