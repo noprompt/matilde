@@ -53,12 +53,17 @@ else
 fi
 
 # Haskell binaries
-if file.directory? "$HOME/.cabal"; then
+if file.directory? "$HOME/.cabal/bin"; then
     path.unshift "$HOME/.cabal/bin"
 fi
 
+# Haskell binaries
+if file.directory? "$HOME/.local/bin"; then
+    path.unshift "$HOME/.local/bin"
+fi
+
 # Rust binaries
-if file.directory? "$HOME/.cargo"; then
+if file.directory? "$HOME/.cargo/bin"; then
     path.unshift "$HOME/.cargo/bin"
 fi
 

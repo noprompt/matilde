@@ -53,3 +53,33 @@ function in-dir () {
       eval "$@"
     fi
 }
+
+
+# View a man page in Preview. Mind blowing.
+function postman() {
+    man -t $1 | open -f -a Preview.app
+}
+
+function tmate-show-ssh() {
+    tmate show-messages | \
+        # Pick the second to last line of the message.
+        tail -2 | \
+        head -1 | \
+        # SSH field
+        cut -d ":" -f 4 | \
+        # Strip leading whitespace.
+        sed -e "s/^ //"
+}
+
+function rubocop-git() {
+    # --porcelain provides a programmer friendly status format.
+    git status --porcelain | \
+        # Select added and modified files.
+        grep -e '^A\|^ M' | \
+        # Select Ruby and Rake files.
+        grep -e '\.\(rake\|rb\)$' | \
+        # Select the file name. 
+        cut -d ' ' -f 3 | \
+        # Pass all of the file names as arguments to rubocop. 
+        xargs rubocop
+}
