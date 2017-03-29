@@ -7,56 +7,32 @@
 ;; ---------------------------------------------------------------------
 ;; Theme packages
 
-(package-require 'arjen-grey-theme)
-(package-require 'assemblage-theme)
 (package-require 'atom-one-dark-theme)
-(package-require 'base16-theme)
-(package-require 'birds-of-paradise-plus-theme)
-(package-require 'clues-theme)
-(package-require 'color-theme-sanityinc-solarized)
-(package-require 'color-theme-sanityinc-tomorrow)
 (package-require 'cyberpunk-theme)
-(package-require 'darktooth-theme)
 (package-require 'dracula-theme)
 (package-require 'eink-theme)
 (package-require 'firebelly-theme)
-(package-require 'goose-theme)
-(package-require 'grandshell-theme)
-(package-require 'gruvbox-theme)
 (package-require 'hamburg-theme)
 (package-require 'ir-black-theme)
 (package-require 'jazz-theme)
-(package-require 'jujube-theme)
-(package-require 'lush-theme)
-(package-require 'molokai-theme)
-(package-require 'noctilux-theme)
-(package-require 'planet-theme)
 (package-require 'seti-theme)
-(package-require 'slime-theme)
 (package-require 'smyx-theme)
-(package-require 'soothe-theme)
-(package-require 'spacegray-theme)
-(package-require 'stekene-theme)
-(package-require 'sublime-themes)
 (package-require 'tronesque-theme)
-(package-require 'ubuntu-theme)
-(package-require 'zonokai-theme)
+(package-require 'subatomic256-theme)
 
 ;; ---------------------------------------------------------------------
 ;; Theme configuration
 
-(dolist (theme-name '("firebelly" "dracula" "hamburg" "seti"))
-  (add-to-list 'custom-theme-load-path
-	       (concat (getenv "HOME") "/.emacs.d/non-elpa/anti-" theme-name "-theme/")))
-
 (defconst ~/theme-ring-file-path
   (concat (getenv "HOME")
-	  "/.emacs.d/theme-list.el"))
+          (if (display-graphic-p)
+              "/.emacs.d/theme-list.el"
+            "/.emacs.d/theme-256-list.el")))
 
 (defun ~/theme-ring-load ()
   (read (with-temp-buffer
-	  (insert-file-contents ~/theme-ring-file-path)
-	  (buffer-string))))
+          (insert-file-contents ~/theme-ring-file-path)
+          (buffer-string))))
 
 (defun ~/theme-ring-next ()
   "Return the next theme in the theme ring."
@@ -68,12 +44,6 @@
       (when (file-writable-p ~/theme-ring-file-path)
 	(write-region (point-min) (point-max) ~/theme-ring-file-path)))
     theme))
-
-;; ---------------------------------------------------------------------
-;; Powerline
-
-(package-require 'powerline)
-(powerline-vim-theme)
 
 ;; ---------------------------------------------------------------------
 ;; Typography
@@ -148,10 +118,12 @@
 	(courier-new . "Courier New")
 	(courier-prime-code . "Courier Prime Code")
 	(fantasque . "Fantasque Sans Mono")
+	(fira-code . "Fira Code")
 	(fixedsys . "Fixedsys Excelsior 3.01")
 	(gohu . "GohuFont")
 	(inconsolata . "Inconsolata LGC")
 	(input . "Input Mono")
+	(iosevka . "IosevkaCC")
 	(liberation . "Liberation Mono")
 	(office-code-pro . "Office Code Pro")
 	(menlo . "Menlo")
@@ -163,6 +135,7 @@
 	(sax . "saxMono")
 	(source-code-pro . "Source Code Pro")
 	(terminus . "Terminus")
+	(triplicate . "Triplicate T4c")
 	(ubuntu . "Ubuntu Mono")
 	(whois . "Whois")))
 
@@ -174,10 +147,9 @@
  (global-set-key (kbd "s--") '~/decrease-font-height)
  (global-set-key (kbd "C-=") '~/text-scale-up)
  (global-set-key (kbd "C--") '~/text-scale-down)
- (~/set-fonts :default-font (~/get-font 'computer-modern))
- (~/load-next-theme))
+ 
+ (~/set-fonts :default-font (~/get-font 'iosevka)))
 
-(when (not (display-graphic-p))
-  (load-theme 'jazz t))
+(~/load-next-theme)
 
 (provide 'init-theme)
