@@ -591,6 +591,17 @@
 	(cider-repl-clear-buffer)))))
 
 
+(defun ~/clojure/lein-test-refresh ()
+  "Like executing \"M-x compile <RET> lein test-refresh\" but renames
+  the buffer appropriately."
+  (interactive)
+  (let ((lein-test-refresh-buffer (get-buffer "*lein-test-refresh*")))
+    (when (not lein-test-refresh-buffer)
+        (setq lein-test-refresh-buffer (compile "lein test-refresh"))
+        (with-current-buffer lein-test-refresh-buffer
+          (rename-buffer "*lein-test-refresh*")))
+    lein-test-refresh-buffer))
+
 ;; CLOJURE INDENTATION
 
 (define-clojure-indent
