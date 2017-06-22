@@ -966,6 +966,15 @@
 (define-key ruby-mode-map
   (kbd "C-c") nil)
 
+;; RUBY HOOKS
+
+(defun ~/ruby/before-save-hook ()
+  (whitespace-cleanup))
+
+(add-hook 'ruby-mode-hook
+          (lambda ()
+            (add-hook 'before-save-hook '~/ruby/before-save-hook nil 'local)))
+
 (add-hook 'ruby-mode-hook 'yard-mode)
 (add-hook 'ruby-mode-hook 'highlight-indent-guides-mode)
 (add-hook 'ruby-mode-hook 'aggressive-indent-mode)
