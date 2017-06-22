@@ -50,7 +50,7 @@
 (add-hook 'prog-mode-hook 'linum-mode)
 
 ;; Do not truncate (wrap) lines by default.
-(setq-default truncate-lines nil)
+(setq-default truncate-lines t)
 
 ;; Always use spaces instead of tabs.
 (setq-default indent-tabs-mode nil)
