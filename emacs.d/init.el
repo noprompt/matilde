@@ -469,6 +469,22 @@
 	(ielm-return)
 	(switch-to-buffer-other-frame buff)))))
 
+(defun ~/emacs-lisp/eval-defun-pp ()
+  (interactive)
+  (let ((output-buffer (get-buffer-create "*elisp-result*"))
+        (current-buffer (current-buffer)))
+    (save-excursion
+      (beginning-of-defun)
+      (let* ((form (read (current-buffer)))
+             (result (eval form)))
+        (pop-to-buffer output-buffer)
+        (setq buffer-read-only nil)
+        (erase-buffer)
+        (pp result (current-buffer))
+        (setq buffer-read-only t)))
+    (pop-to-buffer current-buffer)))
+
+
 (defun ~/emacs-lisp/define-keys ()
   (define-key emacs-lisp-mode-map (kbd "C-;")
     '~/emacs-lisp/eval-expression-at-point-in-ielm)
@@ -484,6 +500,9 @@
 
   (define-key emacs-lisp-mode-map
     (kbd "C-c D") 'lispy-describe)
+
+  (define-key emacs-lisp-mode-map
+    (kbd "C-c C-f") '~/emacs-lisp/eval-defun-pp)
 
   (define-key emacs-lisp-mode-map (kbd "C-;")
     'elisp-eval-expression-at-point-in-ielm))
