@@ -474,6 +474,7 @@
   (let ((output-buffer (get-buffer-create "*elisp-result*"))
         (current-buffer (current-buffer)))
     (save-excursion
+      (end-of-defun)
       (beginning-of-defun)
       (let* ((form (read (current-buffer)))
              (result (eval form)))
