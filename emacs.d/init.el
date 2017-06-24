@@ -469,6 +469,7 @@
 	(ielm-return)
 	(switch-to-buffer-other-frame buff)))))
 
+
 (defun ~/emacs-lisp/eval-defun-pp ()
   (interactive)
   (let ((output-buffer (get-buffer-create "*elisp-result*"))
@@ -497,17 +498,13 @@
     ",l" 'eval-buffer)
 
   (define-key emacs-lisp-mode-map
-    (kbd "C-c C-d") 'lispy-describe-inline)
-
-  (define-key emacs-lisp-mode-map
-    (kbd "C-c D") 'lispy-describe)
+    (kbd "C-c C-d") 'describe-symbol)
 
   (define-key emacs-lisp-mode-map
     (kbd "C-c C-f") '~/emacs-lisp/eval-defun-pp)
 
   (define-key emacs-lisp-mode-map (kbd "C-;")
     'elisp-eval-expression-at-point-in-ielm))
-
 
 (defun ~/emacs-lisp-mode ()
   (~/lisp/setup-imenu)
