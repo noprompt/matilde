@@ -8,6 +8,7 @@
 ;; Theme packages
 
 (package-require 'atom-one-dark-theme)
+(package-require 'base16-theme)
 (package-require 'cyberpunk-theme)
 (package-require 'dracula-theme)
 (package-require 'eink-theme)
@@ -17,8 +18,8 @@
 (package-require 'jazz-theme)
 (package-require 'seti-theme)
 (package-require 'smyx-theme)
-(package-require 'tronesque-theme)
 (package-require 'subatomic256-theme)
+(package-require 'tronesque-theme)
 
 ;; ---------------------------------------------------------------------
 ;; Theme configuration
