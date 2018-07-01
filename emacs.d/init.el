@@ -1,4 +1,3 @@
-(require 'init-util)
 (add-to-list 'load-path (expand-file-name "~/.emacs.d/"))
 
 ;; ---------------------------------------------------------------------
@@ -87,9 +86,6 @@
   (when (not (package-installed-p pkg))
     (package-install pkg)))
 
-
-;; DATE AND TIME FUNCTIONS
-
 (defun ~/insert-date ()
   "Insert the current date using the format `%Y-%m-%d'."
   (interactive)
@@ -103,6 +99,12 @@
 (defmacro ~/comment (&rest body)
   "Comment out one or more s-expressions."
   nil)
+
+;; ---------------------------------------------------------------------
+;; HYDRA
+
+(~/package-require 'hydra)
+(require 'hydra)
 
 ;; ---------------------------------------------------------------------
 ;; AG
@@ -205,11 +207,32 @@
 (define-key evil-insert-state-map [remap newline] 'evil-ret-and-indent)
 
 ;; Escape
-(define-key minibuffer-local-map [escape] 'keyboard-escape-quit)
-(define-key minibuffer-local-ns-map [escape] 'keyboard-escape-quit)
-(define-key minibuffer-local-completion-map [escape] 'keyboard-escape-quit)
-(define-key minibuffer-local-must-match-map [escape] 'keyboard-escape-quit)
-(define-key minibuffer-local-isearch-map [escape] 'keyboard-escape-quit)
+
+(defun ~/minibuffer-keyboard-quit ()
+  "Abort recursive edit.
+In Delete Selection mode, if the mark is active, just deactivate it;
+then it takes a second \\[keyboard-quit] to abort the minibuffer."
+  (interactive)
+  (if (and delete-selection-mode transient-mark-mode mark-active)
+      (setq deactivate-mark  t)
+    (when (get-buffer "*Completions*") (delete-windows-on "*Completions*"))
+    (abort-recursive-edit)))
+
+(define-key evil-normal-state-map [escape] 'keyboard-quit)
+(define-key evil-visual-state-map [escape] 'keyboard-quit)
+(define-key minibuffer-local-map [escape] '~/minibuffer-keyboard-quit)
+(define-key minibuffer-local-ns-map [escape] '~/minibuffer-keyboard-quit)
+(define-key minibuffer-local-completion-map [escape] '~/minibuffer-keyboard-quit)
+(define-key minibuffer-local-must-match-map [escape] '~/minibuffer-keyboard-quit)
+(define-key minibuffer-local-isearch-map [escape] '~/minibuffer-keyboard-quit)
+(global-set-key [escape] 'evil-exit-emacs-state)
+
+(~/comment
+ (define-key minibuffer-local-map [escape] 'keyboard-escape-quit)
+ (define-key minibuffer-local-ns-map [escape] 'keyboard-escape-quit)
+ (define-key minibuffer-local-completion-map [escape] 'keyboard-escape-quit)
+ (define-key minibuffer-local-must-match-map [escape] 'keyboard-escape-quit)
+ (define-key minibuffer-local-isearch-map [escape] 'keyboard-escape-quit))
 
 ;; Evil normal state bindings.
 (define-key evil-normal-state-map
@@ -1002,10 +1025,10 @@
 ;; ---------------------------------------------------------------------
 ;; HASKELL
 
-(package-require 'ghc)
-(package-require 'intero)
-(package-require 'haskell-mode)
-(package-require 'hindent)
+(~/package-require 'ghc)
+(~/package-require 'intero)
+(~/package-require 'haskell-mode)
+(~/package-require 'hindent)
 (require 'haskell)
 (require 'hindent)
 
@@ -1205,10 +1228,12 @@
 ;; ---------------------------------------------------------------------
 ;; JAVASCRIPT
 
-(package-require 'js2-mode)
-(package-require 'skewer-mode)
+(~/package-require 'js2-mode)
+(~/package-require 'skewer-mode)
+(~/package-require 'jsx-mode)
 
 (add-to-list 'auto-mode-alist '("\\.js$" . js2-mode))
+(add-to-list 'auto-mode-alist '("\\.jsx$" . jsx-mode))
 
 (setq-default js2-basic-offset 2)
 
@@ -1291,13 +1316,13 @@
 ;; GRAPHQL
 
 
-(package-require 'graphql-mode)
+(~/package-require 'graphql-mode)
 
 
 ;; ---------------------------------------------------------------------
 ;; PROLOG
 
-(package-require 'prolog)
+(~/package-require 'prolog)
 
 (add-to-list 'auto-mode-alist '("\\.pl$" . prolog-mode))
 
@@ -1315,14 +1340,72 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(ansi-color-faces-vector
+   [default bold shadow italic underline bold bold-italic bold])
+ '(ansi-color-names-vector
+   (vector "#eaeaea" "#d54e53" "DarkOliveGreen3" "#e7c547" "DeepSkyBlue1" "#c397d8" "#70c0b1" "#181a26"))
+ '(ansi-term-color-vector
+   [unspecified "#1d2021" "#fb543f" "#95c085" "#fac03b" "#0d6678" "#8f4673" "#0d6678" "#a89984"])
+ '(background-color "#202020")
+ '(background-mode dark)
  '(burdock-ruby-source-directory "/Users/noprompt/git/noprompt/rhubarb-mode/ruby/")
+ '(cursor-color "#cccccc")
+ '(cursor-type (quote bar))
  '(custom-safe-themes
    (quote
-    ("b85fc9f122202c71b9884c5aff428eb81b99d25d619ee6fde7f3016e08515f07" "c11421683c971b41d154b1a4ef20a2c800537b72fefa618b50b184bbfe6b48a0" "2a998a3b66a0a6068bcb8b53cd3b519d230dd1527b07232e54c8b9d84061d48d" "e04cdda50908b116031c09d7b316fff5d8f9bc6e2126411c9316969461bfd8b6" "5228973368d5a1ac0cbea0564d0cd724937f52cc06a8fd81fc65a4fa72ff837b" "5f99055206ed6a1b9958f7dd5eaa9f884f8b5a8678bd0c5e2622aced5c4a1be7" "4605ce6e798971d215b01844ea39e993d683aa2fa118e02e263539298f9f3921" "ccde32eaf485eb7579412cd756d10b0f20f89bff07696972d7ee46cb2e10b89d" "daa7ac1dde9d089a998fa2f90c19354fc4ef12bcfd312aca1bcf003a7c381501" "36746ad57649893434c443567cb3831828df33232a7790d232df6f5908263692" "a1289424bbc0e9f9877aa2c9a03c7dfd2835ea51d8781a0bf9e2415101f70a7e" "c7a9a68bd07e38620a5508fef62ec079d274475c8f92d75ed0c33c45fbe306bc" "16dd114a84d0aeccc5ad6fd64752a11ea2e841e3853234f19dc02a7b91f5d661" "2882cf41c12276b5875879a71cc670d1468653e342586075a48ed68cfed15bea" "12670281275ea7c1b42d0a548a584e23b9c4e1d2dabb747fd5e2d692bcd0d39b" "04790c9929eacf32d508b84d34e80ad2ee233f13f17767190531b8b350b9ef22" "f5f3a6fb685fe5e1587bafd07db3bf25a0655f3ddc579ed9d331b6b19827ea46" "ffac21ab88a0f4603969a24b96993bd73a13fe0989db7ed76d94c305891fad64" "4a91a64af7ff1182ed04f7453bb5a4b0c3d82148d27db699df89a5f1d449e2a4" "8cf1002c7f805360115700144c0031b9cfa4d03edc6a0f38718cef7b7cabe382" "3f546f127564de59f1c42dfd65d32bd7650fa5a614cd58c2df061da052ea3ec0" "cea3ec09c821b7eaf235882e6555c3ffa2fd23de92459751e18f26ad035d2142" "3380a2766cf0590d50d6366c5a91e976bdc3c413df963a0ab9952314b4577299" "08b8807d23c290c840bbb14614a83878529359eaba1805618b3be7d61b0b0a32" "41eb3fe4c6b80c7ad156a8c52e9dd6093e8856c7bbf2b92cc3a4108ceb385087" "946e871c780b159c4bb9f580537e5d2f7dba1411143194447604ecbaf01bd90c" "9955cc54cc64d6c051616dce7050c1ba34efc2b0613d89a70a68328f34e22c8f" "fc7fd2530b82a722ceb5b211f9e732d15ad41d5306c011253a0ba43aaf93dccc" "25c242b3c808f38b0389879b9cba325fb1fa81a0a5e61ac7cae8da9a32e2811b" "ef04dd1e33f7cbd5aa3187981b18652b8d5ac9e680997b45dc5d00443e6a46e3" "8be07a2c1b3a7300860c7a65c0ad148be6d127671be04d3d2120f1ac541ac103" "3de3f36a398d2c8a4796360bfce1fa515292e9f76b655bb9a377289a6a80a132" "7bef2d39bac784626f1635bd83693fae091f04ccac6b362e0405abf16a32230c" "722e1cd0dad601ec6567c32520126e42a8031cd72e05d2221ff511b58545b108" "0c3b1358ea01895e56d1c0193f72559449462e5952bded28c81a8e09b53f103f" "1606c3a5e58d74a10289df3c7a4005b670e2b80a54c87f05263862cbe4626ac5" "f869a5d068a371532c82027cdf1feefdc5768757c78c48a7e0177e90651503ad" "986e7e8e428decd5df9e8548a3f3b42afc8176ce6171e69658ae083f3c06211c" "463340338b9a67e1389be83e9220a0a2785433ff153fd9d659041c70a7a308d3" "4bf5c18667c48f2979ead0f0bdaaa12c2b52014a6abaa38558a207a65caeb8ad" "df21cdadd3f0648e3106338649d9fea510121807c907e2fd15565dde6409d6e9" "cbd8e65d2452dfaed789f79c92d230aa8bdf413601b261dbb1291fb88605110c" "ffe80c88e3129b2cddadaaf78263a7f896d833a77c96349052ad5b7753c0c5a5" "5a7830712d709a4fc128a7998b7fa963f37e960fd2e8aa75c76f692b36e6cf3c" "6145e62774a589c074a31a05dfa5efdf8789cf869104e905956f0cbd7eda9d0e" "78c1c89192e172436dbf892bd90562bc89e2cc3811b5f9506226e735a953a9c6" "c968804189e0fc963c641f5c9ad64bca431d41af2fb7e1d01a2a6666376f819c" "85e6bb2425cbfeed2f2b367246ad11a62fb0f6d525c157038a0d0eaaabc1bfee" "d9dab332207600e49400d798ed05f38372ec32132b3f7d2ba697e59088021555" "250268d5c0b4877cc2b7c439687f8145a2c85a48981f7070a72c7f47a2d2dc13" "d96587ec2c7bf278269b8ec2b800c7d9af9e22d816827639b332b0e613314dfd" "6f3e8df833cdaaef4ae0fb5cad70f5f74afc834a5eb8eec45efa5dd8f7356f9d" "3f67aee8f8d8eedad7f547a346803be4cc47c420602e19d88bdcccc66dba033b" "7790dbc91156dd9a5c7f2ee99e5f7e6549f244038b46ed6352d7693be2e0aec6" "5b8eccff13d79fc9b26c544ee20e1b0c499587d6c4bfc38cabe34beaf2c2fc77" "8543b328ed10bc7c16a8a35c523699befac0de00753824d7e90148bca583f986" "aeb698d431751b18153e89b5f838fc3992433780a39a082740db216c7202a1c9" "6271fc9740379f8e2722f1510d481c1df1fcc43e48fa6641a5c19e954c21cc8f" "076a94693c0f6fa99612121c18ccb48bfbd842c05b6b9ed04b6e7e0a0f95a53e" "aea30125ef2e48831f46695418677b9d676c3babf43959c8e978c0ad672a7329" "1263771faf6967879c3ab8b577c6c31020222ac6d3bac31f331a74275385a452" "93268bf5365f22c685550a3cbb8c687a1211e827edc76ce7be3c4bd764054bad" "9be1d34d961a40d94ef94d0d08a364c3d27201f3c98c9d38e36f10588469ea57" "73ad471d5ae9355a7fa28675014ae45a0589c14492f52c32a4e9b393fcc333fd" "b8929cff63ffc759e436b0f0575d15a8ad7658932f4b2c99415f3dde09b32e97" "9c4acf7b5801f25501f0db26ac3eee3dc263ed51afd01f9dcfda706a15234733" "85d609b07346d3220e7da1e0b87f66d11b2eeddad945cac775e80d2c1adb0066" "e1498b2416922aa561076edc5c9b0ad7b34d8ff849f335c13364c8f4276904f0" "5a39d2a29906ab273f7900a2ae843e9aa29ed5d205873e1199af4c9ec921aaab" "840db7f67ce92c39deb38f38fbc5a990b8f89b0f47b77b96d98e4bf400ee590a" "a62f0662e6aa7b05d0b4493a8e245ab31492765561b08192df61c9d1c7e1ddee" "159aab698b9d3fb03b495ce3af2d298f4c6dfdf21b53c27cd7f472ee5a1a1de3" "3e34e9bf818cf6301fcabae2005bba8e61b1caba97d95509c8da78cff5f2ec8e" "1d079355c721b517fdc9891f0fda927fe3f87288f2e6cc3b8566655a64ca5453" "92192ea8f0bf04421f5b245d906701abaa7bb3b0d2b3b14fca2ee5ebb1da38d8" "34ed3e2fa4a1cb2ce7400c7f1a6c8f12931d8021435bad841fdc1192bd1cc7da" "760ce657e710a77bcf6df51d97e51aae2ee7db1fba21bbad07aab0fa0f42f834" "dd4628d6c2d1f84ad7908c859797b24cc6239dfe7d71b3363ccdd2b88963f336" "cabc32838ccceea97404f6fcb7ce791c6e38491fd19baa0fcfb336dcc5f6e23c" "b3bcf1b12ef2a7606c7697d71b934ca0bdd495d52f901e73ce008c4c9825a3aa" "eb0a314ac9f75a2bf6ed53563b5d28b563eeba938f8433f6d1db781a47da1366" "a632c5ce9bd5bcdbb7e22bf278d802711074413fd5f681f39f21d340064ff292" "afc220610bee26945b7c750b0cca03775a8b73c27fdca81a586a0a62d45bbce2" "7ceb8967b229c1ba102378d3e2c5fef20ec96a41f615b454e0dc0bfa1d326ea6" "32e3693cd7610599c59997fee36a68e7dd34f21db312a13ff8c7e738675b6dfc" "0820d191ae80dcadc1802b3499f84c07a09803f2cb90b343678bdb03d225b26b" "7ed6913f96c43796aa524e9ae506b0a3a50bfca061eed73b66766d14adfa86d1" "0c311fb22e6197daba9123f43da98f273d2bfaeeaeb653007ad1ee77f0003037" "b06a48029805afb142d96e817abb89e742e5dd7ec7e29c2a1b89948c8e9a225b" "e80a0a5e1b304eb92c58d0398464cd30ccbc3622425b6ff01eea80e44ea5130e" "30a8a5a9099e000f5d4dbfb2d6706e0a94d56620320ce1071eede5481f77d312" "024872c7e77508eb4820866aa9f4251e9eae359c613be5950aa1ee33186c8849" "8288b9b453cdd2398339a9fd0cec94105bc5ca79b86695bd7bf0381b1fbe8147" "1619bebce7101253cf2863133632089435d6f25c89f0711be5bdf0746e7d3572" "3d5307e5d6eb221ce17b0c952aa4cf65dbb3fa4a360e12a71e03aab78e0176c5" "715fdcd387af7e963abca6765bd7c2b37e76154e65401cd8d86104f22dd88404" "94ba29363bfb7e06105f68d72b268f85981f7fba2ddef89331660033101eb5e5" "9f3dd1d7b46e99b94bb53506c44b651c811b3552100898842bdd22ce63ab8b55" "6c7021e320ab007b8549d46f329f0e53fe33c83fb7e315cbdcf5f5175871f955" "edbd517c6ab14f7a224d9817db571971ed3ca2bbab112ac63d5cba4e81a43e21" "49b1bb63985aefb6fb365967080918e6e773f0ef8348cfdac49a235fde13c57a" "71ecffba18621354a1be303687f33b84788e13f40141580fa81e7840752d31bf" "3ed645b3c08080a43a2a15e5768b893c27f6a02ca3282576e3bc09f3d9fa3aaa" "e62cc95f871e4b5474c45c8d2f426ad91f7557666d48f5c605e9d55c3768752f" "aed73c6d0afcf2232bb25ed2d872c7a1c4f1bda6759f84afc24de6a1aec93da8" "8db4b03b9ae654d4a57804286eb3e332725c84d7cdab38463cb6b97d5762ad26" "133222702a3c75d16ea9c50743f66b987a7209fb8b964f2c0938a816a83379a0" "959a77d21e6f15c5c63d360da73281fdc40db3e9f94e310fc1e8213f665d0278" "1edf370d2840c0bf4c031a044f3f500731b41a3fd96b02e4c257522c7457882e" "db9feb330fd7cb170b01b8c3c6ecdc5179fc321f1a4824da6c53609b033b2810" "e681c4fc684a543ce97c2d55082c6585182c0089f605dc9a5fe193870f03edc6" "bf81a86f9cfa079a7bb9841bc6ecf9a2e8999b85e4ae1a4d0138975921315713" "e24679edfdea016519c0e2d4a5e57157a11f928b7ef4361d00c23a7fe54b8e01" "cdfb22711f64d0e665f40b2607879fcf2607764b2b70d672ddaa26d2da13049f" "50e7f9d112e821e42bd2b8410d50de966c35c7434dec12ddea99cb05dd368dd8" "492d12e4ec6a4bb098a8150e8c99372f75617f141b78f94ff5af358c6bda23a1" "1e467344d9bc6dfdd71d64705612882c795170097e48a5bad10ce587e49e97d5" "44eec3c3e6e673c0d41b523a67b64c43b6e38f8879a7969f306604dcf908832c" "4904daa168519536b08ca4655d798ca0fb50d3545e6244cefcf7d0c7b338af7e" "419637b7a8c9cb43f273980f0c9879c0cbadace6b38efac0281e031772c84eb2" "b571f92c9bfaf4a28cb64ae4b4cdbda95241cd62cf07d942be44dc8f46c491f4" "196cc00960232cfc7e74f4e95a94a5977cb16fd28ba7282195338f68c84058ec" "1fab355c4c92964546ab511838e3f9f5437f4e68d9d1d073ab8e36e51b26ca6a" "d8f76414f8f2dcb045a37eb155bfaa2e1d17b6573ed43fb1d18b936febc7bbc2" "88d556f828e4ec17ac074077ef9dcaa36a59dccbaa6f2de553d6528b4df79cbd" "b6f42c69cf96795c75b1e79e5cd8ca62f9f9a0cb07bf11d1e0b49f97785358f1" "7d2447bfa3b440e4eb985c6d199afb25c1b71ea8179066b81a09915ebf3aa95e" "5d7e1a089a0392827c1a1a626c93f2be5cf1a108a5f86663e9f1eed67fd094ea" "cdd26fa6a8c6706c9009db659d2dffd7f4b0350f9cc94e5df657fa295fffec71" "28c015882edacd8a785f191d91104ee47c45fc6f5ca23e7a3d1700169cd75516" "dc261a3614777e08f8c8f70d7cf63215786eafeedae45fc7f062c614eabf584c" "726dd9a188747664fbbff1cd9ab3c29a3f690a7b861f6e6a1c64462b64b306de" "76626efc044daee1c402e50f185bd633d1a688c332bc15c8fd5db4cdf2966b79" "86a731bda96ed5ed69980b4cbafe45614ec3c288da3b773e4585101e7ece40d2" "fbcdb6b7890d0ec1708fa21ab08eb0cc16a8b7611bb6517b722eba3891dfc9dd" "f9d34593e9dd14b2d798494609aa0fddca618145a5d4b8a1819283bc5b7a2bfd" "8f0334c430540bf45dbcbc06184a2e8cb01145f0ae1027ce6b1c40876144c0c9" "beeb5ac6b65fcccfe434071d4624ff0308b5968bf2f0c01b567d212bcaf66054" "bb08c73af94ee74453c90422485b29e5643b73b05e8de029a6909af6a3fb3f58" "06f0b439b62164c6f8f84fdda32b62fb50b6d00e8b01c2208e55543a6337433a" "628278136f88aa1a151bb2d6c8a86bf2b7631fbea5f0f76cba2a0079cd910f7d" "1b8d67b43ff1723960eb5e0cba512a2c7a2ad544ddb2533a90101fd1852b426e" "82d2cac368ccdec2fcc7573f24c3f79654b78bf133096f9b40c20d97ec1d8016" "4aee8551b53a43a883cb0b7f3255d6859d766b6c5e14bcb01bed572fcbef4328" "4cf3221feff536e2b3385209e9b9dc4c2e0818a69a1cdb4b522756bcdf4e00a4" "de2c46ed1752b0d0423cde9b6401062b67a6a1300c068d5d7f67725adc6c3afb" "95db78d85e3c0e735da28af774dfa59308db832f84b8a2287586f5b4f21a7a5b" "66132890ee1f884b4f8e901f0c61c5ed078809626a547dbefbb201f900d03fd8" "f04122bbc305a202967fa1838e20ff741455307c2ae80a26035fbf5d637e325f" "c1390663960169cd92f58aad44ba3253227d8f715c026438303c09b9fb66cdfb" "bf648fd77561aae6722f3d53965a9eb29b08658ed045207fe32ffed90433eb52" "53c542b560d232436e14619d058f81434d6bbcdc42e00a4db53d2667d841702e" "f7094f95081ade69e556e0f77b92685a528edc62adbff33f19a0fef9c1424975" "41f5dc9ed7495632659799cad8f2a800e647039c8156118eeace34b1487a4372" "77fc243537528d575a79ba067f163d9af80df6f8600a20805de2ba8da6b3ba65" "7d4d00a2c2a4bba551fcab9bfd9186abe5bfa986080947c2b99ef0b4081cb2a6" "38743882bea2c9b8cca7b3beec6cd295af182b09cd7931e60826ce84c09e5ab8" "e53cc4144192bb4e4ed10a3fa3e7442cae4c3d231df8822f6c02f1220a0d259a" "72348ab1195650b7357fc109c1695da71e0dff6e2cf59f144851afd330308720" "51bea7765ddaee2aac2983fac8099ec7d62dff47b708aa3595ad29899e9e9e44" "57c3a891ccbe422beab64b87906b9fc32a1b14d120b28577dea3b3bad5901c03" "56cb99174fad69feba8edd6663c592e77d77332fb4c4bb5be058ef459a426463" "6eaf798ea6d282767006d74d79435c4f0eb9826fcc1afa9ef0c4f9a69fdd44da" "387c1002dc74cc227328b361ad8e2772736e4c4bf5c17a1f76f66a6f6e3524c6" "e504d40d974f54ee7f5e3e667f984fcd0b180fd4b3efcd89832b95e52cb5050c" "43ad20da04c7ef7b66c5bdc9c6ca3212ea43ba7d71efbbdd70e4c299c08c093e" "d43938753d1553540a99e0ff915f31a0efe295656195016d6b479777b50a3f90" "61cbf304a24a2f9dce16efe22130a4576c568f16c64ef9d6ae82e11b65ba1c52" "f0a99f53cbf7b004ba0c1760aa14fd70f2eabafe4e62a2b3cf5cabae8203113b" "ee6081af57dd389d9c94be45d49cf75d7d737c4a78970325165c7d8cb6eb9e34" "941bc214a26ed295e68bbeaadcd279475a3d6df06ae36b0b2872319d58b855f7" "329e9e8c979ce487c8b4f923a8ddfdbdcf5c6c69082a27e2271d9f4b23b7477a" "7dd515d883520286fc8936ce32381fb01b978d0d7cfb6fe56f7f55d8accbf63a" "b234b4b98c70de265ed95f73ba4bb4e6a1ec7e70c0bfe355f60b2c1f94b45d5e" "b8a865d858814ef21d2fc27328a55da9e47ef924afc6043a4b4b9774786c6677" "2a8571b0d6aafa09a9b044db2cddf15acbdcc5a2eda3a848304343177a6b98aa" "b775f042ee4eac6fb17231ba939140fa688b6bad098e54ba3c0ed7d9a6cc3268" "73338d58c8d87c722be9fdfe5af45baa26bbdff2c3e2305bd6c9481f8867bdc4" "b5dbcd843f467fb8a85440bc148f065e3ba6318eeabb493c5869d0e4e783cead" "58ef798c0d6700e9c4b6af5371b88ce72cf272a0f51677b714ba7eb9f7f44dd5" "d915f98ec1b444953ef5a58e17de3df122a7876996eb48cb7042c0df2fb49fc7" "50f2c52f87cadf18c9f6f6da73a48123f6f9563f3f8565ef334e8c8bfd3748e2" "e3cba678a91ca9d10d676ac098677a5f73568ca4553c9640e5d04b35ea27c150" "3a5d311c0c6770a7fbda07e59b694f7f17ab6d472e8dfd0421146176aac6df5c" "2ffd1e3f39dc4284688775ff2eca173fb7a5f0b81cbec7bbc4bdafe2c5bdc59b" "28e8be1d4ecc0007c695db5df83b515c41551971e9bb688235a57f04a896be52" "c675b5d31397ea1c5138c3d23a66c27a13371e3a32a475a59808ba5e8b18036c" "27188886f3bb62e00f1f9a778d91afd6072c7f31941ecf9ec7a847da0ce65d96" "bb912be2c5c5013c3e6ec95ecc7de389e3736ecb4f920283877addde69d3af4b" "e9b6a09c4b4ec239dc60851d2504e8d0200b165b26cf3949a71754b01224fce8" "9d8123cade02c4fb3168e8b6f3278296b3ebfbb2d013f089f8f38a45e79d209a" "4fff2cd238cd997353fee5c0b91709b5f8ac01f290244559627b357c3ad02c75" "1b23bd6576aea1926ba6c528b1541a474613706ba4b021484ce9a4895c18458b" "5051c19b8a50dcc04f866ec34ff76b9e3393dc2546890cdb566f4a38697d30a9" "031711b978eeaab58685dbdcf1e91a2b1be4908f962697ba72b7784ad50ba51c" "e16940739758b35d82ee55d269f5f028c8b23e5c5786e8e63ad890580c792e78" "12b43553eb62fad4fc5361a9afc874b48cc77b76891e6a2d2f6ec957b934554c" "5a515057e7c4e39b42d402c3e9a5dff6984717af09a9abd05cc3d590a08a19cb" "e802c27d13f74a70f06973c4794382343de653a61d664dcf361a2a7bb697bf2c" "9921c8ce62cc6191a05fef3e681f7110c6272dfca75a25cd588bc7f6103e005e" "8fbaca482eb08c07dd3dee3495c621de3c6e4ebbcbe2f6cc88949d57787cb74d" "53e29ea3d0251198924328fd943d6ead860e9f47af8d22f0b764d11168455a8e" "0744f61189c62ed6d1f8fa69f6883d5772fe8577310b09e623c62c040f208cd4" "454dc6f3a1e9e062f34c0f988bcef5d898146edc5df4aa666bf5c30bed2ada2e" "573e46dadf8c2623256a164831cfe9e42d5c700baed1f8ecd1de0675072e23c2" "3cdc26b9fce6dbc23594b6194150b025909daa4b33fa58343aef4228b1baa4b5" "a5062bd764b24b4c6b3311c5130edc9dec2ed0a5be099db16f67ca648d5116d4" "e2efd6fb54caa83a0b90b5531dff9a0e82a85da0ec6be1e1e099a3812a64700b" "8c2c0368b83202caddaaf4f3d73427f644539a26c299fde942e37401959cb9e4" "c746b748e2a7eff4d211dd7bb5454d9641dffdfd3f03d13a3465cf416858fcf7" "cec78cf3910d386a50c6367dd7c41d13420326148a59b0ceaa02991786b023f0" "e6d83e70d2955e374e821e6785cd661ec363091edf56a463d0018dc49fbc92dd" "da49c10eb5dfa7779d9ac68629f00e42463f82c80ea849a251336e806dfec4b1" default)))
+    ("a3fa4abaf08cc169b61dea8f6df1bbe4123ec1d2afeb01c17e11fdc31fc66379" "b4c13d25b1f9f66eb769e05889ee000f89d64b089f96851b6da643cee4fdab08" "3a3de615f80a0e8706208f0a71bbcc7cc3816988f971b6d237223b6731f91605" "f0dc4ddca147f3c7b1c7397141b888562a48d9888f1595d69572db73be99a024" "4980e5ddaae985e4bae004280bd343721271ebb28f22b3e3b2427443e748cd3f" "5b24babd20e58465e070a8d7850ec573fe30aca66c8383a62a5e7a3588db830b" "0c387e27a3dd040b33c6711ff92e13bd952369a788eee97e4e4ea2335ac5528f" "b85fc9f122202c71b9884c5aff428eb81b99d25d619ee6fde7f3016e08515f07" "c11421683c971b41d154b1a4ef20a2c800537b72fefa618b50b184bbfe6b48a0" "2a998a3b66a0a6068bcb8b53cd3b519d230dd1527b07232e54c8b9d84061d48d" "e04cdda50908b116031c09d7b316fff5d8f9bc6e2126411c9316969461bfd8b6" "5228973368d5a1ac0cbea0564d0cd724937f52cc06a8fd81fc65a4fa72ff837b" "5f99055206ed6a1b9958f7dd5eaa9f884f8b5a8678bd0c5e2622aced5c4a1be7" "4605ce6e798971d215b01844ea39e993d683aa2fa118e02e263539298f9f3921" "ccde32eaf485eb7579412cd756d10b0f20f89bff07696972d7ee46cb2e10b89d" "daa7ac1dde9d089a998fa2f90c19354fc4ef12bcfd312aca1bcf003a7c381501" "36746ad57649893434c443567cb3831828df33232a7790d232df6f5908263692" "a1289424bbc0e9f9877aa2c9a03c7dfd2835ea51d8781a0bf9e2415101f70a7e" "c7a9a68bd07e38620a5508fef62ec079d274475c8f92d75ed0c33c45fbe306bc" "16dd114a84d0aeccc5ad6fd64752a11ea2e841e3853234f19dc02a7b91f5d661" "2882cf41c12276b5875879a71cc670d1468653e342586075a48ed68cfed15bea" "12670281275ea7c1b42d0a548a584e23b9c4e1d2dabb747fd5e2d692bcd0d39b" "04790c9929eacf32d508b84d34e80ad2ee233f13f17767190531b8b350b9ef22" "f5f3a6fb685fe5e1587bafd07db3bf25a0655f3ddc579ed9d331b6b19827ea46" "ffac21ab88a0f4603969a24b96993bd73a13fe0989db7ed76d94c305891fad64" "4a91a64af7ff1182ed04f7453bb5a4b0c3d82148d27db699df89a5f1d449e2a4" "8cf1002c7f805360115700144c0031b9cfa4d03edc6a0f38718cef7b7cabe382" "3f546f127564de59f1c42dfd65d32bd7650fa5a614cd58c2df061da052ea3ec0" "cea3ec09c821b7eaf235882e6555c3ffa2fd23de92459751e18f26ad035d2142" "3380a2766cf0590d50d6366c5a91e976bdc3c413df963a0ab9952314b4577299" "08b8807d23c290c840bbb14614a83878529359eaba1805618b3be7d61b0b0a32" "41eb3fe4c6b80c7ad156a8c52e9dd6093e8856c7bbf2b92cc3a4108ceb385087" "946e871c780b159c4bb9f580537e5d2f7dba1411143194447604ecbaf01bd90c" "9955cc54cc64d6c051616dce7050c1ba34efc2b0613d89a70a68328f34e22c8f" "fc7fd2530b82a722ceb5b211f9e732d15ad41d5306c011253a0ba43aaf93dccc" "25c242b3c808f38b0389879b9cba325fb1fa81a0a5e61ac7cae8da9a32e2811b" "ef04dd1e33f7cbd5aa3187981b18652b8d5ac9e680997b45dc5d00443e6a46e3" "8be07a2c1b3a7300860c7a65c0ad148be6d127671be04d3d2120f1ac541ac103" "3de3f36a398d2c8a4796360bfce1fa515292e9f76b655bb9a377289a6a80a132" "7bef2d39bac784626f1635bd83693fae091f04ccac6b362e0405abf16a32230c" "722e1cd0dad601ec6567c32520126e42a8031cd72e05d2221ff511b58545b108" "0c3b1358ea01895e56d1c0193f72559449462e5952bded28c81a8e09b53f103f" "1606c3a5e58d74a10289df3c7a4005b670e2b80a54c87f05263862cbe4626ac5" "f869a5d068a371532c82027cdf1feefdc5768757c78c48a7e0177e90651503ad" "986e7e8e428decd5df9e8548a3f3b42afc8176ce6171e69658ae083f3c06211c" "463340338b9a67e1389be83e9220a0a2785433ff153fd9d659041c70a7a308d3" "4bf5c18667c48f2979ead0f0bdaaa12c2b52014a6abaa38558a207a65caeb8ad" "df21cdadd3f0648e3106338649d9fea510121807c907e2fd15565dde6409d6e9" "cbd8e65d2452dfaed789f79c92d230aa8bdf413601b261dbb1291fb88605110c" "ffe80c88e3129b2cddadaaf78263a7f896d833a77c96349052ad5b7753c0c5a5" "5a7830712d709a4fc128a7998b7fa963f37e960fd2e8aa75c76f692b36e6cf3c" "6145e62774a589c074a31a05dfa5efdf8789cf869104e905956f0cbd7eda9d0e" "78c1c89192e172436dbf892bd90562bc89e2cc3811b5f9506226e735a953a9c6" "c968804189e0fc963c641f5c9ad64bca431d41af2fb7e1d01a2a6666376f819c" "85e6bb2425cbfeed2f2b367246ad11a62fb0f6d525c157038a0d0eaaabc1bfee" "d9dab332207600e49400d798ed05f38372ec32132b3f7d2ba697e59088021555" "250268d5c0b4877cc2b7c439687f8145a2c85a48981f7070a72c7f47a2d2dc13" "d96587ec2c7bf278269b8ec2b800c7d9af9e22d816827639b332b0e613314dfd" "6f3e8df833cdaaef4ae0fb5cad70f5f74afc834a5eb8eec45efa5dd8f7356f9d" "3f67aee8f8d8eedad7f547a346803be4cc47c420602e19d88bdcccc66dba033b" "7790dbc91156dd9a5c7f2ee99e5f7e6549f244038b46ed6352d7693be2e0aec6" "5b8eccff13d79fc9b26c544ee20e1b0c499587d6c4bfc38cabe34beaf2c2fc77" "8543b328ed10bc7c16a8a35c523699befac0de00753824d7e90148bca583f986" "aeb698d431751b18153e89b5f838fc3992433780a39a082740db216c7202a1c9" "6271fc9740379f8e2722f1510d481c1df1fcc43e48fa6641a5c19e954c21cc8f" "076a94693c0f6fa99612121c18ccb48bfbd842c05b6b9ed04b6e7e0a0f95a53e" "aea30125ef2e48831f46695418677b9d676c3babf43959c8e978c0ad672a7329" "1263771faf6967879c3ab8b577c6c31020222ac6d3bac31f331a74275385a452" "93268bf5365f22c685550a3cbb8c687a1211e827edc76ce7be3c4bd764054bad" "9be1d34d961a40d94ef94d0d08a364c3d27201f3c98c9d38e36f10588469ea57" "73ad471d5ae9355a7fa28675014ae45a0589c14492f52c32a4e9b393fcc333fd" "b8929cff63ffc759e436b0f0575d15a8ad7658932f4b2c99415f3dde09b32e97" "9c4acf7b5801f25501f0db26ac3eee3dc263ed51afd01f9dcfda706a15234733" "85d609b07346d3220e7da1e0b87f66d11b2eeddad945cac775e80d2c1adb0066" "e1498b2416922aa561076edc5c9b0ad7b34d8ff849f335c13364c8f4276904f0" "5a39d2a29906ab273f7900a2ae843e9aa29ed5d205873e1199af4c9ec921aaab" "840db7f67ce92c39deb38f38fbc5a990b8f89b0f47b77b96d98e4bf400ee590a" "a62f0662e6aa7b05d0b4493a8e245ab31492765561b08192df61c9d1c7e1ddee" "159aab698b9d3fb03b495ce3af2d298f4c6dfdf21b53c27cd7f472ee5a1a1de3" "3e34e9bf818cf6301fcabae2005bba8e61b1caba97d95509c8da78cff5f2ec8e" "1d079355c721b517fdc9891f0fda927fe3f87288f2e6cc3b8566655a64ca5453" "92192ea8f0bf04421f5b245d906701abaa7bb3b0d2b3b14fca2ee5ebb1da38d8" "34ed3e2fa4a1cb2ce7400c7f1a6c8f12931d8021435bad841fdc1192bd1cc7da" "760ce657e710a77bcf6df51d97e51aae2ee7db1fba21bbad07aab0fa0f42f834" "dd4628d6c2d1f84ad7908c859797b24cc6239dfe7d71b3363ccdd2b88963f336" "cabc32838ccceea97404f6fcb7ce791c6e38491fd19baa0fcfb336dcc5f6e23c" "b3bcf1b12ef2a7606c7697d71b934ca0bdd495d52f901e73ce008c4c9825a3aa" "eb0a314ac9f75a2bf6ed53563b5d28b563eeba938f8433f6d1db781a47da1366" "a632c5ce9bd5bcdbb7e22bf278d802711074413fd5f681f39f21d340064ff292" "afc220610bee26945b7c750b0cca03775a8b73c27fdca81a586a0a62d45bbce2" "7ceb8967b229c1ba102378d3e2c5fef20ec96a41f615b454e0dc0bfa1d326ea6" "32e3693cd7610599c59997fee36a68e7dd34f21db312a13ff8c7e738675b6dfc" "0820d191ae80dcadc1802b3499f84c07a09803f2cb90b343678bdb03d225b26b" "7ed6913f96c43796aa524e9ae506b0a3a50bfca061eed73b66766d14adfa86d1" "0c311fb22e6197daba9123f43da98f273d2bfaeeaeb653007ad1ee77f0003037" "b06a48029805afb142d96e817abb89e742e5dd7ec7e29c2a1b89948c8e9a225b" "e80a0a5e1b304eb92c58d0398464cd30ccbc3622425b6ff01eea80e44ea5130e" "30a8a5a9099e000f5d4dbfb2d6706e0a94d56620320ce1071eede5481f77d312" "024872c7e77508eb4820866aa9f4251e9eae359c613be5950aa1ee33186c8849" "8288b9b453cdd2398339a9fd0cec94105bc5ca79b86695bd7bf0381b1fbe8147" "1619bebce7101253cf2863133632089435d6f25c89f0711be5bdf0746e7d3572" "3d5307e5d6eb221ce17b0c952aa4cf65dbb3fa4a360e12a71e03aab78e0176c5" "715fdcd387af7e963abca6765bd7c2b37e76154e65401cd8d86104f22dd88404" "94ba29363bfb7e06105f68d72b268f85981f7fba2ddef89331660033101eb5e5" "9f3dd1d7b46e99b94bb53506c44b651c811b3552100898842bdd22ce63ab8b55" "6c7021e320ab007b8549d46f329f0e53fe33c83fb7e315cbdcf5f5175871f955" "edbd517c6ab14f7a224d9817db571971ed3ca2bbab112ac63d5cba4e81a43e21" "49b1bb63985aefb6fb365967080918e6e773f0ef8348cfdac49a235fde13c57a" "71ecffba18621354a1be303687f33b84788e13f40141580fa81e7840752d31bf" "3ed645b3c08080a43a2a15e5768b893c27f6a02ca3282576e3bc09f3d9fa3aaa" "e62cc95f871e4b5474c45c8d2f426ad91f7557666d48f5c605e9d55c3768752f" "aed73c6d0afcf2232bb25ed2d872c7a1c4f1bda6759f84afc24de6a1aec93da8" "8db4b03b9ae654d4a57804286eb3e332725c84d7cdab38463cb6b97d5762ad26" "133222702a3c75d16ea9c50743f66b987a7209fb8b964f2c0938a816a83379a0" "959a77d21e6f15c5c63d360da73281fdc40db3e9f94e310fc1e8213f665d0278" "1edf370d2840c0bf4c031a044f3f500731b41a3fd96b02e4c257522c7457882e" "db9feb330fd7cb170b01b8c3c6ecdc5179fc321f1a4824da6c53609b033b2810" "e681c4fc684a543ce97c2d55082c6585182c0089f605dc9a5fe193870f03edc6" "bf81a86f9cfa079a7bb9841bc6ecf9a2e8999b85e4ae1a4d0138975921315713" "e24679edfdea016519c0e2d4a5e57157a11f928b7ef4361d00c23a7fe54b8e01" "cdfb22711f64d0e665f40b2607879fcf2607764b2b70d672ddaa26d2da13049f" "50e7f9d112e821e42bd2b8410d50de966c35c7434dec12ddea99cb05dd368dd8" "492d12e4ec6a4bb098a8150e8c99372f75617f141b78f94ff5af358c6bda23a1" "1e467344d9bc6dfdd71d64705612882c795170097e48a5bad10ce587e49e97d5" "44eec3c3e6e673c0d41b523a67b64c43b6e38f8879a7969f306604dcf908832c" "4904daa168519536b08ca4655d798ca0fb50d3545e6244cefcf7d0c7b338af7e" "419637b7a8c9cb43f273980f0c9879c0cbadace6b38efac0281e031772c84eb2" "b571f92c9bfaf4a28cb64ae4b4cdbda95241cd62cf07d942be44dc8f46c491f4" "196cc00960232cfc7e74f4e95a94a5977cb16fd28ba7282195338f68c84058ec" "1fab355c4c92964546ab511838e3f9f5437f4e68d9d1d073ab8e36e51b26ca6a" "d8f76414f8f2dcb045a37eb155bfaa2e1d17b6573ed43fb1d18b936febc7bbc2" "88d556f828e4ec17ac074077ef9dcaa36a59dccbaa6f2de553d6528b4df79cbd" "b6f42c69cf96795c75b1e79e5cd8ca62f9f9a0cb07bf11d1e0b49f97785358f1" "7d2447bfa3b440e4eb985c6d199afb25c1b71ea8179066b81a09915ebf3aa95e" "5d7e1a089a0392827c1a1a626c93f2be5cf1a108a5f86663e9f1eed67fd094ea" "cdd26fa6a8c6706c9009db659d2dffd7f4b0350f9cc94e5df657fa295fffec71" "28c015882edacd8a785f191d91104ee47c45fc6f5ca23e7a3d1700169cd75516" "dc261a3614777e08f8c8f70d7cf63215786eafeedae45fc7f062c614eabf584c" "726dd9a188747664fbbff1cd9ab3c29a3f690a7b861f6e6a1c64462b64b306de" "76626efc044daee1c402e50f185bd633d1a688c332bc15c8fd5db4cdf2966b79" "86a731bda96ed5ed69980b4cbafe45614ec3c288da3b773e4585101e7ece40d2" "fbcdb6b7890d0ec1708fa21ab08eb0cc16a8b7611bb6517b722eba3891dfc9dd" "f9d34593e9dd14b2d798494609aa0fddca618145a5d4b8a1819283bc5b7a2bfd" "8f0334c430540bf45dbcbc06184a2e8cb01145f0ae1027ce6b1c40876144c0c9" "beeb5ac6b65fcccfe434071d4624ff0308b5968bf2f0c01b567d212bcaf66054" "bb08c73af94ee74453c90422485b29e5643b73b05e8de029a6909af6a3fb3f58" "06f0b439b62164c6f8f84fdda32b62fb50b6d00e8b01c2208e55543a6337433a" "628278136f88aa1a151bb2d6c8a86bf2b7631fbea5f0f76cba2a0079cd910f7d" "1b8d67b43ff1723960eb5e0cba512a2c7a2ad544ddb2533a90101fd1852b426e" "82d2cac368ccdec2fcc7573f24c3f79654b78bf133096f9b40c20d97ec1d8016" "4aee8551b53a43a883cb0b7f3255d6859d766b6c5e14bcb01bed572fcbef4328" "4cf3221feff536e2b3385209e9b9dc4c2e0818a69a1cdb4b522756bcdf4e00a4" "de2c46ed1752b0d0423cde9b6401062b67a6a1300c068d5d7f67725adc6c3afb" "95db78d85e3c0e735da28af774dfa59308db832f84b8a2287586f5b4f21a7a5b" "66132890ee1f884b4f8e901f0c61c5ed078809626a547dbefbb201f900d03fd8" "f04122bbc305a202967fa1838e20ff741455307c2ae80a26035fbf5d637e325f" "c1390663960169cd92f58aad44ba3253227d8f715c026438303c09b9fb66cdfb" "bf648fd77561aae6722f3d53965a9eb29b08658ed045207fe32ffed90433eb52" "53c542b560d232436e14619d058f81434d6bbcdc42e00a4db53d2667d841702e" "f7094f95081ade69e556e0f77b92685a528edc62adbff33f19a0fef9c1424975" "41f5dc9ed7495632659799cad8f2a800e647039c8156118eeace34b1487a4372" "77fc243537528d575a79ba067f163d9af80df6f8600a20805de2ba8da6b3ba65" "7d4d00a2c2a4bba551fcab9bfd9186abe5bfa986080947c2b99ef0b4081cb2a6" "38743882bea2c9b8cca7b3beec6cd295af182b09cd7931e60826ce84c09e5ab8" "e53cc4144192bb4e4ed10a3fa3e7442cae4c3d231df8822f6c02f1220a0d259a" "72348ab1195650b7357fc109c1695da71e0dff6e2cf59f144851afd330308720" "51bea7765ddaee2aac2983fac8099ec7d62dff47b708aa3595ad29899e9e9e44" "57c3a891ccbe422beab64b87906b9fc32a1b14d120b28577dea3b3bad5901c03" "56cb99174fad69feba8edd6663c592e77d77332fb4c4bb5be058ef459a426463" "6eaf798ea6d282767006d74d79435c4f0eb9826fcc1afa9ef0c4f9a69fdd44da" "387c1002dc74cc227328b361ad8e2772736e4c4bf5c17a1f76f66a6f6e3524c6" "e504d40d974f54ee7f5e3e667f984fcd0b180fd4b3efcd89832b95e52cb5050c" "43ad20da04c7ef7b66c5bdc9c6ca3212ea43ba7d71efbbdd70e4c299c08c093e" "d43938753d1553540a99e0ff915f31a0efe295656195016d6b479777b50a3f90" "61cbf304a24a2f9dce16efe22130a4576c568f16c64ef9d6ae82e11b65ba1c52" "f0a99f53cbf7b004ba0c1760aa14fd70f2eabafe4e62a2b3cf5cabae8203113b" "ee6081af57dd389d9c94be45d49cf75d7d737c4a78970325165c7d8cb6eb9e34" "941bc214a26ed295e68bbeaadcd279475a3d6df06ae36b0b2872319d58b855f7" "329e9e8c979ce487c8b4f923a8ddfdbdcf5c6c69082a27e2271d9f4b23b7477a" "7dd515d883520286fc8936ce32381fb01b978d0d7cfb6fe56f7f55d8accbf63a" "b234b4b98c70de265ed95f73ba4bb4e6a1ec7e70c0bfe355f60b2c1f94b45d5e" "b8a865d858814ef21d2fc27328a55da9e47ef924afc6043a4b4b9774786c6677" "2a8571b0d6aafa09a9b044db2cddf15acbdcc5a2eda3a848304343177a6b98aa" "b775f042ee4eac6fb17231ba939140fa688b6bad098e54ba3c0ed7d9a6cc3268" "73338d58c8d87c722be9fdfe5af45baa26bbdff2c3e2305bd6c9481f8867bdc4" "b5dbcd843f467fb8a85440bc148f065e3ba6318eeabb493c5869d0e4e783cead" "58ef798c0d6700e9c4b6af5371b88ce72cf272a0f51677b714ba7eb9f7f44dd5" "d915f98ec1b444953ef5a58e17de3df122a7876996eb48cb7042c0df2fb49fc7" "50f2c52f87cadf18c9f6f6da73a48123f6f9563f3f8565ef334e8c8bfd3748e2" "e3cba678a91ca9d10d676ac098677a5f73568ca4553c9640e5d04b35ea27c150" "3a5d311c0c6770a7fbda07e59b694f7f17ab6d472e8dfd0421146176aac6df5c" "2ffd1e3f39dc4284688775ff2eca173fb7a5f0b81cbec7bbc4bdafe2c5bdc59b" "28e8be1d4ecc0007c695db5df83b515c41551971e9bb688235a57f04a896be52" "c675b5d31397ea1c5138c3d23a66c27a13371e3a32a475a59808ba5e8b18036c" "27188886f3bb62e00f1f9a778d91afd6072c7f31941ecf9ec7a847da0ce65d96" "bb912be2c5c5013c3e6ec95ecc7de389e3736ecb4f920283877addde69d3af4b" "e9b6a09c4b4ec239dc60851d2504e8d0200b165b26cf3949a71754b01224fce8" "9d8123cade02c4fb3168e8b6f3278296b3ebfbb2d013f089f8f38a45e79d209a" "4fff2cd238cd997353fee5c0b91709b5f8ac01f290244559627b357c3ad02c75" "1b23bd6576aea1926ba6c528b1541a474613706ba4b021484ce9a4895c18458b" "5051c19b8a50dcc04f866ec34ff76b9e3393dc2546890cdb566f4a38697d30a9" "031711b978eeaab58685dbdcf1e91a2b1be4908f962697ba72b7784ad50ba51c" "e16940739758b35d82ee55d269f5f028c8b23e5c5786e8e63ad890580c792e78" "12b43553eb62fad4fc5361a9afc874b48cc77b76891e6a2d2f6ec957b934554c" "5a515057e7c4e39b42d402c3e9a5dff6984717af09a9abd05cc3d590a08a19cb" "e802c27d13f74a70f06973c4794382343de653a61d664dcf361a2a7bb697bf2c" "9921c8ce62cc6191a05fef3e681f7110c6272dfca75a25cd588bc7f6103e005e" "8fbaca482eb08c07dd3dee3495c621de3c6e4ebbcbe2f6cc88949d57787cb74d" "53e29ea3d0251198924328fd943d6ead860e9f47af8d22f0b764d11168455a8e" "0744f61189c62ed6d1f8fa69f6883d5772fe8577310b09e623c62c040f208cd4" "454dc6f3a1e9e062f34c0f988bcef5d898146edc5df4aa666bf5c30bed2ada2e" "573e46dadf8c2623256a164831cfe9e42d5c700baed1f8ecd1de0675072e23c2" "3cdc26b9fce6dbc23594b6194150b025909daa4b33fa58343aef4228b1baa4b5" "a5062bd764b24b4c6b3311c5130edc9dec2ed0a5be099db16f67ca648d5116d4" "e2efd6fb54caa83a0b90b5531dff9a0e82a85da0ec6be1e1e099a3812a64700b" "8c2c0368b83202caddaaf4f3d73427f644539a26c299fde942e37401959cb9e4" "c746b748e2a7eff4d211dd7bb5454d9641dffdfd3f03d13a3465cf416858fcf7" "cec78cf3910d386a50c6367dd7c41d13420326148a59b0ceaa02991786b023f0" "e6d83e70d2955e374e821e6785cd661ec363091edf56a463d0018dc49fbc92dd" "da49c10eb5dfa7779d9ac68629f00e42463f82c80ea849a251336e806dfec4b1" default)))
  '(default-input-method "TeX")
+ '(diary-entry-marker (quote font-lock-variable-name-face))
  '(electric-indent-mode t)
+ '(emms-mode-line-icon-image-cache
+   (quote
+    (image :type xpm :ascent center :data "/* XPM */
+static char *note[] = {
+/* width height num_colors chars_per_pixel */
+\"    10   11        2            1\",
+/* colors */
+\". c #358d8d\",
+\"# c None s None\",
+/* pixels */
+\"###...####\",
+\"###.#...##\",
+\"###.###...\",
+\"###.#####.\",
+\"###.#####.\",
+\"#...#####.\",
+\"....#####.\",
+\"#..######.\",
+\"#######...\",
+\"######....\",
+\"#######..#\" };")))
  '(fci-rule-character-color "#192028")
  '(fci-rule-color "#192028")
+ '(foreground-color "#cccccc")
+ '(fringe-mode 10 nil (fringe))
+ '(gnus-logo-colors (quote ("#0d7b72" "#adadad")))
+ '(gnus-mode-line-image-cache
+   (quote
+    (image :type xpm :ascent center :data "/* XPM */
+static char *gnus-pointer[] = {
+/* width height num_colors chars_per_pixel */
+\"    18    13        2            1\",
+/* colors */
+\". c #358d8d\",
+\"# c None s None\",
+/* pixels */
+\"##################\",
+\"######..##..######\",
+\"#####........#####\",
+\"#.##.##..##...####\",
+\"#...####.###...##.\",
+\"#..###.######.....\",
+\"#####.########...#\",
+\"###########.######\",
+\"####.###.#..######\",
+\"######..###.######\",
+\"###....####.######\",
+\"###..######.######\",
+\"###########.######\" };")))
  '(haskell-process-auto-import-loaded-modules t)
  '(haskell-process-log t)
  '(haskell-process-suggest-add-package nil)
@@ -1335,20 +1418,62 @@
  '(haskell-process-suggest-remove-import-lines nil)
  '(haskell-process-type (quote stack-ghci))
  '(haskell-tags-on-save t)
+ '(hl-paren-colors
+   (quote
+    ("#B9F" "#B8D" "#B7B" "#B69" "#B57" "#B45" "#B33" "#B11")))
+ '(hl-sexp-background-color "#1c1f26")
+ '(jdee-db-active-breakpoint-face-colors (cons "#0d0f11" "#7FC1CA"))
+ '(jdee-db-requested-breakpoint-face-colors (cons "#0d0f11" "#A8CE93"))
+ '(jdee-db-spec-breakpoint-face-colors (cons "#0d0f11" "#899BA6"))
+ '(jsx-indent-level 2)
+ '(linum-format " %6d ")
+ '(main-line-color1 "#222912")
+ '(main-line-color2 "#09150F")
+ '(notmuch-search-line-faces
+   (quote
+    (("unread" :foreground "#aeee00")
+     ("flagged" :foreground "#0a9dff")
+     ("deleted" :foreground "#ff2c4b" :bold t))))
  '(package-selected-packages
    (quote
-    (base16-themes graphql-mode parsec font-lock-studio highlight-indent-guides hindent sql-indent sqlup-mode restclient scribble-mode quack jsc-light-theme rubocop rubocop-mode subatomic256-theme ham-mode evil moe-theme clojure-mode zonokai-theme yoshi-theme yard-mode yaml-mode xresources-theme which-key web-mode ubuntu-theme twilight-bright-theme twilight-anti-bright-theme tuareg tronesque-theme toml-mode theme-changer term+ tagedit swiper sublime-themes subatomic-theme stekene-theme sr-speedbar spacegray-theme soothe-theme smyx-theme smex smartparens smart-tab slime-theme slime-js slim-mode skewer-mode shen-mode seti-theme scss-mode sass-mode sane-term ruby-tools ruby-test-mode ruby-end ruby-electric rspec-mode robe rinari request rbenv rainbow-mode rainbow-identifiers rainbow-delimiters racket-mode racer quasi-monochrome-theme projectile planet-theme pivotal-tracker noctilux-theme neotree monokai-theme molokai-theme maxframe markdown-mode majapahit-theme magit lush-theme lispy less-css-mode lenlen-theme key-chord jujube-theme jsx-mode jdee jazz-theme ir-black-theme intero ido-vertical-mode ido-ubiquitous idle-highlight-mode highlight-sexp highlight-indentation heroku-theme hamburg-theme gruvbox-theme grandshell-theme gotham-theme goose-theme github-theme gherkin-mode ghc geiser fuzzy flycheck-haskell flatland-theme fish-mode firecode-theme firebelly-theme feature-mode farmhouse-theme faff-theme faceup exec-path-from-shell evil-paredit evil-mc evil-annoying-arrows elm-mode elfeed eink-theme dracula-theme dash-functional dash-at-point darktooth-theme darkmine-theme dark-krystal-theme darcula-theme cyberpunk-theme csv-nav csv-mode css-eldoc csharp-mode company-quickhelp company-inf-ruby colorsarenice-theme color-theme-sanityinc-tomorrow color-theme-sanityinc-solarized coffee-mode clues-theme clojurescript-mode clj-refactor cargo boron-theme birds-of-paradise-plus-theme beacon base16-theme autopair aurora-theme atom-one-dark-theme atom-dark-theme assemblage-theme arjen-grey-theme apache-mode airline-themes aggressive-indent ag ac-cider-compliment ac-cider)))
+    (doom-themes doom-theme afternoon-theme alect-themes alect-theme alec-theme alec-themes badwolf-theme soft-charcoal-theme spacemacs-dark spacemacs-dark-theme toxi-theme bubbleberry-theme material-theme bundler ace-jump-mode folding base16-themes graphql-mode parsec font-lock-studio highlight-indent-guides hindent sql-indent sqlup-mode restclient scribble-mode quack jsc-light-theme rubocop rubocop-mode subatomic256-theme ham-mode evil moe-theme clojure-mode zonokai-theme yoshi-theme yard-mode yaml-mode xresources-theme which-key web-mode ubuntu-theme twilight-bright-theme twilight-anti-bright-theme tuareg tronesque-theme toml-mode theme-changer term+ tagedit swiper sublime-themes subatomic-theme stekene-theme sr-speedbar spacegray-theme soothe-theme smyx-theme smex smartparens smart-tab slime-theme slime-js slim-mode skewer-mode shen-mode seti-theme scss-mode sass-mode sane-term ruby-tools ruby-test-mode ruby-end ruby-electric rspec-mode robe rinari request rbenv rainbow-mode rainbow-identifiers rainbow-delimiters racket-mode racer quasi-monochrome-theme projectile planet-theme pivotal-tracker noctilux-theme neotree monokai-theme molokai-theme maxframe markdown-mode majapahit-theme magit lush-theme lispy less-css-mode lenlen-theme key-chord jujube-theme jsx-mode jdee jazz-theme ir-black-theme intero ido-vertical-mode ido-ubiquitous idle-highlight-mode highlight-sexp highlight-indentation heroku-theme hamburg-theme gruvbox-theme grandshell-theme gotham-theme goose-theme github-theme gherkin-mode ghc geiser fuzzy flycheck-haskell flatland-theme fish-mode firecode-theme firebelly-theme feature-mode farmhouse-theme faff-theme faceup exec-path-from-shell evil-paredit evil-mc evil-annoying-arrows elm-mode elfeed eink-theme dracula-theme dash-functional dash-at-point darktooth-theme darkmine-theme dark-krystal-theme darcula-theme cyberpunk-theme csv-nav csv-mode css-eldoc csharp-mode company-quickhelp company-inf-ruby colorsarenice-theme color-theme-sanityinc-tomorrow color-theme-sanityinc-solarized coffee-mode clues-theme clojurescript-mode clj-refactor cargo boron-theme birds-of-paradise-plus-theme beacon base16-theme autopair aurora-theme atom-one-dark-theme atom-dark-theme assemblage-theme arjen-grey-theme apache-mode airline-themes aggressive-indent ag ac-cider-compliment ac-cider)))
+ '(pos-tip-background-color "#36473A")
+ '(pos-tip-foreground-color "#FFFFC8")
+ '(powerline-color1 "#222912")
+ '(powerline-color2 "#09150F")
  '(sql-postgres-options (quote ("-P" "pager=off")))
  '(truncate-lines nil)
+ '(vc-annotate-background nil)
+ '(vc-annotate-color-map
+   (quote
+    ((20 . "#d54e53")
+     (40 . "goldenrod")
+     (60 . "#e7c547")
+     (80 . "DarkOliveGreen3")
+     (100 . "#70c0b1")
+     (120 . "DeepSkyBlue1")
+     (140 . "#c397d8")
+     (160 . "#d54e53")
+     (180 . "goldenrod")
+     (200 . "#e7c547")
+     (220 . "DarkOliveGreen3")
+     (240 . "#70c0b1")
+     (260 . "DeepSkyBlue1")
+     (280 . "#c397d8")
+     (300 . "#d54e53")
+     (320 . "goldenrod")
+     (340 . "#e7c547")
+     (360 . "DarkOliveGreen3"))))
+ '(vc-annotate-very-old-color nil)
  '(xterm-mouse-mode t))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(default ((t (:background nil))))
+ '(default ((t (:font "Monoid" :height 160))))
  '(font-lock-comment-face ((t (:slant italic))))
  '(font-lock-doc-face ((t (:slant italic))))
- '(mode-line ((t (:font "IosevkaCC" :height 140))))
+ '(mode-line ((t (:font "Monoid" :height 140))))
  '(mode-line-highlight ((t (:height 140))))
  '(mode-line-inactive ((t (:slant italic :height 140)))))
