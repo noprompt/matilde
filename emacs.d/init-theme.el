@@ -16,13 +16,14 @@
 (package-require 'darktooth-theme)
 (package-require 'doom-themes)
 (package-require 'eink-theme)
+(package-require 'exotica-theme)
 (package-require 'firebelly-theme)
+(package-require 'gruvbox-theme)
 (package-require 'hamburg-theme)
 (package-require 'jazz-theme)
+(package-require 'kaolin-themes)
 (package-require 'seti-theme)
 (package-require 'smyx-theme)
-(package-require 'subatomic256-theme)
-(package-require 'tronesque-theme)
 
 ;; The doom themes seem to assume this variable is bound.
 (if (not (boundp 'region-fg))
@@ -73,43 +74,68 @@
   "Like `load-theme' but disables all themes in
 `custom-enabled-themes' beforehand. This prevents the \"layering\" of
 themes that occurs when calling `load-theme' numerous times."
+  (interactive
+   (list
+    (intern (completing-read "Load custom theme: " (mapcar 'symbol-name (custom-available-themes))))
+    t nil))
   (~/disable-all-themes)
   (load-theme theme no-confirm no-enable)
   ;; Some themes like to mess with linum-format. Shame on them.
   (setq linum-format 'dynamic)
   t)
 
-(defhydra ~/hydra-next-theme (nil nil)
+
+(defun ~/theme/prev-themes ()
+  (let* ((current-theme (car custom-enabled-themes))
+         (prev-themes (reverse
+                       (seq-take-while
+                        (lambda (theme)
+                          (not (equal theme current-theme)))
+                        (custom-available-themes)))))
+    (or prev-themes (reverse (custom-available-themes)))))
+
+(defun ~/theme/next-themes ()
+  (let* ((current-theme (car custom-enabled-themes))
+         (next-themes (cdr
+                       (seq-drop-while
+                        (lambda (theme)
+                          (not (equal theme current-theme)))
+                        (custom-available-themes)))))
+    (or next-themes (custom-available-themes))))
+
+(defhydra ~/hydra-pick-theme (nil nil)
   "Theme"
   ("p"
    (lambda ()
      (interactive)
-     (let* ((old-theme (car custom-enabled-themes))
-            (prev-themes (seq-take-while
-                          (lambda (theme)
-                            (not (equal theme old-theme)))
-                          (custom-available-themes)))
-            (new-theme (if prev-themes
-                           (car (last prev-themes))
-                         (car (last (custom-available-themes))))))
-       (~/load-theme new-theme t)
-       (message "%s" new-theme)))
+     (letrec ((load-prev-theme
+               (lambda (prev-themes)
+                 (condition-case nil
+                     (let ((new-theme (car prev-themes)))
+                       (~/load-theme (car prev-themes) t)
+                       (message "%s" new-theme))
+                   (error
+                    (funcall load-prev-theme (cdr prev-themes)))))))
+       (funcall load-prev-theme (~/theme/prev-themes))))
    "prev")
   ("n"
    (lambda ()
      (interactive)
-     (let* ((current-theme (car custom-enabled-themes))
-            (next-themes (cdr
-                          (seq-drop-while
-                           (lambda (theme)
-                             (not (equal theme current-theme)))
-                           (custom-available-themes))))
-            (new-theme (if next-themes
-                           (car next-themes)
-                         (car (custom-available-themes)))))
-       (~/load-theme new-theme t)
-       (message "%s" new-theme)))
+     (letrec ((load-next-theme
+               (lambda (next-themes)
+                 (condition-case nil
+                     (let ((new-theme (car next-themes)))
+                       (~/load-theme (car next-themes) t)
+                       (message "%s" new-theme))
+                   (error
+                    (funcall load-next-theme (cdr next-themes)))))))
+       (funcall load-next-theme (~/theme/next-themes))))
    "next")
+  ("l"
+   (lambda ()
+     (interactive)
+     (setq linum-format 'dynamic))
+   "dynamic linum")
   ("d"
    (lambda ()
      (interactive)
@@ -119,6 +145,50 @@ themes that occurs when calling `load-theme' numerous times."
 (defun ~/load-next-theme ()
   (interactive)
   (~/load-theme (~/theme-ring-next) t))
+
+
+(defun ~/decrease-transparency ()
+  "Decrease selected-frame transparency by 1."
+  (interactive)
+  (pcase (frame-parameter (selected-frame) 'alpha)
+    ('nil
+     '(100 . 100))
+
+    (`(100 . 100)
+     '(100 . 100))
+
+    (`(,alpha-1 . 100)
+     (set-frame-parameter (seected-frame) 'alpha `(,(+ alpha-1 1) . 100)))
+
+    (`(100 . ,alpha-2)
+     (set-frame-parameter (selected-frame) 'alpha `(100 . ,(+ alpha-2 1))))
+
+    (`(,alpha-1 . ,alpha-2)
+     (set-frame-parameter (selected-frame) 'alpha `(,(+ alpha-1 1) . ,(+ alpha-2 1))))))
+
+(defun ~/increase-transparency ()
+  "Increase selected-frame transparency by 1."
+  (interactive)
+  (pcase (frame-parameter (selected-frame) 'alpha)
+    ('nil
+     (set-frame-parameter (selected-frame) 'alpha `(99 . 99)))
+
+    (`(0 . 0)
+     '(0 . 0))
+
+    (`(,alpha-1 . 0)
+     (set-frame-parameter (selected-frame) 'alpha `(,(- alpha-1 1) . 100)))
+
+    (`(0 . ,alpha-2)
+     (set-frame-parameter (selected-frame) 'alpha `(100 . ,(- alpha-2 1))))
+
+    (`(,alpha-1 . ,alpha-2)
+     (set-frame-parameter (selected-frame) 'alpha `(,(- alpha-1 1) . ,(- alpha-2 1))))))
+
+(defhydra ~/hydra-transparency (nil nil)
+  "Transparency"
+  ("i" ~/increase-transparency "increase")
+  ("d" ~/decrease-transparency "decrease"))
 
 
 ;; ---------------------------------------------------------------------
@@ -162,8 +232,8 @@ themes that occurs when calling `load-theme' numerous times."
           mode-line-font
           mode-line-font-height
           &allow-other-keys)
-  (let* ((default-font-height 160)
-         (mode-line-font-height 140)
+  (let* ((default-font-height 140)
+         (mode-line-font-height 120)
          (mode-line-font (or mode-line-font default-font)))
     (custom-set-faces
      `(default
@@ -201,12 +271,14 @@ themes that occurs when calling `load-theme' numerous times."
         (iosevka . "IosevkaCC")
         (liberation . "Liberation Mono")
         (office-code-pro . "Office Code Pro")
+        (overpass . "Overpass Mono")
         (menlo . "Menlo")
         (monaco . "Monaco")
         (monoid . "Monoid")
         (plex . "IBM Plex Mono")
-        (pt . "PT Mono")
         (pt-mono . "PT Mono")
+        (pf-din . "PFDin")
+        (pragmata . "PragmataPro")
         (roboto . "Roboto Mono")
         (sax . "saxMono")
         (source-code-pro . "Source Code Pro")
@@ -215,16 +287,20 @@ themes that occurs when calling `load-theme' numerous times."
         (ubuntu . "Ubuntu Mono")
         (whois . "Whois")))
 
+
+
 (defun ~/get-font (key)
   (cdr (assoc key ~/font-families-alist)))
 
 (when (display-graphic-p)
- (global-set-key (kbd "s-=") '~/increase-font-height)
- (global-set-key (kbd "s--") '~/decrease-font-height)
- (global-set-key (kbd "C-=") '~/text-scale-up)
- (global-set-key (kbd "C--") '~/text-scale-down)
- (~/set-fonts :default-font (~/get-font 'monoid)))
+  (global-set-key (kbd "s-=") '~/increase-font-height)
+  (global-set-key (kbd "s--") '~/decrease-font-height)
+  (global-set-key (kbd "C-=") '~/text-scale-up)
+  (global-set-key (kbd "C--") '~/text-scale-down)
+  (~/set-fonts :default-font (~/get-font 'pragmata)))
+
 
 (~/load-next-theme)
 
 (provide 'init-theme)
+
