@@ -1,1 +1,0 @@
-../non-elpa/textmate-themes/krtheme-theme.el

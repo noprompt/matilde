@@ -1,1 +1,0 @@
-../non-elpa/textmate-themes/cool-glow-theme.el
