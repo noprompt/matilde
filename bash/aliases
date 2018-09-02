@@ -46,6 +46,7 @@ alias tarx="tar -xzvf"
 # Miscellaneous
 alias so="source"
 alias timestamp="date +%s"
+alias timestamp-utc="date -u +%FT%TZ"
 alias grep="grep --color"
 alias be="bundle exec"
 
@@ -93,4 +94,22 @@ function ..() {
 
 function postman() {
     man -t $1 | open -f -a Preview.app
+}
+
+function pbcopy-file() {
+  cat $1 | pbcopy
+}
+
+function clj-auth-sock {
+  SSH_AUTH_SOCK=~/.kr/krd-agent.sock
+}
+
+function show-desktop-icons {
+  defaults write com.apple.finder CreateDesktop true
+  killall Finder
+}
+
+function hide-desktop-icons {
+  defaults write com.apple.finder CreateDesktop false
+  killall Finder
 }
