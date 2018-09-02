@@ -2,6 +2,10 @@
 
  {#_:signing
   #_{:gpg-key "cjholdbrooks@gmail.com"}
+  :dependencies [[pjstadig/humane-test-output "0.8.1"]]
+
+  :injections [(require 'pjstadig.humane-test-output)
+               (pjstadig.humane-test-output/activate!)]
 
   :plugins
   [[lein-clojars "0.9.1"]
@@ -13,4 +17,4 @@
  {:dependencies
   [[org.clojure/tools.namespace "0.2.4"]]
   :plugins
-  [[cider/cider-nrepl "0.9.1"]]}}
+  [[cider/cider-nrepl "0.17.0"]]}}
