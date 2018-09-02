@@ -41,7 +41,8 @@ function shiftp() {
 
 
 # Like `cd` but creates the directory if it does not exist. Uses
-# `mkdir -p` to create the directory.
+# `mkdir -p` to create the directory. Any additional arguments passed
+# after the directory name will be handled by `eval`.
 function in-dir () {
     local dir=$1
     shift
