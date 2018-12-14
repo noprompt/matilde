@@ -692,33 +692,35 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 (global-rbenv-mode)
 
 ;; RUBY BURDOCK
+
 (setq ~/burdock-mode-source-path
       (concat user-emacs-directory "lisp/burdock-mode/"))
 
-(add-to-list 'load-path ~/burdock-mode-source-path)
+(when (file-exists-p ~/burdock-mode-source-path)
+  (add-to-list 'load-path ~/burdock-mode-source-path)
+  (require 'burdock-mode)
 
-(require 'burdock-mode)
+  (setq burdock-ruby-source-directory
+        (concat ~/burdock-mode-source-path "ruby/"))
 
-(setq burdock-ruby-source-directory
-      (concat ~/burdock-mode-source-path "ruby/"))
+  (defun ~/define-evil-keys-for-burdock-mode ()
+    (interactive)
+    (define-key evil-normal-state-local-map "D" 'burdock-kill)
+    (define-key evil-normal-state-local-map ",e" 'burdock-evaluate-scope-at-point)
+    (define-key evil-normal-state-local-map "W(" 'burdock-structured-wrap-round)
+    (define-key evil-normal-state-local-map "W[" 'burdock-structured-wrap-square)
+    (define-key evil-normal-state-local-map "W{" 'burdock-structured-wrap-curly)
+    (define-key evil-normal-state-local-map "W\"" 'burdock-structured-wrap-double-quote)
+    (define-key evil-normal-state-local-map "W'" 'burdock-structured-wrap-single-quote)
+    (define-key evil-normal-state-local-map "Wl" 'burdock-structured-wrap-lambda)
+    (define-key evil-normal-state-local-map "WL" 'burdock-structured-wrap-lambda-call)
+    (define-key evil-normal-state-local-map [down] 'burdock-zip-down)
+    (define-key evil-normal-state-local-map [up] 'burdock-zip-up)
+    (define-key evil-normal-state-local-map [left] 'burdock-zip-left)
+    (define-key evil-normal-state-local-map [right] 'burdock-zip-right))
 
-(defun ~/define-evil-keys-for-burdock-mode ()
-  (interactive)
-  (define-key evil-normal-state-local-map "D" 'burdock-kill)
-  (define-key evil-normal-state-local-map ",e" 'burdock-evaluate-scope-at-point)
-  (define-key evil-normal-state-local-map "W(" 'burdock-structured-wrap-round)
-  (define-key evil-normal-state-local-map "W[" 'burdock-structured-wrap-square)
-  (define-key evil-normal-state-local-map "W{" 'burdock-structured-wrap-curly)
-  (define-key evil-normal-state-local-map "W\"" 'burdock-structured-wrap-double-quote)
-  (define-key evil-normal-state-local-map "W'" 'burdock-structured-wrap-single-quote)
-  (define-key evil-normal-state-local-map "Wl" 'burdock-structured-wrap-lambda)
-  (define-key evil-normal-state-local-map "WL" 'burdock-structured-wrap-lambda-call)
-  (define-key evil-normal-state-local-map [down] 'burdock-zip-down)
-  (define-key evil-normal-state-local-map [up] 'burdock-zip-up)
-  (define-key evil-normal-state-local-map [left] 'burdock-zip-left)
-  (define-key evil-normal-state-local-map [right] 'burdock-zip-right))
+  (add-hook 'ruby-mode-hook 'burdock-mode))
 
-(add-hook 'ruby-mode-hook 'burdock-mode)
 (add-hook 'burdock-mode-hook '~/define-evil-keys-for-burdock-mode)
 (add-hook 'burdock-mode-hook 'burdock-start)
 
@@ -795,110 +797,6 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 (add-hook 'ruby-mode-hook 'aggressive-indent-mode)
 (add-hook 'ruby-mode-hook 'autopair-mode)
 
-
-;; ---------------------------------------------------------------------
-;; HASKELL
-
-(~/package-require 'ghc)
-(~/package-require 'intero)
-(~/package-require 'haskell-mode)
-(~/package-require 'hindent)
-(require 'haskell)
-(require 'hindent)
-
-;; HASKELL INTERO SCRATCH
-
-(setq ~/intero-scratch-source-path
-      (concat user-emacs-directory "lisp/intero-scratch/"))
-
-(add-to-list 'load-path ~/intero-scratch-source-path)
-
-(require 'intero-scratch)
-
-(setq auto-mode-alist (cons '("\.hs$" . haskell-mode) auto-mode-alist))
-
-;; HASKELL FUNCTIONS
-
-(defun ~/haskell/before-save-hook ()
-  (haskell-mode-stylish-buffer))
-
-(add-hook 'haskell-mode-hook
-          (lambda ()
-            (add-hook 'before-save-hook '~/haskell/before-save-hook nil 'local)))
-
-;; HASKELL HOOKS
-
-(add-hook 'haskell-mode-hook 'intero-mode)
-
-(add-hook 'haskell-mode-hook 'autopair-mode)
-
-(add-hook 'haskell-mode-hook
-           (lambda ()
-             (haskell-indentation-mode 1)))
-
-(add-hook 'haskell-mode-hook
-          (lambda ()
-            (add-hook 'before-save-hook '~/haskell/before-save-hook nil 'local)))
-
-(add-hook 'haskell-mode-hook 'highlight-indent-guides-mode)
-
-(add-hook 'haskell-mode-hook
-          (lambda ()
-            (setq evil-shift-width 2)))
-
-;; HASKELL KEY BINDINGS
-
-(define-key haskell-mode-map (kbd "TAB")
-  'evil-shift-right-line)
-
-(define-key haskell-mode-map (kbd "S-TAB")
-  'evil-shift-line-line)
-
-;; Configuration from "Using Emacs for Haskell development"
-;; See: https://github.com/serras/emacs-haskell-tutorial/blob/master/tutorial.md
-
-(let ((my-cabal-path (expand-file-name "~/.cabal/bin")))
-  (setenv "PATH" (concat my-cabal-path path-separator (getenv "PATH")))
-  (add-to-list 'exec-path my-cabal-path))
-
-
-(~/comment
- (eval-after-load 'haskell-mode
-   '(progn
-      (define-key haskell-mode-map (kbd "C-c C-l") 'haskell-process-load-or-reload)
-      (define-key haskell-mode-map (kbd "C-c C-z") 'haskell-interactive-switch)
-      (define-key haskell-mode-map (kbd "C-c C-n C-t") 'haskell-process-do-type)
-      (define-key haskell-mode-map (kbd "C-c C-n C-i") 'haskell-process-do-info)
-      (define-key haskell-mode-map (kbd "C-c C-n C-c") 'haskell-process-cabal-build)
-      (define-key haskell-mode-map (kbd "C-c C-n c") 'haskell-process-cabal)
-      (define-key haskell-mode-map (kbd "C-c M-j") 'haskell-interactive-bring)
-      (define-key haskell-mode-map (kbd "SPC") 'haskell-mode-contextual-space)
-      ;; This should probably be a bit more sophisticated.
-      (define-key haskell-mode-map (kbd "TAB") 'haskell-indent-cycle)))
-
- (eval-after-load 'haskell-cabal
-   '(progn
-      (define-key haskell-cabal-mode-map (kbd "C-c C-z") 'haskell-interactive-switch)
-      (define-key haskell-cabal-mode-map (kbd "C-c C-k") 'haskell-interactive-mode-clear)
-      (define-key haskell-cabal-mode-map (kbd "C-c C-c") 'haskell-process-cabal-build)
-      (define-key haskell-cabal-mode-map (kbd "C-c c") 'haskell-process-cabal)))
-
- (add-hook 'haskell-mode-hook 'haskell-doc-mode))
-
-;; ---------------------------------------------------------------------
-;; RACKET
-
-(~/package-require 'quack)
-(~/package-require 'scribble-mode)
-(require 'quack)
-(require 'scribble-mode)
-
-
-(evil-define-key
-  'normal racket-mode-map
-  (kbd ",e") 'geiser-eval-definition)
-
-(add-hook 'scheme-mode-hook '~/lisp-mode)
 
 ;; ---------------------------------------------------------------------
 ;; SQL
@@ -1069,13 +967,6 @@ Enter app name when prompted for `database'."
 ;; GRAPHQL
 
 (~/package-require 'graphql-mode)
-
-;; ---------------------------------------------------------------------
-;; PROLOG
-
-(~/package-require 'prolog)
-
-(add-to-list 'auto-mode-alist '("\\.pl$" . prolog-mode))
 
 ;; ---------------------------------------------------------------------
 ;; JSON
