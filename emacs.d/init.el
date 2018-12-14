@@ -115,14 +115,6 @@
 (~/package-require 'hydra)
 (require 'hydra)
 
-;; ---------------------------------------------------------------------
-;; AG
-
-(~/package-require 'ag)
-(require 'ag)
-
-(define-key ag-mode-map (kbd "k") 'evil-previous-line)
-
 
 ;; ---------------------------------------------------------------------
 ;; IDLE HIGHLIGHT
@@ -282,80 +274,6 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 
 (define-key evil-insert-state-map
   (kbd "C-p") nil)
-
-;; ---------------------------------------------------------------------
-;; COMPANY
-
-(~/package-require 'company)
-(require 'company)
-
-(define-key company-mode-map [remap indent-for-tab-command]
-  'company-indent-for-tab-command)
-
-(setq tab-always-indent 'complete)
-
-(define-key company-mode-map (kbd "<C-tab>") 'company-complete)
-(define-key company-mode-map (kbd "C-n") 'company-select-next)
-(define-key company-mode-map (kbd "C-p") 'company-select-previous)
-
-;; ---------------------------------------------------------------------
-;; WORDNET
-
-(setq ~/wordnut-source-path
-      (concat user-emacs-directory "lisp/wordnut/"))
-
-(add-to-list 'load-path ~/wordnut-source-path)
-(require 'wordnut)
-
-;; ---------------------------------------------------------------------
-;; ECHO KEYS
-;; See: https://www.emacswiki.org/emacs/EchoKeyPresses
-
-(defvar *echo-keys-last* nil "Last command processed by `echo-keys'.")
-
-(defun echo-keys ()
-  (interactive)
-  (let ((deactivate-mark deactivate-mark))
-    (when (this-command-keys)
-      (with-current-buffer (get-buffer-create "*echo-key*")
-	(goto-char (point-max))
-	;; self  self
-	;; self  other \n
-	;; other self  \n
-	;; other other \n
-	(unless (and (eq 'self-insert-command *echo-keys-last*)
-		     (eq 'self-insert-command this-command))
-	  (insert "\n"))
-	(if (eql this-command 'self-insert-command)
-	    (let ((desc (key-description (this-command-keys))))
-	      (if (= 1 (length desc))
-		  (insert desc)
-		(insert " " desc " ")))
-	  (insert (key-description (this-command-keys))))
-	(setf *echo-keys-last* this-command)
-	(dolist (window (window-list))
-	  (when (eq (window-buffer window) (current-buffer))
-	    ;; We need to use both to get the effect.
-	    (set-window-point window (point))
-	    (end-of-buffer)))))))
-
-(defun toggle-echo-keys ()
-  (interactive)
-  (if (member 'echo-keys  pre-command-hook)
-      (progn
-	(remove-hook 'pre-command-hook 'echo-keys)
-	(dolist (window (window-list))
-	  (when (eq (window-buffer window) (get-buffer "*echo-key*"))
-	    (delete-window window))))
-    (progn
-      (add-hook    'pre-command-hook 'echo-keys)
-      (delete-other-windows)
-      (split-window nil (- (window-width) 32) t)
-      (other-window 1)
-      (switch-to-buffer (get-buffer-create "*echo-key*"))
-      (set-window-dedicated-p (selected-window) t)
-      (other-window 1))))
-
 
 ;; ---------------------------------------------------------------------
 ;; PAREDIT
@@ -541,12 +459,11 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 ;; CLOJURE
 
 (~/package-require 'clojure-mode)
-
 (require 'clojure-mode)
 
 ;; CLOJURE CIDER
 
-(add-to-list 'load-path (expand-file-name "~/.emacs.d/non-elpa/cider"))
+(~/package-require 'cider)
 (require 'cider)
 
 (add-hook 'cider-mode-hook 'eldoc-mode)
@@ -587,7 +504,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
     (switch-to-buffer-other-frame buff)))
 
 (defun ~/clojure/scratch ()
-  "Create/retrieve a Clojure scratch buffer and switch to it.."
+  "Create/retrieve a Clojure scratch buffer and switch to it."
   (interactive)
   (let ((buf (get-buffer-create "*clj-scratch*")))
     (switch-to-buffer buf)
@@ -667,18 +584,10 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
   (at-keyframes 1)
   (rule 1)
 
-  ;; korma
-  (select 'defun)
-  (insert 'defun)
-
   ;; compojure
   (GET 'defun)
   (POST 'defun)
   (context 2)
-
-  ;; persephone
-  (start 'defun)
-  (start* 'defun)
 
   ;; core.logic
   (run* 1)
@@ -694,142 +603,11 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
   ;; clojure.core.match
   (match 1)
 
-  ;; midje
-  (fact 'defun)
-  (facts 'defun)
-
   ;; other
   (λ 1)
   (variant 1)
   (field 1)
   (optional-field 1))
-
-(dolist (html-tag '(a
-		    abbr
-		    address
-		    area
-		    article
-		    aside
-		    audio
-		    b
-		    base
-		    bdi
-		    bdo
-		    big
-		    blockquote
-		    body
-		    br
-		    button
-		    canvas
-		    caption
-		    cite
-		    code
-		    col
-		    colgroup
-		    data
-		    datalist
-		    dd
-		    del
-		    dfn
-		    div
-		    dl
-		    dt
-		    em
-		    embed
-		    fieldset
-		    figcaption
-		    figure
-		    footer
-		    form
-		    h1
-		    h2
-		    h3
-		    h4
-		    h5
-		    h6
-		    head
-		    header
-		    hr
-		    html
-		    i
-		    iframe
-		    img
-		    input
-		    ins
-		    kbd
-		    keygen
-		    label
-		    legend
-		    li
-		    link
-		    main
-		    ;;map
-		    mark
-		    menu
-		    menuitem
-		    meta
-		    meter
-		    nav
-		    noscript
-		    object
-		    ol
-		    optgroup
-		    option
-		    output
-		    p
-		    param
-		    pre
-		    progress
-		    q
-		    rp
-		    rt
-		    ruby
-		    s
-		    samp
-		    script
-		    section
-		    select
-		    small
-		    source
-		    span
-		    strong
-		    style
-		    sub
-		    summary
-		    sup
-		    table
-		    tbody
-		    td
-		    tfoot
-		    th
-		    thead
-		    time
-		    title
-		    tr
-		    track
-		    u
-		    ul
-		    var
-		    video
-		    wbr
-
-		    ;; svg
-		    circle
-		    ellipse
-		    g
-		    line
-		    path
-		    polyline
-		    rect
-		    svg
-		    text
-		    defs
-		    linearGradient
-		    polygon
-		    radialGradient
-		    stop
-		    tspan))
-  (put-clojure-indent html-tag 'defun))
 
 ;; CLOJURE KEY BINDINGS
 
@@ -884,6 +662,8 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 (add-hook 'clojure-mode-hook '~/clojure-mode)
 (add-hook 'clojure-mode-hook 'aggressive-indent-mode)
 
+(setq-default cider-clojure-cli-global-options "-A:convenient")
+
 ;; ---------------------------------------------------------------------
 ;; YAML
 
@@ -907,13 +687,9 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 
 ;; RUBY RBENV
 
-(setq ~/rbenv-el-source-path
-      (concat user-emacs-directory "lisp/rbenv.el/"))
-
+(setq ~/rbenv-el-source-path (concat user-emacs-directory "lisp/rbenv.el/"))
 (setq rbenv-installation-dir "/usr/local/")
-
 (add-to-list 'load-path ~/rbenv-el-source-path)
-
 (require 'rbenv)
 
 (global-rbenv-mode)
@@ -1191,6 +967,56 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 (define-key sql-interactive-mode-map
   "\t" 'sqli-show-completions-if-possible)
 
+
+;;; heroku pg:psql
+
+(defcustom heroku-sql-program "heroku"
+  "Command to start pg:psql by Heroku.
+
+Starts `sql-interactive-mode' after doing some setup."
+  :type 'file
+  :group 'SQL)
+
+(defcustom heroku-sql-login-params `(database)
+  "Login parameters needed to connect to Heroku PostgreSQL."
+  :type 'sql-login-params
+  :group 'SQL)
+
+(defcustom heroku-sql-options '("pg:psql")
+  "List of additional options for `heroku-sql-program'."
+  :type '(repeat string)
+  :group 'SQL)
+
+;;;###autoload
+(defun heroku-sql (&optional buffer)
+  "Run heroku pg:psql as an inferior process in an SQL buffer.
+
+Enter app name when prompted for `database'."
+  (interactive "P")
+  (sql-product-interactive 'heroku buffer))
+
+(defun heroku-sql-comint (product options)
+  (let ((params options))
+    (sql-comint product (if (string= "" sql-database)
+                            options
+                          (append options (list "-a" sql-database))))))
+
+(add-to-list 'sql-product-alist
+             '(heroku :name "Heroku"
+                      :sqli-program heroku-sql-program
+                      :sqli-login heroku-sql-login-params
+                      :sqli-options heroku-sql-options
+                      :sqli-comint-func heroku-sql-comint
+                      :font-lock sql-mode-postgres-font-lock-keywords
+                      :list-all ("\\d+" . "\\dS+")
+                      :list-table ("\\d+ %s" . "\\dS+ %s")
+                      :completion-object sql-postgres-completion-object
+                      :prompt-regexp "^[^>#]+=[#>] "
+                      :prompt-length 5
+                      :prompt-cont-regexp "^\\w*[-(][#>] "
+                      :input-filter sql-remove-tabs-filter
+                      :terminator ("\\(^\\s-*\\\\g$\\|;\\)" . "\\g")))
+
 ;; ---------------------------------------------------------------------
 ;; JAVA
 
@@ -1241,8 +1067,6 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 ;; Prevents funky characters at the REPL.
 (setenv "NODE_NO_READLINE" "1")
 
-;;;; Functions
-
 (defun ~/javascript/nodejs-repl ()
   (interactive)
   (pop-to-buffer (make-comint "nodejs" "node")))
@@ -1255,70 +1079,10 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 
 (~/package-require 'exec-path-from-shell)
 
-(exec-path-from-shell-initialize)
-
-;; ---------------------------------------------------------------------
-;; NEO4J
-
-;; CYPHER MODE
-(setq ~/cypher-mode-source-path
-      (concat user-emacs-directory "lisp/cypher-mode/"))
-
-(add-to-list 'load-path ~/cypher-mode-source-path)
-
-(require 'cypher-mode)
-
-;; N4JS
-(setq ~/n4js-mode-source-path
-      (concat user-emacs-directory "lisp/n4js/"))
-
-(add-to-list 'load-path ~/n4js-mode-source-path)
-
-(let ((neo4j-shell-path (executable-find "cypher-shell")))
-  (if neo4j-shell-path
-      (setq n4js-cli-program neo4j-shell-path)
-    (warn "could not find executable `cypher-shell'")))
-
-(setq n4js-cli-arguments ())
-
-
-;; CYPHER MODE KEY BINDINGS
-
-(define-key cypher-mode-map
-  (kbd "C-c C-c") 'n4js-send-dwim)
-
-(require 'n4js)
-
-;; ---------------------------------------------------------------------
-;; MAUDE
-
-(setq ~/maude-mode-source-path
-      (concat user-emacs-directory "lisp/maude-mode/"))
-
-(add-to-list 'load-path ~/maude-mode-source-path)
-
-(require 'maude-mode)
-
-(setq-default maude-command "maude")
-
-(add-to-list 'auto-mode-alist '("\\.maude$" . maude-mode))
-
-
-;; ---------------------------------------------------------------------
-;; GHERKIN
-
-(setq ~/gherkin-mode-source-path
-      (concat user-emacs-directory "lisp/gherkin-mode/"))
-
-(require 'gherkin-mode)
-
-
 ;; ---------------------------------------------------------------------
 ;; GRAPHQL
 
-
 (~/package-require 'graphql-mode)
-
 
 ;; ---------------------------------------------------------------------
 ;; PROLOG
@@ -1331,6 +1095,72 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 ;; JSON
 
 (~/package-require 'json-navigator)
+
+;; ---------------------------------------------------------------------
+;; WORDNET
+
+(setq ~/wordnut-source-path (concat user-emacs-directory "lisp/wordnut/"))
+
+(when (file-exists-p ~/wordnut-source-path) 
+  (add-to-list 'load-path ~/wordnut-source-path)
+  (require 'wordnut))
+
+;; ---------------------------------------------------------------------
+;; ECHO KEYS
+;; See: https://www.emacswiki.org/emacs/EchoKeyPresses
+
+(defvar *echo-keys-last* nil "Last command processed by `echo-keys'.")
+
+(defun echo-keys ()
+  (interactive)
+  (let ((deactivate-mark deactivate-mark))
+    (when (this-command-keys)
+      (with-current-buffer (get-buffer-create "*echo-key*")
+	(goto-char (point-max))
+	;; self  self
+	;; self  other \n
+	;; other self  \n
+	;; other other \n
+	(unless (and (eq 'self-insert-command *echo-keys-last*)
+		     (eq 'self-insert-command this-command))
+	  (insert "\n"))
+	(if (eql this-command 'self-insert-command)
+	    (let ((desc (key-description (this-command-keys))))
+	      (if (= 1 (length desc))
+		  (insert desc)
+		(insert " " desc " ")))
+	  (insert (key-description (this-command-keys))))
+	(setf *echo-keys-last* this-command)
+	(dolist (window (window-list))
+	  (when (eq (window-buffer window) (current-buffer))
+	    ;; We need to use both to get the effect.
+	    (set-window-point window (point))
+	    (end-of-buffer)))))))
+
+(defun toggle-echo-keys ()
+  (interactive)
+  (if (member 'echo-keys  pre-command-hook)
+      (progn
+	(remove-hook 'pre-command-hook 'echo-keys)
+	(dolist (window (window-list))
+	  (when (eq (window-buffer window) (get-buffer "*echo-key*"))
+	    (delete-window window))))
+    (progn
+      (add-hook    'pre-command-hook 'echo-keys)
+      (delete-other-windows)
+      (split-window nil (- (window-width) 32) t)
+      (other-window 1)
+      (switch-to-buffer (get-buffer-create "*echo-key*"))
+      (set-window-dedicated-p (selected-window) t)
+      (other-window 1))))
+
+;; ---------------------------------------------------------------------
+;; AG
+
+(~/package-require 'ag)
+(require 'ag)
+
+(define-key ag-mode-map (kbd "k") 'evil-previous-line)
 
 ;; ---------------------------------------------------------------------
 ;; Used configuration

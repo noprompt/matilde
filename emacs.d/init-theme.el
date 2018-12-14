@@ -54,11 +54,15 @@
          (theme (car theme-ring))
          (new-theme-list (append (cdr theme-ring) (list (car theme-ring)))))
     (with-temp-buffer
-      (insert (prin1-to-string new-theme-list))
+      (insert "(")
+      (dolist (theme new-theme-list)
+        (newline-and-indent)
+        (insert (symbol-name theme)))
+      (newline)
+      (insert ")")
       (when (file-writable-p ~/theme-ring-file-path)
         (write-region (point-min) (point-max) ~/theme-ring-file-path)))
     theme))
-
 
 (defun ~/edit-theme-ring ()
   (let ((buffer (find-file ~/theme-ring-file-path)))
@@ -145,7 +149,6 @@ themes that occurs when calling `load-theme' numerous times."
 (defun ~/load-next-theme ()
   (interactive)
   (~/load-theme (~/theme-ring-next) t))
-
 
 (defun ~/decrease-transparency ()
   "Decrease selected-frame transparency by 1."
@@ -292,15 +295,22 @@ themes that occurs when calling `load-theme' numerous times."
 (defun ~/get-font (key)
   (cdr (assoc key ~/font-families-alist)))
 
+
+;; ---------------------------------------------------------------------
+;; Theme configuration
+
+(package-require 'focus)
+
+;; ---------------------------------------------------------------------
+;; UI Initialization
+
+
 (when (display-graphic-p)
   (global-set-key (kbd "s-=") '~/increase-font-height)
   (global-set-key (kbd "s--") '~/decrease-font-height)
   (global-set-key (kbd "C-=") '~/text-scale-up)
   (global-set-key (kbd "C--") '~/text-scale-down)
-  (~/set-fonts :default-font (~/get-font 'pragmata)))
-
-
-(~/load-next-theme)
+  (setq linum-format 'dynamic)
+  (~/set-fonts :default-font (~/get-font 'fantasque)))
 
 (provide 'init-theme)
-

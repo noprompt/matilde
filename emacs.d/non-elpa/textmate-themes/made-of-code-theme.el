@@ -53,7 +53,7 @@
 ;; meta.line.entry.logfile, meta.line.exit.logfile {'background': '#EEEEEE29'}
 ;; meta.line.error.logfile {'background': '#751012'}
 (deftheme made-of-code
-  "Made of Code emacs theme autoconverted from the textMate theme by unknown")
+  "Made of Code emacs theme ported from the TextMate theme.")
 (custom-theme-set-faces
   'made-of-code
     '(trailing-whitespace ((t (:background "#373d50"))))
@@ -115,6 +115,16 @@
     '(secondary-selection ((t (:background "#04438d" ))))
     '(show-paren-match-face ((t (:background "#04438d" ))))
     '(show-paren-mismatch-face ((t (:foreground "#fd5ff1" :background "#432447" ))))
+
+    '(rainbow-delimiters-depth-1-face ((t (:foreground "#f8f8f8"))))
+    '(rainbow-delimiters-depth-2-face ((t (:foreground "#0a9cff"))))
+    '(rainbow-delimiters-depth-3-face ((t (:foreground "#8fff58"))))
+    '(rainbow-delimiters-depth-4-face ((t (:foreground "#fd5ff1"))))
+    '(rainbow-delimiters-depth-5-face ((t (:foreground "#00ffff"))))
+    '(rainbow-delimiters-depth-6-face ((t (:foreground "#00FFBC"))))
+    '(rainbow-delimiters-depth-7-face ((t (:foreground "#c050c2"))))
+    '(rainbow-delimiters-depth-8-face ((t (:foreground "#6fd3ff"))))
+    '(rainbow-delimiters-depth-9-face ((t (:foreground "#99cf50"))))
 )
 
 (provide-theme 'made-of-code)

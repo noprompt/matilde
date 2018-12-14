@@ -113,3 +113,9 @@ function hide-desktop-icons {
   defaults write com.apple.finder CreateDesktop false
   killall Finder
 }
+
+alias cljq='clojure -A:cljq'
+
+function git-latest-commit {
+  git log --pretty=oneline | awk -F' ' '{print $1}' | head -1
+}
