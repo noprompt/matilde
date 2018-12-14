@@ -1,4 +1,4 @@
-(add-to-list 'load-path (expand-file-name "~/.emacs.d/"))
+(add-to-list 'load-path (expand-file-name "~/.emacs.d/lisp"))
 
 ;; ---------------------------------------------------------------------
 ;; GENERAL SETTINGS
@@ -53,7 +53,6 @@
           (lambda ()
             (setq truncate-lines t)))
 
-
 ;; Always use spaces instead of tabs.
 (setq-default indent-tabs-mode nil)
 
@@ -77,6 +76,10 @@
 (unless package-archive-contents
   (package-refresh-contents))
 
+(when (not (package-installed-p 'use-package))
+    (package-install 'use-package))
+
+(setq use-package-always-ensure t)
 
 ;; ---------------------------------------------------------------------
 ;; UTILITY FUNCTIONS
@@ -108,54 +111,50 @@
 
 (add-hook 'prog-mode-hook 'hs-minor-mode)
 
-
 ;; ---------------------------------------------------------------------
 ;; HYDRA
 
-(~/package-require 'hydra)
-(require 'hydra)
-
+(use-package hydra)
 
 ;; ---------------------------------------------------------------------
 ;; IDLE HIGHLIGHT
 
-(~/package-require 'idle-highlight-mode)
-
-(require 'idle-highlight-mode)
-
-(add-hook 'prog-mode-hook 'idle-highlight-mode)
-
+(use-package idle-highlight-mode
+  :config
+  (add-hook 'prog-mode-hook 'idle-highlight-mode))
 
 ;; ---------------------------------------------------------------------
 ;; IDO
 
-(require 'ido)
+(use-package ido
+  :config
+  (ido-mode t)
+  (ido-everywhere t)
+  (setq ido-enable-flex-matching t)
+  (setq ido-use-virtual-buffers t))
 
-(~/package-require 'ido-ubiquitous)
-(~/package-require 'ido-vertical-mode)
+(use-package ido-completing-read+
+  :ensure t
+  :config
+  (ido-ubiquitous-mode t))
 
-(ido-mode t)
-(ido-ubiquitous t)
-(ido-vertical-mode t)
-(setq ido-enable-flex-matching t)
-
-(setq ido-use-virtual-buffers t)
-(setq ido-vertical-define-keys 'C-n-and-C-p-only)
+(use-package ido-vertical-mode
+  :ensure t
+  :config
+  (ido-vertical-mode t)
+  (setq ido-vertical-define-keys 'C-n-and-C-p-only))
 
 (defun ~/ido/recentf ()
   (interactive)
   (find-file (ido-completing-read "Find recent file: " recentf-list)))
 
-
 ;; ---------------------------------------------------------------------
 ;; SMEX
 
-(~/package-require 'smex)
-
-(require 'smex)
-
-(smex-initialize)
-(smex-initialize-ido)
+(use-package smex
+  :config
+  (smex-initialize)
+  (smex-initialize-ido))
 
 ;; ---------------------------------------------------------------------
 ;; PROJECTILE
@@ -167,35 +166,30 @@
 
 ;; EVIL
 
-(~/package-require 'evil)
-(~/package-require 'evil-paredit)
-(~/package-require 'evil-mc)
+(use-package evil
+  :config
+  (evil-mode t)
+  (setq evil-shift-width 2)
+  (setq evil-default-cursor t))
 
-(require 'evil)
+(use-package evil-paredit)
 
-(evil-mode t)
-
-(setq evil-shift-width 2)
-(setq evil-default-cursor t)
+(use-package evil-mc)
 
 ;; ACE JUMP
 
-(~/package-require 'ace-jump-mode)
-(require 'ace-jump-mode)
+(use-package ace-jump-mode)
 
 ;; KEY-CHORD
 
-(~/package-require 'key-chord)
-
-(require 'key-chord)
-
-(key-chord-mode t)
-
-(key-chord-define-global ",x" 'smex) ;; M-x
-(key-chord-define-global ",f" 'find-file)
-(key-chord-define evil-normal-state-map ",k" 'kill-buffer)
-(key-chord-define evil-normal-state-map ",r" '~/ido/recentf)
-(key-chord-define evil-normal-state-map ",s" 'ido-switch-buffer)
+(use-package key-chord
+  :config
+  (key-chord-mode t)
+  (key-chord-define-global ",x" 'smex) ;; M-x
+  (key-chord-define-global ",f" 'find-file)
+  (key-chord-define evil-normal-state-map ",k" 'kill-buffer)
+  (key-chord-define evil-normal-state-map ",r" '~/ido/recentf)
+  (key-chord-define evil-normal-state-map ",s" 'ido-switch-buffer))
 
 ;; Fixes borked electric-indent in Emacs 24.
 (define-key evil-insert-state-map [remap newline] 'evil-ret-and-indent)
@@ -212,6 +206,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
     (when (get-buffer "*Completions*") (delete-windows-on "*Completions*"))
     (abort-recursive-edit)))
 
+(global-set-key [escape] 'evil-exit-emacs-state)
 (define-key evil-normal-state-map [escape] 'keyboard-quit)
 (define-key evil-visual-state-map [escape] 'keyboard-quit)
 (define-key minibuffer-local-map [escape] '~/minibuffer-keyboard-quit)
@@ -219,14 +214,11 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 (define-key minibuffer-local-completion-map [escape] '~/minibuffer-keyboard-quit)
 (define-key minibuffer-local-must-match-map [escape] '~/minibuffer-keyboard-quit)
 (define-key minibuffer-local-isearch-map [escape] '~/minibuffer-keyboard-quit)
-(global-set-key [escape] 'evil-exit-emacs-state)
-
-(~/comment
- (define-key minibuffer-local-map [escape] 'keyboard-escape-quit)
- (define-key minibuffer-local-ns-map [escape] 'keyboard-escape-quit)
- (define-key minibuffer-local-completion-map [escape] 'keyboard-escape-quit)
- (define-key minibuffer-local-must-match-map [escape] 'keyboard-escape-quit)
- (define-key minibuffer-local-isearch-map [escape] 'keyboard-escape-quit))
+(define-key minibuffer-local-map [escape] 'keyboard-escape-quit)
+(define-key minibuffer-local-ns-map [escape] 'keyboard-escape-quit)
+(define-key minibuffer-local-completion-map [escape] 'keyboard-escape-quit)
+(define-key minibuffer-local-must-match-map [escape] 'keyboard-escape-quit)
+(define-key minibuffer-local-isearch-map [escape] 'keyboard-escape-quit)
 
 ;; Evil normal state bindings.
 (define-key evil-normal-state-map
@@ -278,8 +270,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 ;; ---------------------------------------------------------------------
 ;; PAREDIT
 
-(~/package-require 'paredit)
-(require 'paredit)
+(use-package paredit)
 
 (defun ~/paredit/wrap-quote ()
   "Wrap the following sexp in double quotes."
@@ -340,7 +331,6 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
     "C" '~/paredit/forward-kill-and-insert)
   (define-key evil-normal-state-local-map
     "D" 'paredit-kill)
-
   ;; Insert state
   (define-key evil-insert-state-local-map
     (kbd "C-(") 'paredit-backward-slurp-sexp)
@@ -358,16 +348,24 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
   (~/paredit/define-evil-keys))
 
 ;; ---------------------------------------------------------------------
-;; INDENT GUIDES
+;; UI/UX
 
-(~/package-require 'highlight-indent-guides)
-(setq highlight-indent-guides-method 'character)
+(use-package ag
+  :bind (:map ag-mode-map
+              ("k" . evil-previous-line)))
+
+(use-package aggressive-indent)
+
+(use-package rainbow-delimiters)
+
+(use-package highlight-indent-guides
+  :config
+  (setq highlight-indent-guides-method 'character))
+
+(use-package highlight-sexp)
 
 ;; ---------------------------------------------------------------------
 ;; LISP
-
-(~/package-require 'highlight-sexp)
-(require 'highlight-sexp)
 
 (defvar ~/lisp/imenu-section
   '((nil "^;; +\\([A-Z ]+\\)$" 1)))
@@ -414,7 +412,6 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 	(insert form)
 	(ielm-return)
 	(switch-to-buffer-other-frame buff)))))
-
 
 (defun ~/emacs-lisp/eval-defun-pp ()
   (interactive)
@@ -904,17 +901,6 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 (add-hook 'scheme-mode-hook '~/lisp-mode)
 
 ;; ---------------------------------------------------------------------
-;; ELM
-
-(add-to-list 'load-path (expand-file-name "~/.emacs.d/non-elpa/elm-mode"))
-
-;; We need to require these packages before requiring elm-mode.
-(~/package-require 'f)
-(~/package-require 'let-alist)
-(~/package-require 's)
-(require 'elm-mode)
-
-;; ---------------------------------------------------------------------
 ;; SQL
 
 (require 'sql)
@@ -1155,14 +1141,29 @@ Enter app name when prompted for `database'."
       (other-window 1))))
 
 ;; ---------------------------------------------------------------------
-;; AG
-
-(~/package-require 'ag)
-(require 'ag)
-
-(define-key ag-mode-map (kbd "k") 'evil-previous-line)
-
-;; ---------------------------------------------------------------------
 ;; Used configuration
 
 (require 'init-theme)
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(ansi-color-names-vector
+   ["#0b1c2c" "#bf8b56" "#56bf8b" "#8bbf56" "#8b56bf" "#bf568b" "#8b56bf" "#cbd6e2"])
+ '(ansi-term-color-vector
+   [unspecified "#0b1c2c" "#bf8b56" "#56bf8b" "#8bbf56" "#8b56bf" "#bf568b" "#8b56bf" "#cbd6e2"])
+ '(package-selected-packages
+   (quote
+    (base16-themes ido-completing-read+ ido-completin-read+ use-package focus smyx-theme seti-theme kaolin-themes jazz-theme hamburg-theme gruvbox-theme yard-mode yaml-mode smex skewer-mode scribble-mode ruby-tools ruby-test-mode ruby-end rubocop robe rbenv quack projectile key-chord jsx-mode json-navigator intero ido-vertical-mode ido-ubiquitous idle-highlight-mode hydra hindent highlight-sexp highlight-indentation highlight-indent-guides graphql-mode ghc feature-mode f exotica-theme exec-path-from-shell evil-paredit evil-mc eink-theme doom-themes darktooth-theme cyberpunk-theme cider bubbleberry-theme base16-theme badwolf-theme atom-one-dark-theme ag afternoon-theme ace-jump-mode))))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(default ((t (:font "Fantasque Sans Mono" :height 140))))
+ '(font-lock-comment-face ((t (:slant italic))))
+ '(font-lock-doc-face ((t (:slant italic))))
+ '(mode-line ((t (:font "Fantasque Sans Mono" :height 120))))
+ '(mode-line-inactive ((t (:slant italic :height 120))))
+ '(modeline-highlight ((t (:height 120)))))

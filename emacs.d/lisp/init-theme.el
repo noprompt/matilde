@@ -17,7 +17,6 @@
 (package-require 'doom-themes)
 (package-require 'eink-theme)
 (package-require 'exotica-theme)
-(package-require 'firebelly-theme)
 (package-require 'gruvbox-theme)
 (package-require 'hamburg-theme)
 (package-require 'jazz-theme)
@@ -36,10 +35,10 @@
 
 
 (defconst ~/theme-ring-file-path
-  (concat (getenv "HOME")
+  (concat user-emacs-directory 
           (if (display-graphic-p)
-              "/.emacs.d/theme-list.el"
-            "/.emacs.d/theme-256-list.el")))
+              "lisp/theme-list.el"
+            "lisp/theme-256-list.el")))
 
 
 (defun ~/theme-ring-load ()
@@ -290,8 +289,6 @@ themes that occurs when calling `load-theme' numerous times."
         (ubuntu . "Ubuntu Mono")
         (whois . "Whois")))
 
-
-
 (defun ~/get-font (key)
   (cdr (assoc key ~/font-families-alist)))
 
@@ -312,5 +309,7 @@ themes that occurs when calling `load-theme' numerous times."
   (global-set-key (kbd "C--") '~/text-scale-down)
   (setq linum-format 'dynamic)
   (~/set-fonts :default-font (~/get-font 'fantasque)))
+
+(~/load-next-theme)
 
 (provide 'init-theme)
