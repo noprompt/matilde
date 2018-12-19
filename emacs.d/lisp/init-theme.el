@@ -7,20 +7,20 @@
 ;; ---------------------------------------------------------------------
 ;; Theme packages
 
-(package-require 'afternoon-theme)
 (package-require 'atom-one-dark-theme)
 (package-require 'badwolf-theme)
 (package-require 'base16-theme)
-(package-require 'bubbleberry-theme)
+(package-require 'brutalist-theme)
 (package-require 'cyberpunk-theme)
 (package-require 'darktooth-theme)
 (package-require 'doom-themes)
 (package-require 'eink-theme)
-(package-require 'exotica-theme)
 (package-require 'gruvbox-theme)
 (package-require 'hamburg-theme)
 (package-require 'jazz-theme)
 (package-require 'kaolin-themes)
+(package-require 'monotropic-theme)
+(package-require 'noctilux-theme)
 (package-require 'seti-theme)
 (package-require 'smyx-theme)
 
@@ -28,7 +28,6 @@
 (if (not (boundp 'region-fg))
     (defvar region-fg
       nil))
-
 
 ;; ---------------------------------------------------------------------
 ;; Theme configuration
@@ -254,12 +253,11 @@ themes that occurs when calling `load-theme' numerous times."
 (setq ~/font-families-alist
       '((agave . "agave")
         (andale . "Andale Mono")
-        (anonymous . "Anonymous Pro")
         (anonymous-pro . "Anonymous Pro")
         (camingo . "Camingo Code")
-        (camingo-code . "Camingo Code")
         (code-new-roman . "Code New Roman")
         (consolas . "Consolas")
+        ;; http://cm-unicode.sourceforge.net/download.html
         (computer-modern . "CMU Typewriter Text")
         (courier . "Courier")
         (courier-new . "Courier New")
@@ -268,6 +266,8 @@ themes that occurs when calling `load-theme' numerous times."
         (fira-code . "Fira Code")
         (fixedsys . "Fixedsys Excelsior 3.01")
         (gohu . "GohuFont")
+        ;; https://github.com/iaolo/iA-Fonts
+        (ia-writer . "iA Writer Duospace")
         (inconsolata . "Inconsolata LGC")
         (input . "Input Mono")
         (iosevka . "IosevkaCC")
@@ -277,6 +277,7 @@ themes that occurs when calling `load-theme' numerous times."
         (menlo . "Menlo")
         (monaco . "Monaco")
         (monoid . "Monoid")
+        (nanum . "NanumGothicCoding")
         (plex . "IBM Plex Mono")
         (pt-mono . "PT Mono")
         (pf-din . "PFDin")
@@ -285,22 +286,19 @@ themes that occurs when calling `load-theme' numerous times."
         (sax . "saxMono")
         (source-code-pro . "Source Code Pro")
         (terminus . "Terminus")
+        ;; https://practicaltypography.com/triplicate.html
         (triplicate . "Triplicate T4c")
+        ;; http://unifoundry.com/unifont/index.html
+        (uni . "Unifont")
         (ubuntu . "Ubuntu Mono")
         (whois . "Whois")))
+
 
 (defun ~/get-font (key)
   (cdr (assoc key ~/font-families-alist)))
 
-
-;; ---------------------------------------------------------------------
-;; Theme configuration
-
-(package-require 'focus)
-
 ;; ---------------------------------------------------------------------
 ;; UI Initialization
-
 
 (when (display-graphic-p)
   (global-set-key (kbd "s-=") '~/increase-font-height)
@@ -308,7 +306,7 @@ themes that occurs when calling `load-theme' numerous times."
   (global-set-key (kbd "C-=") '~/text-scale-up)
   (global-set-key (kbd "C--") '~/text-scale-down)
   (setq linum-format 'dynamic)
-  (~/set-fonts :default-font (~/get-font 'fantasque)))
+  (~/set-fonts :default-font (~/get-font 'triplicate)))
 
 (~/load-next-theme)
 

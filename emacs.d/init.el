@@ -1,7 +1,7 @@
-(add-to-list 'load-path (expand-file-name "~/.emacs.d/lisp"))
-
 ;; ---------------------------------------------------------------------
 ;; GENERAL SETTINGS
+
+(add-to-list 'load-path (expand-file-name "~/.emacs.d/lisp"))
 
 ;; Disable the splash screen.
 (setq inhibit-startup-message t)
@@ -62,9 +62,6 @@
 
 (add-to-list 'exec-path "/usr/local/bin")
 
-;; ---------------------------------------------------------------------
-;; PACKAGE CONFIGURATION
-
 (require 'package)
 
 (setq package-archives '(("gnu" . "http://elpa.gnu.org/packages/")
@@ -80,9 +77,6 @@
     (package-install 'use-package))
 
 (setq use-package-always-ensure t)
-
-;; ---------------------------------------------------------------------
-;; UTILITY FUNCTIONS
 
 (defun ~/package-require (pkg)
   "Install a package only if it's not already installed."
@@ -103,28 +97,15 @@
   "Comment out one or more s-expressions."
   nil)
 
-
-;; ---------------------------------------------------------------------
-;; HIDESHOW
-
 (require 'hideshow)
 
 (add-hook 'prog-mode-hook 'hs-minor-mode)
 
-;; ---------------------------------------------------------------------
-;; HYDRA
-
 (use-package hydra)
-
-;; ---------------------------------------------------------------------
-;; IDLE HIGHLIGHT
 
 (use-package idle-highlight-mode
   :config
   (add-hook 'prog-mode-hook 'idle-highlight-mode))
-
-;; ---------------------------------------------------------------------
-;; IDO
 
 (use-package ido
   :config
@@ -148,23 +129,17 @@
   (interactive)
   (find-file (ido-completing-read "Find recent file: " recentf-list)))
 
-;; ---------------------------------------------------------------------
-;; SMEX
-
 (use-package smex
   :config
   (smex-initialize)
   (smex-initialize-ido))
 
-;; ---------------------------------------------------------------------
-;; PROJECTILE
-
 (~/package-require 'projectile)
 
-;; ---------------------------------------------------------------------
-;; KEYBOARD CONFIGURATION
+(use-package magit)
 
-;; EVIL
+;; ---------------------------------------------------------------------
+;; Keyboard configuration
 
 (use-package evil
   :config
@@ -176,11 +151,7 @@
 
 (use-package evil-mc)
 
-;; ACE JUMP
-
 (use-package ace-jump-mode)
-
-;; KEY-CHORD
 
 (use-package key-chord
   :config
@@ -261,14 +232,18 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 (define-key evil-insert-state-map
   (kbd "C-k") 'previous-line)
 
-(define-key evil-insert-state-map
-  (kbd "C-n") nil)
+(use-package auto-complete
+  :config
+  (ac-config-default))
 
 (define-key evil-insert-state-map
-  (kbd "C-p") nil)
+  (kbd "TAB") 'auto-complete)
 
-;; ---------------------------------------------------------------------
-;; PAREDIT
+(define-key evil-insert-state-map
+  (kbd "C-n") 'ac-next)
+
+(define-key evil-insert-state-map
+  (kbd "C-p") 'ac-previous)
 
 (use-package paredit)
 
@@ -368,7 +343,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 ;; LISP
 
 (defvar ~/lisp/imenu-section
-  '((nil "^;; +\\([A-Z ]+\\)$" 1)))
+  '((nil "defun +\\(.+\\)" 1)))
 
 (defun ~/lisp/setup-imenu ()
   (setq imenu-generic-expression ~/lisp/imenu-section)
@@ -462,6 +437,8 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 
 (~/package-require 'cider)
 (require 'cider)
+
+(use-package ac-cider)
 
 (add-hook 'cider-mode-hook 'eldoc-mode)
 (add-hook 'cider-repl-mode-hook 'subword-mode)
@@ -619,7 +596,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
   (kbd "C-c C-d") 'cider-doc)
 
 (define-key cider-mode-map
-  (kbd "C-c C-j") 'cider-jump-to-var)
+  (kbd "C-c C-j") 'cider-find-dwim)
 
 (evil-define-key
   'normal clojure-mode-map
@@ -657,7 +634,6 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
   (~/lisp-mode))
 
 (add-hook 'clojure-mode-hook '~/clojure-mode)
-(add-hook 'clojure-mode-hook 'aggressive-indent-mode)
 
 (setq-default cider-clojure-cli-global-options "-A:convenient")
 
@@ -681,15 +657,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 
 (require 'ruby-mode)
 (require 'subr-x)
-
-;; RUBY RBENV
-
-(setq ~/rbenv-el-source-path (concat user-emacs-directory "lisp/rbenv.el/"))
-(setq rbenv-installation-dir "/usr/local/")
-(add-to-list 'load-path ~/rbenv-el-source-path)
-(require 'rbenv)
-
-(global-rbenv-mode)
+;;(global-rbenv-mode)
 
 ;; RUBY BURDOCK
 
@@ -794,7 +762,6 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 
 (add-hook 'ruby-mode-hook 'yard-mode)
 (add-hook 'ruby-mode-hook 'highlight-indent-guides-mode)
-(add-hook 'ruby-mode-hook 'aggressive-indent-mode)
 (add-hook 'ruby-mode-hook 'autopair-mode)
 
 
@@ -851,6 +818,13 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 (define-key sql-interactive-mode-map
   "\t" 'sqli-show-completions-if-possible)
 
+(defun ~/sql-postgres/scratch ()
+  "Create/retrieve a PostgreSQL scratch buffer and switch to it."
+  (interactive)
+  (let ((buf (get-buffer-create "*sql-postgres-scratch*")))
+    (switch-to-buffer buf)
+    (sql-mode)
+    (sql-set-product 'postgres)))
 
 ;;; heroku pg:psql
 
@@ -1035,26 +1009,3 @@ Enter app name when prompted for `database'."
 ;; Used configuration
 
 (require 'init-theme)
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(ansi-color-names-vector
-   ["#0b1c2c" "#bf8b56" "#56bf8b" "#8bbf56" "#8b56bf" "#bf568b" "#8b56bf" "#cbd6e2"])
- '(ansi-term-color-vector
-   [unspecified "#0b1c2c" "#bf8b56" "#56bf8b" "#8bbf56" "#8b56bf" "#bf568b" "#8b56bf" "#cbd6e2"])
- '(package-selected-packages
-   (quote
-    (base16-themes ido-completing-read+ ido-completin-read+ use-package focus smyx-theme seti-theme kaolin-themes jazz-theme hamburg-theme gruvbox-theme yard-mode yaml-mode smex skewer-mode scribble-mode ruby-tools ruby-test-mode ruby-end rubocop robe rbenv quack projectile key-chord jsx-mode json-navigator intero ido-vertical-mode ido-ubiquitous idle-highlight-mode hydra hindent highlight-sexp highlight-indentation highlight-indent-guides graphql-mode ghc feature-mode f exotica-theme exec-path-from-shell evil-paredit evil-mc eink-theme doom-themes darktooth-theme cyberpunk-theme cider bubbleberry-theme base16-theme badwolf-theme atom-one-dark-theme ag afternoon-theme ace-jump-mode))))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(default ((t (:font "Fantasque Sans Mono" :height 140))))
- '(font-lock-comment-face ((t (:slant italic))))
- '(font-lock-doc-face ((t (:slant italic))))
- '(mode-line ((t (:font "Fantasque Sans Mono" :height 120))))
- '(mode-line-inactive ((t (:slant italic :height 120))))
- '(modeline-highlight ((t (:height 120)))))

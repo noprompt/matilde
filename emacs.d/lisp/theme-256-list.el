@@ -1,6 +1,7 @@
 (
 doom-vibrant
-cyberpunk
+monotropic
+eink
 badwolf
 atom-dark
 doom-nova
