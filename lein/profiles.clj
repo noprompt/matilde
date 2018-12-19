@@ -17,4 +17,4 @@
  {:dependencies
   [[org.clojure/tools.namespace "0.2.4"]]
   :plugins
-  [[cider/cider-nrepl "0.17.0"]]}}
+  [[cider/cider-nrepl "0.19.0-SNAPSHOT"]]}}
