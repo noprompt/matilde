@@ -464,19 +464,6 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
   (let ((b clojure-defun-style-default-indent))
     (setq clojure-defun-style-default-indent (not b))))
 
-(defun ~/clojure/cider-eval-expression-at-point-in-repl ()
-  (interactive)
-  (let ((form (cider-defun-at-point))
-	(buff (window-buffer)))
-    ;; Strip excess whitespace
-    (while (string-match "\\`\s+\\|\n+\\'" form)
-      (setq form (replace-match "" t t form)))
-    (cider-switch-to-repl-buffer)
-    (goto-char (point-max))
-    (insert form)
-    (cider-repl-return)
-    (switch-to-buffer-other-frame buff)))
-
 (defun ~/clojure/scratch ()
   "Create/retrieve a Clojure scratch buffer and switch to it."
   (interactive)
@@ -501,7 +488,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
   (interactive)
   (save-excursion
     (if (equal 1 (point))
-        (message "Beginning of file reached, this was probably a mistake.")
+        nil
       (cond
        ((equal "\"" (char-at-point))
         (insert ":" (~/clojure/string-name
@@ -535,62 +522,9 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 
 (setq cider-cljs-lein-repl "(do (use 'figwheel-sidecar.repl-api) (start-figwheel!) (cljs-repl))")
 
-;; CLOJURE INDENTATION
-
-(define-clojure-indent
-  ;; clojure.core
-  (apply 1)
-  (as-> 'defun)
-  (add-watch 'defun)
-
-  ;; clojure.test
-  (are 'defun)
-
-  ;; clojure.test.check
-  (for-all 'defun)
-
-  ;; clojure.core.async
-  (go-loop 1)
-
-  ;; garden
-  (css 'defun)
-  (at-media 1)
-  (at-keyframes 1)
-  (rule 1)
-
-  ;; compojure
-  (GET 'defun)
-  (POST 'defun)
-  (context 2)
-
-  ;; core.logic
-  (run* 1)
-  (fresh 1)
-
-  ;; cljs.core
-  (specify! 'defun)
-  (specify 'defun)
-  (this-as 'defun)
-  ;; clojure.spec
-  (fdef 1)
-
-  ;; clojure.core.match
-  (match 1)
-
-  ;; other
-  (λ 1)
-  (variant 1)
-  (field 1)
-  (optional-field 1))
-
-;; CLOJURE KEY BINDINGS
-
 (define-key clojure-mode-map
   (kbd "C-c M-b")
   '~/clojure/cider-repl-clear-buffer)
-
-(define-key cider-mode-map
-  (kbd "C-;") '~/clojure/cider-eval-expression-at-point-in-repl)
 
 (define-key cider-mode-map
   (kbd "C-c C-d") 'cider-doc)
@@ -640,24 +574,23 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 ;; ---------------------------------------------------------------------
 ;; YAML
 
-(~/package-require 'yaml-mode)
+(use-package yaml-mode)
 
 ;; ---------------------------------------------------------------------
-;; RUBY
+;; Ruby
 
-(~/package-require 'inf-ruby)
-(~/package-require 'ruby-end)
-(~/package-require 'ruby-test-mode)
-(~/package-require 'ruby-tools)
-(~/package-require 'feature-mode)
-(~/package-require 'yard-mode)
-(~/package-require 'rbenv)
-(~/package-require 'robe)
-(~/package-require 'rubocop)
+(use-package inf-ruby)
+(use-package ruby-end)
+(use-package ruby-test-mode)
+(use-package ruby-tools)
+(use-package feature-mode)
+(use-package yard-mode)
+(use-package rbenv)
+(use-package robe)
+(use-package rubocop)
 
 (require 'ruby-mode)
 (require 'subr-x)
-;;(global-rbenv-mode)
 
 ;; RUBY BURDOCK
 
@@ -667,9 +600,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 (when (file-exists-p ~/burdock-mode-source-path)
   (add-to-list 'load-path ~/burdock-mode-source-path)
   (require 'burdock-mode)
-
-  (setq burdock-ruby-source-directory
-        (concat ~/burdock-mode-source-path "ruby/"))
+  (setq burdock-ruby-source-directory (concat ~/burdock-mode-source-path "ruby/"))
 
   (defun ~/define-evil-keys-for-burdock-mode ()
     (interactive)
@@ -687,10 +618,9 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
     (define-key evil-normal-state-local-map [left] 'burdock-zip-left)
     (define-key evil-normal-state-local-map [right] 'burdock-zip-right))
 
-  (add-hook 'ruby-mode-hook 'burdock-mode))
-
-(add-hook 'burdock-mode-hook '~/define-evil-keys-for-burdock-mode)
-(add-hook 'burdock-mode-hook 'burdock-start)
+  (add-hook 'ruby-mode-hook 'burdock-mode)
+  (add-hook 'burdock-mode-hook '~/define-evil-keys-for-burdock-mode)
+  (add-hook 'burdock-mode-hook 'burdock-start))
 
 ;; RUBY CONFIGURATION
 
@@ -751,8 +681,6 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 (define-key ruby-mode-map
   (kbd "C-c") nil)
 
-;; RUBY HOOKS
-
 (defun ~/ruby/before-save-hook ()
   (whitespace-cleanup))
 
@@ -779,8 +707,6 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 (add-hook 'sql-interactive-mode-hook
           (lambda ()
             (toggle-truncate-lines t)))
-
-;; SQL KEY BINDINGS
 
 (define-key
   sql-interactive-mode-map
@@ -876,7 +802,7 @@ Enter app name when prompted for `database'."
                       :terminator ("\\(^\\s-*\\\\g$\\|;\\)" . "\\g")))
 
 ;; ---------------------------------------------------------------------
-;; JAVA
+;; Java
 
 ;; The following three forms were taken from
 ;; https://gist.github.com/skeeto/3178747 and modified to fit the
@@ -930,15 +856,7 @@ Enter app name when prompted for `database'."
   (pop-to-buffer (make-comint "nodejs" "node")))
 
 ;; ---------------------------------------------------------------------
-;; MISCELLANEOUS
-
-(~/package-require 'highlight-indentation)
-(require 'highlight-indentation)
-
-(~/package-require 'exec-path-from-shell)
-
-;; ---------------------------------------------------------------------
-;; GRAPHQL
+;; GraphQL
 
 (~/package-require 'graphql-mode)
 
@@ -948,7 +866,7 @@ Enter app name when prompted for `database'."
 (~/package-require 'json-navigator)
 
 ;; ---------------------------------------------------------------------
-;; WORDNET
+;; Wordnet
 
 (setq ~/wordnut-source-path (concat user-emacs-directory "lisp/wordnut/"))
 
@@ -957,7 +875,7 @@ Enter app name when prompted for `database'."
   (require 'wordnut))
 
 ;; ---------------------------------------------------------------------
-;; ECHO KEYS
+;; Echo keys
 ;; See: https://www.emacswiki.org/emacs/EchoKeyPresses
 
 (defvar *echo-keys-last* nil "Last command processed by `echo-keys'.")
@@ -1004,6 +922,14 @@ Enter app name when prompted for `database'."
       (switch-to-buffer (get-buffer-create "*echo-key*"))
       (set-window-dedicated-p (selected-window) t)
       (other-window 1))))
+
+;; ---------------------------------------------------------------------
+;; Miscellaneous
+
+(~/package-require 'highlight-indentation)
+(require 'highlight-indentation)
+
+(~/package-require 'exec-path-from-shell)
 
 ;; ---------------------------------------------------------------------
 ;; Used configuration
