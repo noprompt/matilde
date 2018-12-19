@@ -42,14 +42,9 @@ fi
 #fi
 
 # rbenv
-if file.directory? "$HOME/.rbenv/bin"; then
-    path.push "$HOME/.rbenv/bin"
-    eval "$($HOME/.rbenv/bin/rbenv init -)"
-else
-    if file.exists? "/usr/local/var/rbenv"; then
-        export RBENV_ROOT=/usr/local/var/rbenv
-        eval "$(rbenv init -)";
-    fi
+if file.exists? "$HOME/.rbenv"; then
+    export RBENV_ROOT="$HOME/.rbenv"
+    eval "$(rbenv init -)";
 fi
 
 # Haskell binaries
