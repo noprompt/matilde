@@ -60,6 +60,9 @@
 (setq backup-directory-alist
       `(("." . ,(concat user-emacs-directory "backups"))))
 
+;; (setq-default header-line-format mode-line-format)
+;; (setq-default mode-line-format nil)
+
 (add-to-list 'exec-path "/usr/local/bin")
 
 (require 'package)
@@ -438,7 +441,11 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 (~/package-require 'cider)
 (require 'cider)
 
-(use-package ac-cider)
+
+
+(use-package ac-cider
+  :config
+  (add-hook 'cider-mode-hook 'ac-cider-setup))
 
 (add-hook 'cider-mode-hook 'eldoc-mode)
 (add-hook 'cider-repl-mode-hook 'subword-mode)
@@ -456,6 +463,8 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 ;; This can cause a lot of problems with ClojureScript errors so it's
 ;; turned off right now.
 (setq cider-show-error-buffer t)
+
+(put-clojure-indent 'clojure.test.check.properties/for-all :defn)
 
 ;; CLOJURE MODE FUNCTIONS
 
@@ -744,6 +753,27 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 (define-key sql-interactive-mode-map
   "\t" 'sqli-show-completions-if-possible)
 
+(defun ~/sql/upcase-keywords-after-change (beg end length)
+  (interactive)
+  (if (string-match-p (regexp-opt (list " " "\n" "\r")) 
+                      (buffer-substring-no-properties beg end))
+      (save-excursion
+        (backward-word)
+        (let ((next-change (or (next-property-change (point) (current-buffer))
+                               (point-max))))
+          (if next-change
+              (pcase (get-text-property (point) 'face)
+                ((or 'font-lock-keyword-face
+                     'font-lock-builtin-face)
+                 (upcase-region (point) next-change))
+                (_)))))))
+
+(defun ~/sql-mode ()
+  (add-hook 'after-change-functions
+            '~/sql/upcase-keywords-after-change
+            nil
+            t))
+
 (defun ~/sql-postgres/scratch ()
   "Create/retrieve a PostgreSQL scratch buffer and switch to it."
   (interactive)
@@ -751,6 +781,9 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
     (switch-to-buffer buf)
     (sql-mode)
     (sql-set-product 'postgres)))
+
+(add-hook 'sql-mode-hook '~/sql-mode)
+
 
 ;;; heroku pg:psql
 
@@ -922,6 +955,10 @@ Enter app name when prompted for `database'."
       (switch-to-buffer (get-buffer-create "*echo-key*"))
       (set-window-dedicated-p (selected-window) t)
       (other-window 1))))
+
+(use-package go-mode)
+(use-package go-guru)
+(use-package go-autocomplete)
 
 ;; ---------------------------------------------------------------------
 ;; Miscellaneous
