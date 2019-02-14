@@ -465,6 +465,9 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 (setq cider-show-error-buffer t)
 
 (put-clojure-indent 'clojure.test.check.properties/for-all :defn)
+(put-clojure-indent 'meander.match.alpha/match :defn)
+(put-clojure-indent 'meander.match.alpha/search :defn)
+(put-clojure-indent 'meander.match.alpha/find :defn)
 
 ;; CLOJURE MODE FUNCTIONS
 
@@ -579,6 +582,18 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 (add-hook 'clojure-mode-hook '~/clojure-mode)
 
 (setq-default cider-clojure-cli-global-options "-A:convenient")
+
+(defun ~/clojure/cider-clojure-cli-jack-in-dependencies (&rest args)
+  (pcase (car args)
+    (`(,global-opts ,params ,dependencies)
+     (list (concat global-opts " " (read-string "Additional options: "))
+           params
+           dependencies))
+    (_ args)))
+
+(advice-add 'cider-clojure-cli-jack-in-dependencies
+            :filter-args
+            '~/clojure/cider-clojure-cli-jack-in-dependencies)
 
 ;; ---------------------------------------------------------------------
 ;; YAML
