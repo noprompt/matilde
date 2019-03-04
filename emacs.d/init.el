@@ -463,18 +463,24 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 ;; This can cause a lot of problems with ClojureScript errors so it's
 ;; turned off right now.
 (setq cider-show-error-buffer t)
+;; Turn off font-lock for reader conditionals.
+(setq cider-font-lock-reader-conditionals nil)
 
 (put-clojure-indent 'clojure.test.check.properties/for-all :defn)
 (put-clojure-indent 'meander.match.alpha/match :defn)
 (put-clojure-indent 'meander.match.alpha/search :defn)
 (put-clojure-indent 'meander.match.alpha/find :defn)
+(put-clojure-indent 'meander.match.beta/match :defn)
+(put-clojure-indent 'meander.match.beta/search :defn)
+(put-clojure-indent 'meander.match.beta/find :defn)
 
 ;; CLOJURE MODE FUNCTIONS
 
 (defun ~/clojure/toggle-defun-style-indent ()
   (interactive)
-  (let ((b clojure-defun-style-default-indent))
-    (setq clojure-defun-style-default-indent (not b))))
+  (if (equal clojure-indent-style 'always-indent)
+      (setq clojure-indent-style 'always-align)
+    (setq clojure-indent-style 'always-indent)))
 
 (defun ~/clojure/scratch ()
   "Create/retrieve a Clojure scratch buffer and switch to it."
@@ -722,15 +728,11 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 
 (require 'sql)
 
-(sql-set-product-feature
- 'postgres :prompt-regexp "^[[:alnum:]_]*=[#>] ")
-
-(sql-set-product-feature
- 'postgres :prompt-cont-regexp "^[[:alnum:]_]*[-(][#>] ")
+(sql-set-product-feature 'postgres :prompt-regexp "^[_[:alnum:]\-:]*=[#>] *")
+(sql-set-product-feature 'postgres :prompt-cont-regexp  "^[_[:alnum:]\-:]*[-(][#>] *")
 
 (add-hook 'sql-interactive-mode-hook
-          (lambda ()
-            (toggle-truncate-lines t)))
+          (lambda () (toggle-truncate-lines t)))
 
 (define-key
   sql-interactive-mode-map
@@ -768,6 +770,49 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 (define-key sql-interactive-mode-map
   "\t" 'sqli-show-completions-if-possible)
 
+(defun ~/end-of-previous-face-change (face-name)
+  (save-excursion
+    (let ((continue t)
+          (answer nil))
+      (while continue
+        (let ((p (or (previous-single-property-change (point) 'face)
+                     1)))
+          (if (= p 1)
+              (progn
+                (setq continue nil)
+                (setq answer p))
+            (if (equalp (get-text-property p 'face)
+                        face-name)
+                (progn
+                  (setq continue nil)
+                  (setq answer (next-single-property-change p 'face)))
+              (goto-char p)))))
+      answer)))
+
+(defun ~/inside-string-p ()
+  (save-excursion
+    (let ((p (point)))
+      ;; There is a " to the left.
+      (when (re-search-backward "\"" (point-min) t)
+        ;; It's not in a comment.
+        (when (not (equalp (get-text-property (point) 'face)
+                           'font-lock-comment-face))
+          ;; Goto to the end of the previous comment or beginning of
+          ;; buffer. It'd be nice to use syntax tables here but that's
+          ;; not always possible.
+          (goto-char (~/end-of-previous-face-change 'font-lock-comment-face))
+          (let ((continue t)
+                (answer nil))
+            (while continue
+              (if (re-search-forward "\"[^\"]*\\(\"\\|\\'\\)" (point-max) t)
+                  (progn
+                    (goto-char (match-end 0))
+                    (when (< (match-beginning 0) p (match-end 0))
+                      (setq continue nil)
+                      (setq answer t)))
+                (setq continue nil)))
+            answer))))))
+
 (defun ~/sql/upcase-keywords-after-change (beg end length)
   (interactive)
   (if (string-match-p (regexp-opt (list " " "\n" "\r")) 
@@ -780,7 +825,8 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
               (pcase (get-text-property (point) 'face)
                 ((or 'font-lock-keyword-face
                      'font-lock-builtin-face)
-                 (upcase-region (point) next-change))
+                 (if (not (~/inside-string-p))
+                     (upcase-region (point) next-change)))
                 (_)))))))
 
 (defun ~/sql-mode ()
@@ -796,6 +842,25 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
     (switch-to-buffer buf)
     (sql-mode)
     (sql-set-product 'postgres)))
+
+;; This has much better behavior than the built in verison.
+(defun ~/sql/send-paragraph ()
+  "Send the current paragraph to the SQL process."
+  (interactive)
+  (let ((start (save-excursion
+                 (backward-paragraph)
+                 (point)))
+        (end (save-excursion
+               (forward-paragraph)
+               (point))))
+    (save-excursion
+      (goto-char start)
+      (while (< (point) end)
+        (sql-send-line-and-next)
+        ;; Not happy about this.
+        (sleep-for 0 10)))))
+
+(define-key sql-mode-map (kbd "C-c C-c") '~/sql/send-paragraph)
 
 (add-hook 'sql-mode-hook '~/sql-mode)
 
