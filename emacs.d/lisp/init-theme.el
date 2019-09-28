@@ -80,10 +80,20 @@ themes that occurs when calling `load-theme' numerous times."
    (list
     (intern (completing-read "Load custom theme: " (mapcar 'symbol-name (custom-available-themes))))
     t nil))
-  (~/disable-all-themes)
-  (load-theme theme no-confirm no-enable)
-  ;; Some themes like to mess with linum-format. Shame on them.
-  (setq linum-format 'dynamic)
+  (let ((current-default-font (face-attribute 'default :font))
+        (current-mode-line-font (face-attribute 'mode-line :font))
+        (current-default-height (face-attribute 'default :height))
+        (current-mode-line-height (face-attribute 'mode-line :height)))
+    (~/disable-all-themes)
+    (load-theme theme no-confirm no-enable)
+    ;; Some themes like to mess with linum-format. Shame on them.
+    (setq linum-format 'dynamic)
+    (set-face-attribute 'default nil :height current-default-height)
+    (set-face-attribute 'mode-line nil :height current-mode-line-height)
+    (set-face-attribute 'default nil :font current-default-font)
+    (set-face-attribute 'mode-line nil :font current-mode-line-font)
+    (set-face-attribute 'font-lock-comment-face nil :slant 'italic)
+    (set-face-attribute 'font-lock-doc-face nil :slant 'italic))
   t)
 
 
@@ -293,9 +303,29 @@ themes that occurs when calling `load-theme' numerous times."
         (ubuntu . "Ubuntu Mono")
         (whois . "Whois")))
 
-
 (defun ~/get-font (key)
   (cdr (assoc key ~/font-families-alist)))
+
+(defun ~/set-font (key)
+  (let ((font (~/get-font key)))
+    (set-face-attribute 'default nil :font font)
+    (set-face-attribute 'mode-line nil :font font)))
+
+(defun ~/pick-font (font)
+  (interactive
+   (list (completing-read "Font: " (~/mono-font-family-list))))
+  (set-face-attribute 'default nil :font font)
+  (set-face-attribute 'mode-line nil :font font)
+  t)
+
+(defun ~/mono-font-family-list ()
+  (seq-filter
+   (lambda (font)
+     (let ((info (font-info font)))
+       (if info
+           (string-match-p "spacing=100" (aref info 1)))))
+   (font-family-list)))
+
 
 ;; ---------------------------------------------------------------------
 ;; UI Initialization
