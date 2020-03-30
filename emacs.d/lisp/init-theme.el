@@ -311,13 +311,6 @@ themes that occurs when calling `load-theme' numerous times."
     (set-face-attribute 'default nil :font font)
     (set-face-attribute 'mode-line nil :font font)))
 
-(defun ~/pick-font (font)
-  (interactive
-   (list (completing-read "Font: " (~/mono-font-family-list))))
-  (set-face-attribute 'default nil :font font)
-  (set-face-attribute 'mode-line nil :font font)
-  t)
-
 (defun ~/mono-font-family-list ()
   (seq-filter
    (lambda (font)
@@ -325,6 +318,13 @@ themes that occurs when calling `load-theme' numerous times."
        (if info
            (string-match-p "spacing=100" (aref info 1)))))
    (font-family-list)))
+
+(defun ~/pick-font (font)
+  (interactive
+   (list (completing-read "Font: " (~/mono-font-family-list))))
+  (set-face-attribute 'default nil :font font)
+  (set-face-attribute 'mode-line nil :font font)
+  t)
 
 
 ;; ---------------------------------------------------------------------
