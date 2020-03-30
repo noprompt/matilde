@@ -141,6 +141,11 @@
 
 (use-package magit)
 
+(use-package dumb-jump
+  :init
+  (dumb-jump-mode)
+  (global-set-key (kbd "C-s") 'dumb-jump-go))
+
 ;; ---------------------------------------------------------------------
 ;; Keyboard configuration
 
