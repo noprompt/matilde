@@ -503,13 +503,14 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 ;; Turn off font-lock for reader conditionals.
 (setq cider-font-lock-reader-conditionals nil)
 
+(put-clojure-indent 'compojure.core/DELETE :defn)
+(put-clojure-indent 'compojure.core/GET :defn)
+(put-clojure-indent 'compojure.core/POST :defn)
+(put-clojure-indent 'compojure.core/PUT :defn)
+(put-clojure-indent 'compojure.core/context :defn)
 (put-clojure-indent 'clojure.test.check.properties/for-all :defn)
-(put-clojure-indent 'meander.match.alpha/match :defn)
-(put-clojure-indent 'meander.match.alpha/search :defn)
-(put-clojure-indent 'meander.match.alpha/find :defn)
-(put-clojure-indent 'meander.match.beta/match :defn)
-(put-clojure-indent 'meander.match.beta/search :defn)
-(put-clojure-indent 'meander.match.beta/find :defn)
+(put-clojure-indent 'with :defn)
+(put-clojure-indent 'bidi.syntax/branch :defn)
 
 ;; CLOJURE MODE FUNCTIONS
 
