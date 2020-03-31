@@ -989,6 +989,7 @@ Enter app name when prompted for `database'."
 (add-to-list 'auto-mode-alist '("\\.jsx$" . jsx-mode))
 
 (setq-default js2-basic-offset 2)
+(setq-default js-indent-level 2)
 
 ;; Prevents funky characters at the REPL.
 (setenv "NODE_NO_READLINE" "1")
