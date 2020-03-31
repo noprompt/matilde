@@ -385,10 +385,10 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 
 (defun ~/lisp/narrow-to-defun ()
   (interactive)
-  (with-current-buffer
-      (let ((p1 (save-excursion (beginning-of-defun) (point)))
-            (p2 (save-excursion (end-of-defun) (point))))
-        (narrow-to-region p1 p2))))
+  (with-current-buffer (current-buffer)
+    (let ((p1 (save-excursion (beginning-of-defun) (point)))
+          (p2 (save-excursion (end-of-defun) (point))))
+      (narrow-to-region p1 p2))))
 
 (defun ~/lisp/indirect-narrow-to-defun ()
   (interactive)
