@@ -1066,9 +1066,63 @@ Enter app name when prompted for `database'."
       (set-window-dedicated-p (selected-window) t)
       (other-window 1))))
 
+;; ---------------------------------------------------------------------
+;; Go
+
 (use-package go-mode)
 (use-package go-guru)
 (use-package go-autocomplete)
+
+;; ---------------------------------------------------------------------
+;; Racket
+
+(use-package racket-mode)
+(use-package geiser)
+
+;; ---------------------------------------------------------------------
+;; Swift
+
+;; (use-package swift-helpful)
+
+;; (use-package lsp-sourcekit
+;;   :after lsp-mode
+;;   :config
+;;   (setenv "SOURCEKIT_TOOLCHAIN_PATH" "/Library/Developer/Toolchains/swift-latest.xctoolchain")
+;;   (setq lsp-sourcekit-executable (expand-file-name "/usr/local/bin/sourcekit-lsp")))
+
+;; (use-package swift-mode
+;;   :hook (swift-mode . (lambda () (lsp))))
+
+;; (use-package lsp-ui)
+
+;; ---------------------------------------------------------------------
+;; Haskell
+
+(defun ~/haskell-send-paragraph ()
+  (interactive)
+  (save-excursion
+    (let* ((point-a (progn (backward-paragraph)
+                           (point)))
+           (point-b (progn (forward-paragraph)
+                           (point)))
+           (snippet (string-trim (buffer-substring-no-properties point-a point-b))))
+      (with-current-buffer (get-buffer "*haskell*")
+        (goto-char (point-max))
+        (insert ":{")
+        (comint-send-input)
+        (sleep-for 0 1)
+        (dolist (line (split-string snippet "[\n]" t))
+          (insert line)
+          (comint-send-input)
+          (sleep-for 0 1))
+        (insert ":}")
+        (comint-send-input)))))
+
+(defun ~/define-evil-keys-for-haskell-mode ()
+  (interactive)
+  (define-key evil-normal-state-local-map ",e" '~/haskell-send-paragraph))
+
+(use-package haskell-mode)
 
 ;; ---------------------------------------------------------------------
 ;; Miscellaneous
