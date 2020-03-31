@@ -357,6 +357,19 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
   (setq imenu-generic-expression ~/lisp/imenu-section)
   (imenu-add-menubar-index))
 
+(defun ~/lisp/insert-comment-h1 (title)
+  (interactive (list (read-string "Title: ")))
+  (insert ";; " title "\n")
+  (insert ";; ---------------------------------------------------------------------\n"))
+
+(defun ~/lisp/insert-comment-h2 (title)
+  (interactive (list (read-string "Title: ")))
+  (insert ";; " title "\n")
+  (insert ";; ")
+  (dotimes (n (length title))
+    (insert "-"))
+  (insert "\n"))
+
 (defun ~/lisp/insert-comment-header (&optional title)
   (interactive)
   (insert ";; ---------------------------------------------------------------------\n")
