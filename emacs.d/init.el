@@ -465,12 +465,20 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 (~/package-require 'clojure-mode)
 (require 'clojure-mode)
 
+(use-package inf-clojure)
+
+
+(define-key inf-clojure-minor-mode-map
+  (kbd "C-c C-p") 'inf-clojure-eval-last-sexp)
+
+(define-key inf-clojure-minor-mode-map
+  (kbd "C-c C-f") 'inf-clojure-eval-defun)
+
+
 ;; CLOJURE CIDER
 
 (~/package-require 'cider)
 (require 'cider)
-
-
 
 (use-package ac-cider
   :config
