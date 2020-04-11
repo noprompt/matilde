@@ -390,9 +390,14 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
           (p2 (save-excursion (end-of-defun) (point))))
       (narrow-to-region p1 p2))))
 
+
 (defun ~/lisp/indirect-narrow-to-defun ()
   (interactive)
-  (with-current-buffer (clone-indirect-buffer (make-temp-name "defun__") t)
+  (let* ((buffer-name (read-from-minibuffer "Buffer name: "))
+         (buffer-name (if (s-blank-p buffer-name)
+                          (make-temp-name "defun__")
+                        buffer-name))))
+  (with-current-buffer (clone-indirect-buffer buffer-name t)
     (~/lisp/narrow-to-defun)))
 
 ;; EMACS LISP
