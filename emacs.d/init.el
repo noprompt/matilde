@@ -396,9 +396,9 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
   (let* ((buffer-name (read-from-minibuffer "Buffer name: "))
          (buffer-name (if (s-blank-p buffer-name)
                           (make-temp-name "defun__")
-                        buffer-name))))
-  (with-current-buffer (clone-indirect-buffer buffer-name t)
-    (~/lisp/narrow-to-defun)))
+                        buffer-name)))
+    (with-current-buffer (clone-indirect-buffer buffer-name t)
+      (~/lisp/narrow-to-defun))))
 
 ;; EMACS LISP
 
