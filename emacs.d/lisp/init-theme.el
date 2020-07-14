@@ -236,7 +236,6 @@ themes that occurs when calling `load-theme' numerous times."
   (when (display-graphic-p)
     (text-scale-adjust -0.5)))
 
-
 (defun* ~/set-fonts
     (&key default-font
           default-font-height
@@ -244,7 +243,7 @@ themes that occurs when calling `load-theme' numerous times."
           mode-line-font-height
           &allow-other-keys)
   (let* ((default-font-height 140)
-         (mode-line-font-height 120)
+         (mode-line-font-height 140)
          (mode-line-font (or mode-line-font default-font)))
     (custom-set-faces
      `(default
@@ -279,7 +278,7 @@ themes that occurs when calling `load-theme' numerous times."
         ;; https://github.com/iaolo/iA-Fonts
         (ia-writer . "iA Writer Duospace")
         (inconsolata . "Inconsolata LGC")
-        (input . "Input Mono")
+        (input . "Input Mono Compressed")
         (iosevka . "IosevkaCC")
         (liberation . "Liberation Mono")
         (office-code-pro . "Office Code Pro")
@@ -301,6 +300,7 @@ themes that occurs when calling `load-theme' numerous times."
         ;; http://unifoundry.com/unifont/index.html
         (uni . "Unifont")
         (ubuntu . "Ubuntu Mono")
+        (victor . "Victor Mono")
         (whois . "Whois")))
 
 (defun ~/get-font (key)
@@ -336,7 +336,7 @@ themes that occurs when calling `load-theme' numerous times."
   (global-set-key (kbd "C-=") '~/text-scale-up)
   (global-set-key (kbd "C--") '~/text-scale-down)
   (setq linum-format 'dynamic)
-  (~/set-fonts :default-font (~/get-font 'triplicate)))
+  (~/set-fonts :default-font (~/get-font 'victor)))
 
 (~/load-next-theme)
 
