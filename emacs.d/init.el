@@ -1132,11 +1132,43 @@ Enter app name when prompted for `database'."
         (insert ":}")
         (comint-send-input)))))
 
-(defun ~/define-evil-keys-for-haskell-mode ()
+(defun ~/intero-send-paragraph ()
   (interactive)
-  (define-key evil-normal-state-local-map ",e" '~/haskell-send-paragraph))
+  (save-excursion
+    (let* ((point-a (progn (backward-paragraph)
+                           (point)))
+           (point-b (progn (forward-paragraph)
+                           (point)))
+           (snippet (string-trim (buffer-substring-no-properties point-a point-b))))
+      (let ((intero-pop-to-repl nil))
+        (intero-with-repl-buffer nil
+          (goto-char (point-max))
+          (let ((lines (split-string snippet "[\n]" t)))
+            (if (< 1 (length lines))
+                (progn
+                  (insert ":{")
+                  (comint-send-input)))
+            (sleep-for 0 1)
+            (dolist (line lines)
+              (insert line)
+              (comint-send-input)
+              (sleep-for 0 1))
+            (if (< 1 (length lines) )
+                (progn
+                  (insert ":}")
+                  (comint-send-input)))))))))
+
+(defun ~/intero/scratch ()
+  "Create/retrieve a Clojure scratch buffer and switch to it."
+  (interactive)
+  (let ((buf (get-buffer-create "*intero-scratch*")))
+    (switch-to-buffer buf)
+    (intero-mode)))
 
 (use-package haskell-mode)
+(use-package intero)
+
+(define-key intero-mode-map (kbd "C-c C-f") '~/intero-send-paragraph)
 
 ;; ---------------------------------------------------------------------
 ;; Miscellaneous
@@ -1146,7 +1178,98 @@ Enter app name when prompted for `database'."
 
 (~/package-require 'exec-path-from-shell)
 
+
 ;; ---------------------------------------------------------------------
 ;; Used configuration
 
 (require 'init-theme)
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(ansi-color-faces-vector
+   [default default default italic underline success warning error])
+ '(ansi-color-names-vector
+   ["#282828" "#fb4934" "#8ec07c" "#fabd2f" "#268bd2" "#fb2874" "#83a598" "#ebdbb2"])
+ '(ansi-term-color-vector
+   [unspecified "#1F1611" "#660000" "#144212" "#EFC232" "#5798AE" "#BE73FD" "#93C1BC" "#E6E1DC"] t)
+ '(background-color "#202020")
+ '(background-mode dark)
+ '(company-quickhelp-color-background "#D0D0D0")
+ '(company-quickhelp-color-foreground "#494B53")
+ '(cursor-color "#cccccc")
+ '(cursor-type (quote bar))
+ '(custom-safe-themes
+   (quote
+    ("0d75aa06198c4245ac2a8877bfc56503d5d8199cc85da2c65a6791b84afb9024" "462d6915a7eac1c6f00d5acd8b08ae379e12db2341e7d3eac44ff7f984a5e579" "30289fa8d502f71a392f40a0941a83842152a68c54ad69e0638ef52f04777a4c" "ffba0482d3548c9494e84c1324d527f73ea4e43fff8dfd0e48faa8fc6d5c2bc7" default)))
+ '(fci-rule-character-color "#452E2E")
+ '(fci-rule-color "#555556")
+ '(foreground-color "#cccccc")
+ '(hl-paren-background-colors (quote ("#e8fce8" "#c1e7f8" "#f8e8e8")))
+ '(hl-paren-colors (quote ("#40883f" "#0287c8" "#b85c57")))
+ '(jdee-db-active-breakpoint-face-colors (cons "#1B2229" "#fabd2f"))
+ '(jdee-db-requested-breakpoint-face-colors (cons "#1B2229" "#8ec07c"))
+ '(jdee-db-spec-breakpoint-face-colors (cons "#1B2229" "#555556"))
+ '(notmuch-search-line-faces
+   (quote
+    (("unread" :foreground "#aeee00")
+     ("flagged" :foreground "#0a9dff")
+     ("deleted" :foreground "#ff2c4b" :bold t))))
+ '(nrepl-message-colors
+   (quote
+    ("#ee11dd" "#8584ae" "#b4f5fe" "#4c406d" "#ffe000" "#ffa500" "#ffa500" "#DC8CC3")))
+ '(objed-cursor-color "#fb4934")
+ '(package-selected-packages
+   (quote
+    (stack-mode intero vterm abyss-theme ahungry-theme alect-themes ample-theme ample-zen-theme apropospriate-theme arc-dark-theme autumn-light-theme ayu-theme basic-theme cloud-theme exotica-theme faff-theme farmhouse-theme flatui-dark-theme gandalf-theme green-phosphor-theme green-screen-theme humanoid-themes hydandata-light-theme inkpot-theme labburn-theme lavenderless-theme leuven-theme liso-theme lush-theme madhat2r-theme majapahit-theme micgoline minimal-theme minsk-theme modus-operandi-theme modus-vivendi-theme nordless-theme nova-theme oceanic-theme org-beautify-theme overcast-theme paper-theme poet-theme professional-theme qtcreator-theme quasi-monochrome-theme railscasts-theme rebecca-theme rimero-theme snazzy-theme spacemacs-theme tangotango-theme white-theme xresources-theme zeno-theme ubuntu-theme zerodark-theme zweilight-theme punpun-theme zen-and-art-theme suscolors-theme vs-light-theme vs-dark-theme vscdark-theme tron-theme almost-mono-themes plan9-theme yard-mode yaml-mode wordnut use-package typescript-mode termbright-theme swift-mode sunny-day-theme smyx-theme smex skewer-mode seti-theme seoul256-theme ruby-tools ruby-test-mode ruby-end rubocop robe ripgrep restclient rbenv ranger rainbow-delimiters racket-mode projectile peacock-theme one-themes noctilux-theme monotropic-theme matlab-mode markdown-mode magit key-chord kaolin-themes jsx-mode json-navigator jazz-theme inf-clojure ido-vertical-mode ido-completing-read+ idle-highlight-mode hydra highlight-sexp highlight-indentation highlight-indent-guides haskell-mode haskell-emacs-text hamburg-theme gruvbox-theme graphql-mode go-guru go-autocomplete geiser flucui-themes feature-mode exec-path-from-shell evil-paredit evil-mc eink-theme dumb-jump doom-themes darktooth-theme dark-mint-theme cyberpunk-theme cyberpunk-2019-theme challenger-deep-theme brutalist-theme birds-of-paradise-plus-theme berrys-theme base16-theme badwolf-theme atom-one-dark-theme aggressive-indent ag ace-jump-mode ac-cider)))
+ '(pdf-view-midnight-colors (quote ("#FDF4C1" . "#282828")))
+ '(pos-tip-background-color "#36473A")
+ '(pos-tip-foreground-color "#FFFFC8")
+ '(safe-local-variable-values (quote ((eval setq js2-strict-missing-semi-warning nil))))
+ '(sml/active-background-color "#98ece8")
+ '(sml/active-foreground-color "#424242")
+ '(sml/inactive-background-color "#4fa8a8")
+ '(sml/inactive-foreground-color "#424242")
+ '(tetris-x-colors
+   [[229 192 123]
+    [97 175 239]
+    [209 154 102]
+    [224 108 117]
+    [152 195 121]
+    [198 120 221]
+    [86 182 194]])
+ '(typescript-indent-level 4)
+ '(vc-annotate-background "#282828")
+ '(vc-annotate-color-map
+   (list
+    (cons 20 "#8ec07c")
+    (cons 40 "#b2bf62")
+    (cons 60 "#d5be48")
+    (cons 80 "#fabd2f")
+    (cons 100 "#fba827")
+    (cons 120 "#fc9420")
+    (cons 140 "#fe8019")
+    (cons 160 "#fd6237")
+    (cons 180 "#fb4555")
+    (cons 200 "#fb2874")
+    (cons 220 "#fb335e")
+    (cons 240 "#fa3e49")
+    (cons 260 "#fb4934")
+    (cons 280 "#d14c3c")
+    (cons 300 "#a84f45")
+    (cons 320 "#7e514d")
+    (cons 340 "#555556")
+    (cons 360 "#555556")))
+ '(vc-annotate-very-old-color nil))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(default ((t (:font "Victor Mono" :height 140))))
+ '(font-lock-comment-face ((t (:slant italic))))
+ '(font-lock-doc-face ((t (:slant italic))))
+ '(mode-line ((t (:font "Victor Mono" :height 140))))
+ '(mode-line-inactive ((t (:slant italic :height 140))))
+ '(modeline-highlight ((t (:height 140)))))
