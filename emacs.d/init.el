@@ -1182,7 +1182,7 @@ Enter app name when prompted for `database'."
 ;; ---------------------------------------------------------------------
 ;; Used configuration
 
-(require 'init-theme)
+(require 'init-ui)
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.

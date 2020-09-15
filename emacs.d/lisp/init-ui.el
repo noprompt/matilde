@@ -336,8 +336,8 @@ themes that occurs when calling `load-theme' numerous times."
   (global-set-key (kbd "C-=") '~/text-scale-up)
   (global-set-key (kbd "C--") '~/text-scale-down)
   (setq linum-format 'dynamic)
-  (~/set-fonts :default-font (~/get-font 'victor)))
+  (~/set-fonts :default-font (~/get-font 'input)))
 
 (~/load-next-theme)
 
-(provide 'init-ui)
+(provide 'init-theme)
