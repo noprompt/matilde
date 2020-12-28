@@ -1,179 +1,30 @@
 ;; ---------------------------------------------------------------------
-;; GENERAL SETTINGS
+;; Package
+;; ---------------------------------------------------------------------
 
-(add-to-list 'load-path (expand-file-name "~/.emacs.d/lisp"))
+(defvar bootstrap-version)
 
-;; Disable the splash screen.
-(setq inhibit-startup-message t)
+(let ((bootstrap-file
+       (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
+      (bootstrap-version 5))
+  (unless (file-exists-p bootstrap-file)
+    (with-current-buffer
+        (url-retrieve-synchronously
+         "https://raw.githubusercontent.com/raxod502/straight.el/develop/install.el"
+         'silent 'inhibit-cookies)
+      (goto-char (point-max))
+      (eval-print-last-sexp)))
+  (load bootstrap-file nil 'nomessage))
 
-;; Turn on column numbers.
-(column-number-mode 1)
+(straight-use-package 'use-package)
 
-;; Turn off scroll bars, the tool bar, and the menu bar.
-(dolist (mode '(menu-bar-mode scroll-bar-mode tool-bar-mode))
-  (when (fboundp mode)
-    (funcall mode -1)))
-
-;; Turn off the visual bell.
-(setq visible-bell nil)
-
-;; Highlight matching brackets.
-(show-paren-mode 1)
-
-;; Smooth scrolling.
-(setq scroll-step 1)
-(setq scroll-conservatively 10000)
-
-;; Mouse scrolling
-(setq mouse-wheel-scroll-amount '(1 ((shift) . 1) ((control) . nil)))
-(setq mouse-wheel-progressive-speed nil)
-
-;; Ask for y/n instead of yes/no.
-(defalias 'yes-or-no-p 'y-or-n-p)
-
-(require 'recentf)
-
-(recentf-mode t)
-
-(setq recentf-max-menu-items 25)
-
-(require 'uniquify)
-
-(setq uniquify-buffer-name-style 'forward)
-
-(require 'saveplace)
-
-(setq-default save-place t)
-
-;; Enable line numbering for prog-mode.
-(add-hook 'prog-mode-hook 'linum-mode)
-
-;; Do not truncate (wrap) lines by default.
-(add-hook 'prog-mode-hook
-          (lambda ()
-            (setq truncate-lines t)))
-
-;; Always use spaces instead of tabs.
-(setq-default indent-tabs-mode nil)
-
-;; Backup configuration.
-(setq backup-directory-alist
-      `(("." . ,(concat user-emacs-directory "backups"))))
-
-;; (setq-default header-line-format mode-line-format)
-;; (setq-default mode-line-format nil)
-
-(add-to-list 'exec-path "/usr/local/bin")
-
-(require 'package)
-
-(setq package-archives '(("gnu" . "http://elpa.gnu.org/packages/")
-			 ("marmalade" . "http://marmalade-repo.org/packages/")
-			 ("melpa" . "http://melpa.org/packages/")))
-
-(package-initialize)
-
-(unless package-archive-contents
-  (package-refresh-contents))
-
-(when (not (package-installed-p 'use-package))
-    (package-install 'use-package))
-
-(setq use-package-always-ensure t)
-
-(defun ~/package-require (pkg)
-  "Install a package only if it's not already installed."
-  (when (not (package-installed-p pkg))
-    (package-install pkg)))
-
-(defun ~/insert-date ()
-  "Insert the current date using the format `%Y-%m-%d'."
-  (interactive)
-  (insert (format-time-string "%Y-%m-%d")))
-
-(defun ~/insert-timestamp ()
-  "Inser the current date usint the foramt `%Y-%m-%dT%H:%M:%S'."
-  (interactive)
-  (insert (format-time-string "%Y-%m-%dT%H:%M:%S")))
-
-(defmacro ~/comment (&rest body)
-  "Comment out one or more s-expressions."
-  nil)
-
-(require 'hideshow)
-
-(add-hook 'prog-mode-hook 'hs-minor-mode)
-
-(use-package hydra)
-
-(use-package idle-highlight-mode
-  :config
-  (add-hook 'prog-mode-hook 'idle-highlight-mode))
-
-(use-package ido
-  :config
-  (ido-mode t)
-  (ido-everywhere t)
-  (setq ido-enable-flex-matching t)
-  (setq ido-use-virtual-buffers t))
-
-(use-package ido-completing-read+
-  :ensure t
-  :config
-  (ido-ubiquitous-mode t))
-
-(use-package ido-vertical-mode
-  :ensure t
-  :config
-  (ido-vertical-mode t)
-  (setq ido-vertical-define-keys 'C-n-and-C-p-only))
-
-(defun ~/ido/recentf ()
-  (interactive)
-  (find-file (ido-completing-read "Find recent file: " recentf-list)))
-
-(use-package smex
-  :config
-  (smex-initialize)
-  (smex-initialize-ido))
-
-(~/package-require 'projectile)
-
-(use-package magit)
-
-(use-package dumb-jump
-  :init
-  (dumb-jump-mode)
-  (global-set-key (kbd "C-s") 'dumb-jump-go))
 
 ;; ---------------------------------------------------------------------
-;; Keyboard configuration
+;; Keyboard
+;; ---------------------------------------------------------------------
 
-(use-package evil
-  :config
-  (evil-mode t)
-  (setq evil-shift-width 2)
-  (setq evil-default-cursor t))
-
-(use-package evil-paredit)
-
-(use-package evil-mc)
-
-(use-package ace-jump-mode)
-
-(use-package key-chord
-  :config
-  (key-chord-mode t)
-  (key-chord-define-global ",x" 'smex) ;; M-x
-  (key-chord-define-global ",f" 'find-file)
-  (key-chord-define evil-normal-state-map ",k" 'kill-buffer)
-  (key-chord-define evil-normal-state-map ",r" '~/ido/recentf)
-  (key-chord-define evil-normal-state-map ",s" 'ido-switch-buffer))
-
-;; Fixes borked electric-indent in Emacs 24.
-(define-key evil-insert-state-map [remap newline] 'evil-ret-and-indent)
-
-;; Escape
+;; C-h h is bound to `view-hello-file`.
+(unbind-key (kbd "C-h h"))
 
 (defun ~/minibuffer-keyboard-quit ()
   "Abort recursive edit.
@@ -182,12 +33,11 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
   (interactive)
   (if (and delete-selection-mode transient-mark-mode mark-active)
       (setq deactivate-mark  t)
-    (when (get-buffer "*Completions*") (delete-windows-on "*Completions*"))
+    (when (get-buffer "*Completions*")
+      (delete-windows-on "*Completions*"))
     (abort-recursive-edit)))
 
 (global-set-key [escape] 'evil-exit-emacs-state)
-(define-key evil-normal-state-map [escape] 'keyboard-quit)
-(define-key evil-visual-state-map [escape] 'keyboard-quit)
 (define-key minibuffer-local-map [escape] '~/minibuffer-keyboard-quit)
 (define-key minibuffer-local-ns-map [escape] '~/minibuffer-keyboard-quit)
 (define-key minibuffer-local-completion-map [escape] '~/minibuffer-keyboard-quit)
@@ -199,61 +49,160 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 (define-key minibuffer-local-must-match-map [escape] 'keyboard-escape-quit)
 (define-key minibuffer-local-isearch-map [escape] 'keyboard-escape-quit)
 
-;; Evil normal state bindings.
-(define-key evil-normal-state-map
-  (kbd "C-j") 'evil-scroll-page-down)
+;; Evil
+;; ----
 
-(define-key evil-normal-state-map
-  (kbd "C-k") 'evil-scroll-page-up)
-
-(define-key evil-normal-state-map
-  (kbd "C-f") 'find-file)
-
-(define-key evil-normal-state-map
-  (kbd "C-p") 'projectile-find-file-dwim)
-
-(define-key evil-normal-state-map
-  "zo" 'evil-toggle-fold)
-
-(define-key evil-normal-state-map
-  "zc" 'evil-toggle-fold)
-
-(define-key evil-normal-state-map
-  (kbd "SPC") 'ace-jump-mode)
-
-(define-key evil-normal-state-map
-  (kbd "S-SPC") 'ace-jump-mode-pop-mark)
-
-(define-key evil-normal-state-map
-  (kbd "s-[") 'evil-prev-buffer)
-
-(define-key evil-normal-state-map
-  (kbd "s-]") 'evil-next-buffer)
-
-(define-key evil-normal-state-map
-  (kbd ",i") 'imenu)
-
-;; Evil insert state bindings.
-(define-key evil-insert-state-map
-  (kbd "C-j") 'next-line)
-
-(define-key evil-insert-state-map
-  (kbd "C-k") 'previous-line)
-
-(use-package auto-complete
+(use-package evil
   :config
-  (ac-config-default))
+  (evil-mode t)
+  (setq evil-shift-width 2)
+  (setq evil-default-cursor t)
 
-(define-key evil-insert-state-map
-  (kbd "TAB") 'auto-complete)
+  ;; Evil normal state
+  ;; -----------------
 
-(define-key evil-insert-state-map
-  (kbd "C-n") 'ac-next)
+  (define-key evil-normal-state-map
+    [escape] 'keyboard-quit)
 
-(define-key evil-insert-state-map
-  (kbd "C-p") 'ac-previous)
+  (define-key evil-normal-state-map
+    (kbd "C-j") 'evil-scroll-page-down)
 
-(use-package paredit)
+  (define-key evil-normal-state-map
+    (kbd "C-k") 'evil-scroll-page-up)
+
+  (define-key evil-normal-state-map
+    (kbd "C-f") 'find-file)
+
+  (define-key evil-normal-state-map
+    (kbd "C-i") 'imenu)
+
+
+  ;; Evil insert state
+  ;; -----------------
+
+  (define-key evil-insert-state-map
+    (kbd "C-j") 'next-line)
+
+  (define-key evil-insert-state-map
+    (kbd "C-k") 'previous-line)
+
+  (define-key evil-insert-state-map
+    (kbd "C-b") 'backward-char)
+
+  (define-key evil-insert-state-map
+    (kbd "C-f") 'forward-char)
+
+  ;; Evil visual state
+  ;; -----------------
+
+  (define-key evil-visual-state-map
+    [escape] 'keyboard-quit)
+
+
+  :straight t)
+
+(use-package ace-jump-mode
+  :config
+  (define-key evil-normal-state-map
+    (kbd "SPC") 'ace-jump-mode)
+
+  :straight t)
+
+(use-package key-chord
+  :config
+  (key-chord-mode t)
+  (key-chord-define evil-normal-state-map ",x" 'smex)
+  (key-chord-define evil-normal-state-map ",s" 'ido-switch-buffer)
+
+  :straight t)
+
+;; ---------------------------------------------------------------------
+;; UI/UX
+;; ---------------------------------------------------------------------
+
+;; Highlight matching brackets.
+(show-paren-mode 1)
+
+;; Smooth scrolling.
+(setq scroll-step 1)
+(setq scroll-conservatively 10000)
+
+;; Ask for y/n instead of yes/no.
+(defalias 'yes-or-no-p 'y-or-n-p)
+
+;; Always use spaces instead of tabs.
+(setq-default indent-tabs-mode nil)
+
+;; Do not truncate (wrap) lines by default.
+(add-hook 'prog-mode-hook (lambda () (setq truncate-lines t)))
+
+
+(use-package paredit
+  :straight t)
+
+(use-package magit
+  :straight t)
+
+(use-package ido
+  :config
+  (ido-mode t)
+  (ido-everywhere t)
+  (setq ido-enable-flex-matching t)
+  (setq ido-use-virtual-buffers t)
+
+  :straight t)
+
+(use-package ido-completing-read+
+  :ensure t
+  :config
+  (ido-ubiquitous-mode t)
+
+  :straight t)
+
+(use-package ido-vertical-mode
+  :ensure t
+  :config
+  (ido-vertical-mode t)
+  (setq ido-vertical-define-keys 'C-n-and-C-p-only)
+
+  :straight t)
+
+(use-package smex
+  :config
+  (smex-initialize)
+  (smex-initialize-ido)
+
+  :straight t)
+
+(use-package idle-highlight-mode
+  :config
+  (add-hook 'prog-mode-hook 'idle-highlight-mode)
+
+  :straight t)
+
+(use-package rainbow-delimiters
+  :straight t)
+
+;; Completion
+;; ----------
+
+(use-package company
+  :config
+  (global-company-mode)
+  (define-key company-active-map (kbd "C-n") 'company-select-next-or-abort)
+  (define-key company-active-map (kbd "C-p") 'company-select-previous-or-abort)
+  (define-key company-active-map (kbd "C-d") 'company-show-doc-buffer)
+
+  (define-key evil-insert-state-map
+    (kbd "TAB") 'company-complete)
+
+  :straight t)
+
+;; Paredit
+;; -------
+
+(use-package paredit
+  :straight t)
 
 (defun ~/paredit/wrap-quote ()
   "Wrap the following sexp in double quotes."
@@ -327,28 +276,35 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
     (kbd "C-]") 'paredit-forward-slurp-sexp))
 
 (defun ~/paredit-mode ()
+  (interactive)
   (paredit-mode)
   (~/paredit/define-evil-keys))
 
+(use-package kaolin-themes
+  :straight t)
+
+(use-package doom-themes
+  :straight t)
+
+;; (straight-use-package '(colorless-themes :type git :repo "https://git.sr.ht/~lthms/colorless-themes.el"))
+;; (add-to-list 'custom-theme-load-path (concat user-emacs-directory "straight/repos/colorless-themes"))
+
+;; (straight-use-package '(mac-classic-theme :type git :repo "git@github.com:ahobson/mac-classic-theme.git"))
+;; (add-to-list 'custom-theme-load-path (concat user-emacs-directory "straight/repos/mac-classic-theme"))
+
+;; (use-package snazzy-theme
+;;   :straight t)
+
 ;; ---------------------------------------------------------------------
-;; UI/UX
+;; Utilites
+;; ---------------------------------------------------------------------
 
-(use-package ag
-  :bind (:map ag-mode-map
-              ("k" . evil-previous-line)))
-
-(use-package aggressive-indent)
-
-(use-package rainbow-delimiters)
-
-(use-package highlight-indent-guides
-  :config
-  (setq highlight-indent-guides-method 'character))
-
-(use-package highlight-sexp)
+(use-package s
+  :straight t)
 
 ;; ---------------------------------------------------------------------
 ;; LISP
+;; ---------------------------------------------------------------------
 
 (defvar ~/lisp/imenu-section
   '((nil "defun +\\(.+\\)" 1)))
@@ -379,6 +335,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
     (insert title)))
 
 (defun ~/lisp-mode ()
+  (interactive)
   (~/paredit-mode)
   (rainbow-delimiters-mode)
   (eldoc-mode))
@@ -390,7 +347,6 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
           (p2 (save-excursion (end-of-defun) (point))))
       (narrow-to-region p1 p2))))
 
-
 (defun ~/lisp/indirect-narrow-to-defun ()
   (interactive)
   (let* ((buffer-name (read-from-minibuffer "Buffer name: "))
@@ -400,7 +356,8 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
     (with-current-buffer (clone-indirect-buffer buffer-name t)
       (~/lisp/narrow-to-defun))))
 
-;; EMACS LISP
+;; Emacs Lisp
+;; ----------
 
 (defun ~/emacs-lisp/eval-expression-at-point-in-ielm ()
   "Eval the current sexpr in ielm."
@@ -437,41 +394,43 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
         (pop-to-buffer output-buffer)
         (setq buffer-read-only nil)
         (erase-buffer)
-        (pp result (current-buffer))
+        (let ((print-length 64))
+          (pp result (current-buffer)))
         (setq buffer-read-only t)))
     (pop-to-buffer current-buffer)))
 
 (defun ~/emacs-lisp/define-keys ()
-  (define-key evil-normal-state-map
-    ",e" 'eval-defun)
+  (define-key emacs-lisp-mode-map
+    (kbd "C-c C-c") 'eval-defun)
 
-  (define-key evil-normal-state-map
-    ",l" 'eval-buffer))
+  (define-key emacs-lisp-mode-map
+    (kbd "C-c C-l") 'eval-buffer)
+
+  (define-key emacs-lisp-mode-map
+    (kbd "C-c C-d") 'describe-symbol)
+
+  (define-key emacs-lisp-mode-map
+    (kbd "C-c C-f") '~/emacs-lisp/eval-defun-pp))
 
 ;; (define-key emacs-lisp-mode-map
 ;;   (kbd "C-;") 'elisp-eval-expression-at-point-in-ielm)
 
-(define-key emacs-lisp-mode-map
-  (kbd "C-c C-d") 'describe-symbol)
-
-(define-key emacs-lisp-mode-map
-  (kbd "C-c C-f") '~/emacs-lisp/eval-defun-pp)
-
 (defun ~/emacs-lisp-mode ()
+  (interactive)
   (~/lisp/setup-imenu)
   (~/lisp-mode)
-  (~/emacs-lisp/define-keys)
-  (aggressive-indent-mode t))
+  (~/emacs-lisp/define-keys))
 
 (add-hook 'emacs-lisp-mode-hook '~/emacs-lisp-mode)
 
-;; CLOJURE
+;; Clojure
+;; -------
 
-(~/package-require 'clojure-mode)
-(require 'clojure-mode)
+(use-package clojure-mode
+  :straight t)
 
-(use-package inf-clojure)
-
+(use-package inf-clojure
+  :straight t)
 
 (define-key inf-clojure-minor-mode-map
   (kbd "C-c C-p") 'inf-clojure-eval-last-sexp)
@@ -479,15 +438,8 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 (define-key inf-clojure-minor-mode-map
   (kbd "C-c C-f") 'inf-clojure-eval-defun)
 
-
-;; CLOJURE CIDER
-
-(~/package-require 'cider)
-(require 'cider)
-
-(use-package ac-cider
-  :config
-  (add-hook 'cider-mode-hook 'ac-cider-setup))
+(use-package cider
+  :straight t)
 
 (add-hook 'cider-mode-hook 'eldoc-mode)
 (add-hook 'cider-repl-mode-hook 'subword-mode)
@@ -517,7 +469,8 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 (put-clojure-indent 'with :defn)
 (put-clojure-indent 'bidi.syntax/branch :defn)
 
-;; CLOJURE MODE FUNCTIONS
+;; Clojure mode functions
+;; ----------------------
 
 (defun ~/clojure/toggle-defun-style-indent ()
   (interactive)
@@ -576,16 +529,21 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
   (interactive)
   (let ((lein-test-refresh-buffer (get-buffer "*lein-test-refresh*")))
     (when (not lein-test-refresh-buffer)
-        (setq lein-test-refresh-buffer (compile "lein test-refresh"))
-        (with-current-buffer lein-test-refresh-buffer
-          (rename-buffer "*lein-test-refresh*")))
+      (setq lein-test-refresh-buffer (compile "lein test-refresh"))
+      (with-current-buffer lein-test-refresh-buffer
+        (rename-buffer "*lein-test-refresh*")))
     lein-test-refresh-buffer))
 
 (setq cider-cljs-lein-repl "(do (use 'figwheel-sidecar.repl-api) (start-figwheel!) (cljs-repl))")
 
 (define-key clojure-mode-map
-  (kbd "C-c M-b")
-  '~/clojure/cider-repl-clear-buffer)
+  (kbd "C-c M-b") '~/clojure/cider-repl-clear-buffer)
+
+(define-key cider-mode-map
+  (kbd "C-c C-c") 'cider-eval-defun-at-point)
+
+(define-key cider-mode-map
+  (kbd "C-c C-l") 'cider-load-buffer)
 
 (define-key cider-mode-map
   (kbd "C-c C-d") 'cider-doc)
@@ -644,632 +602,30 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
             :filter-args
             '~/clojure/cider-clojure-cli-jack-in-dependencies)
 
-;; ---------------------------------------------------------------------
-;; YAML
 
-(use-package yaml-mode)
+;; JavaScript
+;; ----------
 
-;; ---------------------------------------------------------------------
-;; Ruby
+(use-package js2-mode
+  :config
+  (add-to-list 'auto-mode-alist '("\\.js$" . js2-mode))
+  (setq-default js2-basic-offset 2)
+  (setq-default js-indent-level 2)
 
-(use-package inf-ruby)
-(use-package ruby-end)
-(use-package ruby-test-mode)
-(use-package ruby-tools)
-(use-package feature-mode)
-(use-package yard-mode)
-(use-package rbenv)
-(use-package robe)
-(use-package rubocop)
+  :straight t)
 
-(require 'ruby-mode)
-(require 'subr-x)
+(use-package rjsx-mode
+  :config
+  (add-to-list 'auto-mode-alist '("\\.jsx$" . rjsx-mode))
 
-;; RUBY BURDOCK
+  :straight t)
 
-(setq ~/burdock-mode-source-path
-      (concat user-emacs-directory "lisp/burdock-mode/"))
-
-(when (file-exists-p ~/burdock-mode-source-path)
-  (add-to-list 'load-path ~/burdock-mode-source-path)
-  (require 'burdock-mode)
-  (setq burdock-ruby-source-directory (concat ~/burdock-mode-source-path "ruby/"))
-
-  (defun ~/define-evil-keys-for-burdock-mode ()
-    (interactive)
-    (define-key evil-normal-state-local-map "D" 'burdock-kill)
-    (define-key evil-normal-state-local-map ",e" 'burdock-evaluate-scope-at-point)
-    (define-key evil-normal-state-local-map "W(" 'burdock-structured-wrap-round)
-    (define-key evil-normal-state-local-map "W[" 'burdock-structured-wrap-square)
-    (define-key evil-normal-state-local-map "W{" 'burdock-structured-wrap-curly)
-    (define-key evil-normal-state-local-map "W\"" 'burdock-structured-wrap-double-quote)
-    (define-key evil-normal-state-local-map "W'" 'burdock-structured-wrap-single-quote)
-    (define-key evil-normal-state-local-map "Wl" 'burdock-structured-wrap-lambda)
-    (define-key evil-normal-state-local-map "WL" 'burdock-structured-wrap-lambda-call)
-    (define-key evil-normal-state-local-map [down] 'burdock-zip-down)
-    (define-key evil-normal-state-local-map [up] 'burdock-zip-up)
-    (define-key evil-normal-state-local-map [left] 'burdock-zip-left)
-    (define-key evil-normal-state-local-map [right] 'burdock-zip-right))
-
-  (add-hook 'ruby-mode-hook 'burdock-mode)
-  (add-hook 'burdock-mode-hook '~/define-evil-keys-for-burdock-mode)
-  (add-hook 'burdock-mode-hook 'burdock-start))
-
-;; RUBY CONFIGURATION
-
-(setq ruby-end-insert-newline nil)
-(setq ruby-deep-indent-paren nil)
-(setq ruby-deep-arglist nil)
-
-(add-to-list 'auto-mode-alist '("\\.irbrc\\'" . ruby-mode))
-(add-to-list 'auto-mode-alist '("\\.pryrc\\'" . ruby-mode))
-(add-to-list 'auto-mode-alist '("\\.rake\\'" . ruby-mode))
-(add-to-list 'auto-mode-alist '("Rakefile\\'" . ruby-mode))
-(add-to-list 'auto-mode-alist '("\\.gemspec\\'" . ruby-mode))
-(add-to-list 'auto-mode-alist '("\\.ru\\'" . ruby-mode))
-(add-to-list 'auto-mode-alist '("Gemfile\\'" . ruby-mode))
-(add-to-list 'auto-mode-alist '("Guardfile\\'" . ruby-mode))
-(add-to-list 'auto-mode-alist '("Capfile\\'" . ruby-mode))
-(add-to-list 'auto-mode-alist '("Vagrantfile\\'" . ruby-mode))
-
-(eval-after-load "hideshow"
-  '(add-to-list 'hs-special-modes-alist
-                 `(ruby-mode
-		   ;; Block start
-                   ,(rx (or "def" "class" "module" "{" "["))
-		   ;; Block end
-                   ,(rx (or "}" "]" "end"))
-		   ;; Comment start
-                   ,(rx (or "#"))
-                   ruby-forward-sexp nil)))
-
-(defun ~/ruby/scratch ()
-  "Create/retrieve a Clojure scratch buffer and switch to it.."
-  (interactive)
-  (let ((buf (get-buffer-create "*rb-scratch*")))
-    (switch-to-buffer buf)
-    (ruby-mode)))
-
-(defun ~/ruby/repl-clear-buffer ()
-  (interactive)
-  (when (bufferp (get-buffer inf-ruby-buffer))
-    (with-current-buffer inf-ruby-buffer
-      (let ((comint-buffer-maximum-size 0))
-	(comint-truncate-buffer)))))
-
-(evil-define-key
-  'normal rspec-mode-map
-  (kbd ",t") 'rspec-verify)
-
-(evil-define-key
-  'normal rspec-mode-map
-  (kbd ",T") 'rspec-verify-all)
-
-(define-key ruby-mode-map
-  (kbd "C-c M-j") 'inf-ruby-console-auto)
-
-(define-key ruby-mode-map
-  (kbd "C-c M-b") '~/ruby/repl-clear-buffer)
-
-(define-key ruby-mode-map
-  (kbd "C-c") nil)
-
-(defun ~/ruby/before-save-hook ()
-  (whitespace-cleanup))
-
-(add-hook 'ruby-mode-hook
-          (lambda ()
-            (add-hook 'before-save-hook '~/ruby/before-save-hook nil 'local)))
-
-(add-hook 'ruby-mode-hook 'yard-mode)
-(add-hook 'ruby-mode-hook 'highlight-indent-guides-mode)
-(add-hook 'ruby-mode-hook 'autopair-mode)
-
-
-;; ---------------------------------------------------------------------
-;; SQL
-
-(require 'sql)
-
-(sql-set-product-feature 'postgres :prompt-regexp "^[_[:alnum:]\-:]*=[#>] *")
-(sql-set-product-feature 'postgres :prompt-cont-regexp  "^[_[:alnum:]\-:]*[-(][#>] *")
-
-(add-hook 'sql-interactive-mode-hook
-          (lambda () (toggle-truncate-lines t)))
-
-(define-key
-  sql-interactive-mode-map
-  (kbd "C-j") nil)
-
-(evil-define-key
-  'normal sql-interactive-mode-map
-  (kbd "C-j")
-  'evil-scroll-page-down)
-
-(defun sqli-show-completions-if-possible ()
-  (interactive)
-  (let* ((process (get-buffer-process (current-buffer)))
-         (start-point (save-excursion
-                        (search-backward-regexp comint-prompt-regexp)
-                        (match-end 0)))
-         (end-point (point))
-         (original-input (buffer-substring-no-properties start-point (point-max)))
-         (partial-input (buffer-substring-no-properties start-point end-point))
-         (partial-input-with-tabs (concat partial-input "\t\t"))
-         (backspaces (replace-regexp-in-string "." "\b" partial-input-with-tabs))
-         (input-for-tab (concat partial-input-with-tabs backspaces)))
-    (process-send-string process input-for-tab)
-    (comint-delete-input)
-    (sleep-for 0 30)
-    (call-interactively (lookup-key (current-local-map) "\r"))
-    (goto-char (point-max))
-    (insert original-input)
-    (backward-char (- (length original-input)
-                      (length partial-input)))))
-
-(define-key sql-interactive-mode-map
-  (kbd "<tab>") 'sqli-show-completions-if-possible)
-
-(define-key sql-interactive-mode-map
-  "\t" 'sqli-show-completions-if-possible)
-
-(defun ~/end-of-previous-face-change (face-name)
-  (save-excursion
-    (let ((continue t)
-          (answer nil))
-      (while continue
-        (let ((p (or (previous-single-property-change (point) 'face)
-                     1)))
-          (if (= p 1)
-              (progn
-                (setq continue nil)
-                (setq answer p))
-            (if (equalp (get-text-property p 'face)
-                        face-name)
-                (progn
-                  (setq continue nil)
-                  (setq answer (next-single-property-change p 'face)))
-              (goto-char p)))))
-      answer)))
-
-(defun ~/inside-string-p ()
-  (save-excursion
-    (let ((p (point)))
-      ;; There is a " to the left.
-      (when (re-search-backward "\"" (point-min) t)
-        ;; It's not in a comment.
-        (when (not (equalp (get-text-property (point) 'face)
-                           'font-lock-comment-face))
-          ;; Goto to the end of the previous comment or beginning of
-          ;; buffer. It'd be nice to use syntax tables here but that's
-          ;; not always possible.
-          (goto-char (~/end-of-previous-face-change 'font-lock-comment-face))
-          (let ((continue t)
-                (answer nil))
-            (while continue
-              (if (re-search-forward "\"[^\"]*\\(\"\\|\\'\\)" (point-max) t)
-                  (progn
-                    (goto-char (match-end 0))
-                    (when (< (match-beginning 0) p (match-end 0))
-                      (setq continue nil)
-                      (setq answer t)))
-                (setq continue nil)))
-            answer))))))
-
-(defun ~/sql/upcase-keywords-after-change (beg end length)
-  (interactive)
-  (if (string-match-p (regexp-opt (list " " "\n" "\r")) 
-                      (buffer-substring-no-properties beg end))
-      (save-excursion
-        (backward-word)
-        (let ((next-change (or (next-property-change (point) (current-buffer))
-                               (point-max))))
-          (if next-change
-              (pcase (get-text-property (point) 'face)
-                ((or 'font-lock-keyword-face
-                     'font-lock-builtin-face)
-                 (if (not (~/inside-string-p))
-                     (upcase-region (point) next-change)))
-                (_)))))))
-
-(defun ~/sql-mode ()
-  (add-hook 'after-change-functions
-            '~/sql/upcase-keywords-after-change
-            nil
-            t))
-
-(defun ~/sql-postgres/scratch ()
-  "Create/retrieve a PostgreSQL scratch buffer and switch to it."
-  (interactive)
-  (let ((buf (get-buffer-create "*sql-postgres-scratch*")))
-    (switch-to-buffer buf)
-    (sql-mode)
-    (sql-set-product 'postgres)))
-
-;; This has much better behavior than the built in verison.
-(defun ~/sql/send-paragraph ()
-  "Send the current paragraph to the SQL process."
-  (interactive)
-  (let ((start (save-excursion
-                 (backward-paragraph)
-                 (point)))
-        (end (save-excursion
-               (forward-paragraph)
-               (point))))
-    (save-excursion
-      (goto-char start)
-      (while (< (point) end)
-        (sql-send-line-and-next)
-        ;; Not happy about this.
-        (sleep-for 0 10)))))
-
-(define-key sql-mode-map (kbd "C-c C-c") '~/sql/send-paragraph)
-
-(add-hook 'sql-mode-hook '~/sql-mode)
-
-
-;;; heroku pg:psql
-
-(defcustom heroku-sql-program "heroku"
-  "Command to start pg:psql by Heroku.
-
-Starts `sql-interactive-mode' after doing some setup."
-  :type 'file
-  :group 'SQL)
-
-(defcustom heroku-sql-login-params `(database)
-  "Login parameters needed to connect to Heroku PostgreSQL."
-  :type 'sql-login-params
-  :group 'SQL)
-
-(defcustom heroku-sql-options '("pg:psql")
-  "List of additional options for `heroku-sql-program'."
-  :type '(repeat string)
-  :group 'SQL)
-
-;;;###autoload
-(defun heroku-sql (&optional buffer)
-  "Run heroku pg:psql as an inferior process in an SQL buffer.
-
-Enter app name when prompted for `database'."
-  (interactive "P")
-  (sql-product-interactive 'heroku buffer))
-
-(defun heroku-sql-comint (product options)
-  (let ((params options))
-    (sql-comint product (if (string= "" sql-database)
-                            options
-                          (append options (list "-a" sql-database))))))
-
-(add-to-list 'sql-product-alist
-             '(heroku :name "Heroku"
-                      :sqli-program heroku-sql-program
-                      :sqli-login heroku-sql-login-params
-                      :sqli-options heroku-sql-options
-                      :sqli-comint-func heroku-sql-comint
-                      :font-lock sql-mode-postgres-font-lock-keywords
-                      :list-all ("\\d+" . "\\dS+")
-                      :list-table ("\\d+ %s" . "\\dS+ %s")
-                      :completion-object sql-postgres-completion-object
-                      :prompt-regexp "^[^>#]+=[#>] "
-                      :prompt-length 5
-                      :prompt-cont-regexp "^\\w*[-(][#>] "
-                      :input-filter sql-remove-tabs-filter
-                      :terminator ("\\(^\\s-*\\\\g$\\|;\\)" . "\\g")))
-
-;; ---------------------------------------------------------------------
-;; Java
-
-;; The following three forms were taken from
-;; https://gist.github.com/skeeto/3178747 and modified to fit the
-;; conventions in this file.
-
-(defun ~/javap-handler (op &rest args)
-  "Handle .class files by putting the output of javap in the buffer."
-  (cond
-   ((eq op 'get-file-buffer)
-    (let ((file (car args)))
-      (with-current-buffer (create-file-buffer file)
-        (call-process "javap" nil (current-buffer) nil "-c" "-verbose"
-                      "-classpath" (file-name-directory file)
-                      (file-name-sans-extension (file-name-nondirectory file)))
-        (setq buffer-file-name file)
-        (setq buffer-read-only t)
-        (set-buffer-modified-p nil)
-        (goto-char (point-min))
-        (java-mode)
-        (current-buffer))))
-   ((~/javap-handler-real op args))))
-
-(defun ~/javap-handler-real (operation args)
-  "Run the real handler without the javap handler installed."
-  (let ((inhibit-file-name-handlers
-         (cons '~/javap-handler
-               (and (eq inhibit-file-name-operation operation)
-                    inhibit-file-name-handlers)))
-        (inhibit-file-name-operation operation))
-    (apply operation args)))
-
-(add-to-list 'file-name-handler-alist '("\\.class$" . ~/javap-handler))
-
-;; ---------------------------------------------------------------------
-;; JAVASCRIPT
-
-(~/package-require 'js2-mode)
-(~/package-require 'skewer-mode)
-(~/package-require 'jsx-mode)
-
-(add-to-list 'auto-mode-alist '("\\.js$" . js2-mode))
-(add-to-list 'auto-mode-alist '("\\.jsx$" . jsx-mode))
-
-(setq-default js2-basic-offset 2)
-(setq-default js-indent-level 2)
-
-;; Prevents funky characters at the REPL.
-(setenv "NODE_NO_READLINE" "1")
+;;(use-package skewer-mode)
 
 (defun ~/javascript/nodejs-repl ()
   (interactive)
-  (pop-to-buffer (make-comint "nodejs" "node")))
+  ;; Prevents funky characters at the REPL.
+  (setenv "NODE_NO_READLINE" "1")
+  (pop-to-buffer (make-comint "nodejs" "node"))
 
-;; ---------------------------------------------------------------------
-;; GraphQL
-
-(~/package-require 'graphql-mode)
-
-;; ---------------------------------------------------------------------
-;; JSON
-
-(~/package-require 'json-navigator)
-
-;; ---------------------------------------------------------------------
-;; Wordnet
-
-(setq ~/wordnut-source-path (concat user-emacs-directory "lisp/wordnut/"))
-
-(when (file-exists-p ~/wordnut-source-path) 
-  (add-to-list 'load-path ~/wordnut-source-path)
-  (require 'wordnut))
-
-;; ---------------------------------------------------------------------
-;; Echo keys
-;; See: https://www.emacswiki.org/emacs/EchoKeyPresses
-
-(defvar *echo-keys-last* nil "Last command processed by `echo-keys'.")
-
-(defun echo-keys ()
-  (interactive)
-  (let ((deactivate-mark deactivate-mark))
-    (when (this-command-keys)
-      (with-current-buffer (get-buffer-create "*echo-key*")
-	(goto-char (point-max))
-	;; self  self
-	;; self  other \n
-	;; other self  \n
-	;; other other \n
-	(unless (and (eq 'self-insert-command *echo-keys-last*)
-		     (eq 'self-insert-command this-command))
-	  (insert "\n"))
-	(if (eql this-command 'self-insert-command)
-	    (let ((desc (key-description (this-command-keys))))
-	      (if (= 1 (length desc))
-		  (insert desc)
-		(insert " " desc " ")))
-	  (insert (key-description (this-command-keys))))
-	(setf *echo-keys-last* this-command)
-	(dolist (window (window-list))
-	  (when (eq (window-buffer window) (current-buffer))
-	    ;; We need to use both to get the effect.
-	    (set-window-point window (point))
-	    (end-of-buffer)))))))
-
-(defun toggle-echo-keys ()
-  (interactive)
-  (if (member 'echo-keys  pre-command-hook)
-      (progn
-	(remove-hook 'pre-command-hook 'echo-keys)
-	(dolist (window (window-list))
-	  (when (eq (window-buffer window) (get-buffer "*echo-key*"))
-	    (delete-window window))))
-    (progn
-      (add-hook    'pre-command-hook 'echo-keys)
-      (delete-other-windows)
-      (split-window nil (- (window-width) 32) t)
-      (other-window 1)
-      (switch-to-buffer (get-buffer-create "*echo-key*"))
-      (set-window-dedicated-p (selected-window) t)
-      (other-window 1))))
-
-;; ---------------------------------------------------------------------
-;; Go
-
-(use-package go-mode)
-(use-package go-guru)
-(use-package go-autocomplete)
-
-;; ---------------------------------------------------------------------
-;; Racket
-
-(use-package racket-mode)
-(use-package geiser)
-
-;; ---------------------------------------------------------------------
-;; Swift
-
-;; (use-package swift-helpful)
-
-;; (use-package lsp-sourcekit
-;;   :after lsp-mode
-;;   :config
-;;   (setenv "SOURCEKIT_TOOLCHAIN_PATH" "/Library/Developer/Toolchains/swift-latest.xctoolchain")
-;;   (setq lsp-sourcekit-executable (expand-file-name "/usr/local/bin/sourcekit-lsp")))
-
-;; (use-package swift-mode
-;;   :hook (swift-mode . (lambda () (lsp))))
-
-;; (use-package lsp-ui)
-
-;; ---------------------------------------------------------------------
-;; Haskell
-
-(defun ~/haskell-send-paragraph ()
-  (interactive)
-  (save-excursion
-    (let* ((point-a (progn (backward-paragraph)
-                           (point)))
-           (point-b (progn (forward-paragraph)
-                           (point)))
-           (snippet (string-trim (buffer-substring-no-properties point-a point-b))))
-      (with-current-buffer (get-buffer "*haskell*")
-        (goto-char (point-max))
-        (insert ":{")
-        (comint-send-input)
-        (sleep-for 0 1)
-        (dolist (line (split-string snippet "[\n]" t))
-          (insert line)
-          (comint-send-input)
-          (sleep-for 0 1))
-        (insert ":}")
-        (comint-send-input)))))
-
-(defun ~/intero-send-paragraph ()
-  (interactive)
-  (save-excursion
-    (let* ((point-a (progn (backward-paragraph)
-                           (point)))
-           (point-b (progn (forward-paragraph)
-                           (point)))
-           (snippet (string-trim (buffer-substring-no-properties point-a point-b))))
-      (let ((intero-pop-to-repl nil))
-        (intero-with-repl-buffer nil
-          (goto-char (point-max))
-          (let ((lines (split-string snippet "[\n]" t)))
-            (if (< 1 (length lines))
-                (progn
-                  (insert ":{")
-                  (comint-send-input)))
-            (sleep-for 0 1)
-            (dolist (line lines)
-              (insert line)
-              (comint-send-input)
-              (sleep-for 0 1))
-            (if (< 1 (length lines) )
-                (progn
-                  (insert ":}")
-                  (comint-send-input)))))))))
-
-(defun ~/intero/scratch ()
-  "Create/retrieve a Clojure scratch buffer and switch to it."
-  (interactive)
-  (let ((buf (get-buffer-create "*intero-scratch*")))
-    (switch-to-buffer buf)
-    (intero-mode)))
-
-(use-package haskell-mode)
-(use-package intero)
-
-(define-key intero-mode-map (kbd "C-c C-f") '~/intero-send-paragraph)
-
-;; ---------------------------------------------------------------------
-;; Miscellaneous
-
-(~/package-require 'highlight-indentation)
-(require 'highlight-indentation)
-
-(~/package-require 'exec-path-from-shell)
-
-
-;; ---------------------------------------------------------------------
-;; Used configuration
-
-(require 'init-ui)
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(ansi-color-faces-vector
-   [default default default italic underline success warning error])
- '(ansi-color-names-vector
-   ["#282828" "#fb4934" "#8ec07c" "#fabd2f" "#268bd2" "#fb2874" "#83a598" "#ebdbb2"])
- '(ansi-term-color-vector
-   [unspecified "#1F1611" "#660000" "#144212" "#EFC232" "#5798AE" "#BE73FD" "#93C1BC" "#E6E1DC"] t)
- '(background-color "#202020")
- '(background-mode dark)
- '(company-quickhelp-color-background "#D0D0D0")
- '(company-quickhelp-color-foreground "#494B53")
- '(cursor-color "#cccccc")
- '(cursor-type (quote bar))
- '(custom-safe-themes
-   (quote
-    ("0d75aa06198c4245ac2a8877bfc56503d5d8199cc85da2c65a6791b84afb9024" "462d6915a7eac1c6f00d5acd8b08ae379e12db2341e7d3eac44ff7f984a5e579" "30289fa8d502f71a392f40a0941a83842152a68c54ad69e0638ef52f04777a4c" "ffba0482d3548c9494e84c1324d527f73ea4e43fff8dfd0e48faa8fc6d5c2bc7" default)))
- '(fci-rule-character-color "#452E2E")
- '(fci-rule-color "#555556")
- '(foreground-color "#cccccc")
- '(hl-paren-background-colors (quote ("#e8fce8" "#c1e7f8" "#f8e8e8")))
- '(hl-paren-colors (quote ("#40883f" "#0287c8" "#b85c57")))
- '(jdee-db-active-breakpoint-face-colors (cons "#1B2229" "#fabd2f"))
- '(jdee-db-requested-breakpoint-face-colors (cons "#1B2229" "#8ec07c"))
- '(jdee-db-spec-breakpoint-face-colors (cons "#1B2229" "#555556"))
- '(notmuch-search-line-faces
-   (quote
-    (("unread" :foreground "#aeee00")
-     ("flagged" :foreground "#0a9dff")
-     ("deleted" :foreground "#ff2c4b" :bold t))))
- '(nrepl-message-colors
-   (quote
-    ("#ee11dd" "#8584ae" "#b4f5fe" "#4c406d" "#ffe000" "#ffa500" "#ffa500" "#DC8CC3")))
- '(objed-cursor-color "#fb4934")
- '(package-selected-packages
-   (quote
-    (stack-mode intero vterm abyss-theme ahungry-theme alect-themes ample-theme ample-zen-theme apropospriate-theme arc-dark-theme autumn-light-theme ayu-theme basic-theme cloud-theme exotica-theme faff-theme farmhouse-theme flatui-dark-theme gandalf-theme green-phosphor-theme green-screen-theme humanoid-themes hydandata-light-theme inkpot-theme labburn-theme lavenderless-theme leuven-theme liso-theme lush-theme madhat2r-theme majapahit-theme micgoline minimal-theme minsk-theme modus-operandi-theme modus-vivendi-theme nordless-theme nova-theme oceanic-theme org-beautify-theme overcast-theme paper-theme poet-theme professional-theme qtcreator-theme quasi-monochrome-theme railscasts-theme rebecca-theme rimero-theme snazzy-theme spacemacs-theme tangotango-theme white-theme xresources-theme zeno-theme ubuntu-theme zerodark-theme zweilight-theme punpun-theme zen-and-art-theme suscolors-theme vs-light-theme vs-dark-theme vscdark-theme tron-theme almost-mono-themes plan9-theme yard-mode yaml-mode wordnut use-package typescript-mode termbright-theme swift-mode sunny-day-theme smyx-theme smex skewer-mode seti-theme seoul256-theme ruby-tools ruby-test-mode ruby-end rubocop robe ripgrep restclient rbenv ranger rainbow-delimiters racket-mode projectile peacock-theme one-themes noctilux-theme monotropic-theme matlab-mode markdown-mode magit key-chord kaolin-themes jsx-mode json-navigator jazz-theme inf-clojure ido-vertical-mode ido-completing-read+ idle-highlight-mode hydra highlight-sexp highlight-indentation highlight-indent-guides haskell-mode haskell-emacs-text hamburg-theme gruvbox-theme graphql-mode go-guru go-autocomplete geiser flucui-themes feature-mode exec-path-from-shell evil-paredit evil-mc eink-theme dumb-jump doom-themes darktooth-theme dark-mint-theme cyberpunk-theme cyberpunk-2019-theme challenger-deep-theme brutalist-theme birds-of-paradise-plus-theme berrys-theme base16-theme badwolf-theme atom-one-dark-theme aggressive-indent ag ace-jump-mode ac-cider)))
- '(pdf-view-midnight-colors (quote ("#FDF4C1" . "#282828")))
- '(pos-tip-background-color "#36473A")
- '(pos-tip-foreground-color "#FFFFC8")
- '(safe-local-variable-values (quote ((eval setq js2-strict-missing-semi-warning nil))))
- '(sml/active-background-color "#98ece8")
- '(sml/active-foreground-color "#424242")
- '(sml/inactive-background-color "#4fa8a8")
- '(sml/inactive-foreground-color "#424242")
- '(tetris-x-colors
-   [[229 192 123]
-    [97 175 239]
-    [209 154 102]
-    [224 108 117]
-    [152 195 121]
-    [198 120 221]
-    [86 182 194]])
- '(typescript-indent-level 4)
- '(vc-annotate-background "#282828")
- '(vc-annotate-color-map
-   (list
-    (cons 20 "#8ec07c")
-    (cons 40 "#b2bf62")
-    (cons 60 "#d5be48")
-    (cons 80 "#fabd2f")
-    (cons 100 "#fba827")
-    (cons 120 "#fc9420")
-    (cons 140 "#fe8019")
-    (cons 160 "#fd6237")
-    (cons 180 "#fb4555")
-    (cons 200 "#fb2874")
-    (cons 220 "#fb335e")
-    (cons 240 "#fa3e49")
-    (cons 260 "#fb4934")
-    (cons 280 "#d14c3c")
-    (cons 300 "#a84f45")
-    (cons 320 "#7e514d")
-    (cons 340 "#555556")
-    (cons 360 "#555556")))
- '(vc-annotate-very-old-color nil))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(default ((t (:font "Victor Mono" :height 140))))
- '(font-lock-comment-face ((t (:slant italic))))
- '(font-lock-doc-face ((t (:slant italic))))
- '(mode-line ((t (:font "Victor Mono" :height 140))))
- '(mode-line-inactive ((t (:slant italic :height 140))))
- '(modeline-highlight ((t (:height 140)))))
+  :straight t)
