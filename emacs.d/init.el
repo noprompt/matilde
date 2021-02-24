@@ -286,6 +286,15 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 (use-package doom-themes
   :straight t)
 
+(straight-use-package
+ '(base16-emacs
+   :type git
+   :repo "git@github.com:neeasade/base16-emacs.git"))
+
+(add-to-list 'custom-theme-load-path
+             (concat user-emacs-directory "straight/repos/base16-emacs/build"))
+
+
 ;; (straight-use-package '(colorless-themes :type git :repo "https://git.sr.ht/~lthms/colorless-themes.el"))
 ;; (add-to-list 'custom-theme-load-path (concat user-emacs-directory "straight/repos/colorless-themes"))
 
