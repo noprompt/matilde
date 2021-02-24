@@ -612,8 +612,9 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
             '~/clojure/cider-clojure-cli-jack-in-dependencies)
 
 
+;; ---------------------------------------------------------------------
 ;; JavaScript
-;; ----------
+;; ---------------------------------------------------------------------
 
 (use-package js2-mode
   :config
