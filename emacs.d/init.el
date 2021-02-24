@@ -639,3 +639,10 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
   (pop-to-buffer (make-comint "nodejs" "node"))
 
   :straight t)
+
+;; ---------------------------------------------------------------------
+;; Markdown
+;; ---------------------------------------------------------------------
+
+(use-package markdown-mode
+  :straight t)
