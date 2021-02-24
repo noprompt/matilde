@@ -275,3 +275,12 @@ darkened by 5% otherwise."
     (set-face-attribute face nil :font font))
   (setq nano-font font)
   t)
+
+(global-set-key (kbd "C-=") 'nano-increase-font-height)
+(global-set-key (kbd "C--") 'nano-decrease-font-height)
+
+(defun ~/set-default-face-weight (weight)
+  (interactive
+   (list (completing-read "Weight: " '(ultra-bold extra-bold bold semi-bold normal semi-light light extra-light ultra-light))))
+  (set-face-attribute 'default nil :weight (intern-soft weight))
+  t)
