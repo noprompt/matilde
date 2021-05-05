@@ -4,7 +4,8 @@ source $MATILDE_ROOT/bash/util
 require "file"
 require "path"
 
-ulimit -n 10240
+# This operation can fail.
+ulimit -n 10240 2>/dev/null
 
 # Command history file location.
 export HISTFILE="$HOME/.bash_history"
@@ -62,7 +63,7 @@ if file.directory? "$HOME/.cargo/bin"; then
     path.unshift "$HOME/.cargo/bin"
 fi
 
-[ `which highlight` ] || brew install highlight
+[ `which highlight` ] || [ `which brew` ] && brew install highlight
 export LESSOPEN="| $(which highlight) %s --out-format=xterm256 --line-numbers --quiet --force --style=moria"
 export LESS=" -R -F -X"
 
