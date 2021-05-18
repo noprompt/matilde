@@ -338,6 +338,9 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 (use-package ripgrep
   :straight t)
 
+(use-package bshell
+  :straight t)
+
 ;; ---------------------------------------------------------------------
 ;; LISP
 ;; ---------------------------------------------------------------------
