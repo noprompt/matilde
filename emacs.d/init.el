@@ -280,6 +280,10 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
   (paredit-mode)
   (~/paredit/define-evil-keys))
 
+;; ---------------------------------------------------------------------
+;; Themes
+;; ---------------------------------------------------------------------
+
 (use-package kaolin-themes
   :straight t)
 
@@ -289,26 +293,49 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 (straight-use-package
  '(base16-emacs
    :type git
-   :repo "git@github.com:neeasade/base16-emacs.git"))
+   :repo "neeasade/base16-emacs"))
 
-(add-to-list 'custom-theme-load-path
-             (concat user-emacs-directory "straight/repos/base16-emacs/build"))
+(add-to-list 'custom-theme-load-path (concat user-emacs-directory "straight/repos/base16-emacs/build"))
 
+(straight-use-package
+ '(emacs-tron-theme
+   :type git
+   :repo "ivanmarcin/emacs-tron-theme"))
 
-;; (straight-use-package '(colorless-themes :type git :repo "https://git.sr.ht/~lthms/colorless-themes.el"))
-;; (add-to-list 'custom-theme-load-path (concat user-emacs-directory "straight/repos/colorless-themes"))
+(add-to-list 'custom-theme-load-path (concat user-emacs-directory "straight/repos/emacs-tron-theme"))
 
-;; (straight-use-package '(mac-classic-theme :type git :repo "git@github.com:ahobson/mac-classic-theme.git"))
-;; (add-to-list 'custom-theme-load-path (concat user-emacs-directory "straight/repos/mac-classic-theme"))
+(straight-use-package
+ '(eink-emacs
+   :type git
+   :repo "maio/eink-emacs"))
 
-;; (use-package snazzy-theme
-;;   :straight t)
+(add-to-list 'custom-theme-load-path (concat user-emacs-directory "straight/repos/eink-emacs"))
+
+(straight-use-package
+ '(almost-mono-themes
+   :type git
+   :repo "cryon/almost-mono-themes"))
+
+(add-to-list 'custom-theme-load-path (concat user-emacs-directory "straight/repos/almost-mono-themes"))
+
+(straight-use-package
+ '(borland-blue-theme
+   :type git
+   :repo "fourier/borland-blue-theme"))
+
+(add-to-list 'custom-theme-load-path (concat user-emacs-directory "straight/repos/borland-blue-theme"))
 
 ;; ---------------------------------------------------------------------
 ;; Utilites
 ;; ---------------------------------------------------------------------
 
 (use-package s
+  :straight t)
+
+(use-package rainbow-mode
+  :straight t)
+
+(use-package ripgrep
   :straight t)
 
 ;; ---------------------------------------------------------------------
@@ -638,6 +665,9 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
   (setenv "NODE_NO_READLINE" "1")
   (pop-to-buffer (make-comint "nodejs" "node"))
 
+  :straight t)
+
+(use-package json-navigator
   :straight t)
 
 ;; ---------------------------------------------------------------------
