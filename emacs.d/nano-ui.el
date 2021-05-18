@@ -27,7 +27,7 @@
 
 (tool-bar-mode 0)
 
-(menu-bar-mode t)
+(menu-bar-mode 0)
 
 (tooltip-mode 0)
 
