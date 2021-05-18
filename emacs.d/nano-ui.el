@@ -238,8 +238,6 @@ darkened by 5% otherwise."
 ;; Typography controls
 ;; ---------------------------------------------------------------------
 
-
-
 (defun nano-increase-font-height ()
   "Increase the current global font height by 10pts."
   (interactive)
@@ -260,14 +258,6 @@ darkened by 5% otherwise."
        (set-face-attribute face nil :height nano-font-height))
      ~/typography-global-targets)))
 
-(defun ~/mono-font-family-list ()
-  (seq-filter
-   (lambda (font)
-     (let ((info (font-info font)))
-       (if info
-           (string-match-p "spacing=100" (aref info 1)))))
-   (font-family-list)))
-
 (defun nano-pick-font (font)
   (interactive
    (list (completing-read "Font: " (~/mono-font-family-list))))
@@ -279,8 +269,74 @@ darkened by 5% otherwise."
 (global-set-key (kbd "C-=") 'nano-increase-font-height)
 (global-set-key (kbd "C--") 'nano-decrease-font-height)
 
+(defun ~/mono-font-family-list ()
+  (seq-filter
+   (lambda (font)
+     (let ((info (font-info font)))
+       (if info
+           (string-match-p "spacing=100" (aref info 1)))))
+   (font-family-list)))
+
 (defun ~/set-default-face-weight (weight)
   (interactive
    (list (completing-read "Weight: " '(ultra-bold extra-bold bold semi-bold normal semi-light light extra-light ultra-light))))
   (set-face-attribute 'default nil :weight (intern-soft weight))
   t)
+
+(defun ~/set-default-face-width (width)
+  (interactive
+   (list (completing-read "Width: " '(ultra-condensed extra-condensed condensed semi-condensed normal semi-expanded expanded extra-expanded ultra-expanded))))
+  (set-face-attribute 'default nil :width (intern-soft width))
+  t)
+
+(defun ~/color-rotate-hue (color degrees)
+  (pcase (color-name-to-rgb color)
+    (`(,r ,g ,b)
+     (pcase-let ((`(,h ,s ,l) (color-rgb-to-hsl r g b)))
+       (let ((h* (/ (mod (+ degrees (* h 360)) 360) 360)))
+         (pcase-let ((`(,r ,g, b) (color-hsl-to-rgb h* s l)))
+           (color-rgb-to-hex r g b)))))))
+
+(defun ~/color-invert (color)
+  (pcase (color-name-to-rgb (~/color-rotate-hue color 180))
+    (`(,r ,g ,b)
+     (pcase-let ((`(,h ,s ,l) (color-rgb-to-hsl r g b)))
+       (let ((l* (abs (- l 1.0))))
+         (pcase-let ((`(,r ,g, b) (color-hsl-to-rgb h s l*)))
+           (color-rgb-to-hex r g b)))))))
+
+;; (defun ~/next-theme ()
+;;   (let ((current-theme (car custom-enabled-themes)))
+;;     (or (car (cdr (seq-drop-while (lambda (theme)
+;;                                     (not (equal theme current-theme)))
+;;                                   (custom-available-themes))))
+;;         (car (custom-available-themes)))))
+
+;; (defun nano-load-next-theme ()
+;;   (interactive)
+;;   (nano-load-theme (~/next-theme)))
+
+;; (let ((degrees 22.5))
+;;   (seq-map (lambda (face)
+;;              (set-face-attribute face 'nil 
+;;                                  :foreground
+;;                                  (if-let (foreground (face-attribute face :foreground))
+;;                                      (~/color-rotate-hue foreground degrees))
+;;                                  :background
+;;                                  (if-let (background (face-attribute face :background))
+;;                                      (~/color-rotate-hue background degrees))))
+;;            (face-list)))
+;; (seq-map (lambda (face)
+;;            (set-face-attribute face 'nil  
+;;                                :foreground
+;;                                (if-let (foreground (face-attribute face :foreground))
+;;                                    (if (eq foreground 'unspecified)
+;;                                        nil
+;;                                      (~/color-invert foreground)))
+;;                                :background
+;;                                (if-let (background (face-attribute face :background))
+;;                                    (if (eq background 'unspecified)
+;;                                        nil
+;;                                      (~/color-invert background)))))
+;;          (face-list))
+
