@@ -64,10 +64,3 @@ fi
 
 export LESSOPEN="| $(which highlight) %s --out-format=xterm256 --line-numbers --quiet --force --style=moria"
 export LESS=" -R -F -X"
-
-
-
-if [ `which autojump` ]; then
-    [[ -s $(brew --prefix)/etc/profile.d/autojump.sh ]] && \
-	. $(brew --prefix)/etc/profile.d/autojump.sh
-fi
