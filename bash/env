@@ -53,7 +53,6 @@ if file.directory? "$HOME/.cabal/bin"; then
     path.unshift "$HOME/.cabal/bin"
 fi
 
-# Haskell binaries
 if file.directory? "$HOME/.local/bin"; then
     path.unshift "$HOME/.local/bin"
 fi
@@ -63,7 +62,6 @@ if file.directory? "$HOME/.cargo/bin"; then
     path.unshift "$HOME/.cargo/bin"
 fi
 
-[ `which highlight` ] || [ `which brew` ] && brew install highlight
 export LESSOPEN="| $(which highlight) %s --out-format=xterm256 --line-numbers --quiet --force --style=moria"
 export LESS=" -R -F -X"
 
