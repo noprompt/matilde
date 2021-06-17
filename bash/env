@@ -1,7 +1,6 @@
 # -*- mode: sh; -*-
 # vim:filetype=sh
 source $MATILDE_ROOT/bash/util
-require "file"
 require "path"
 
 # This operation can fail.
@@ -33,9 +32,8 @@ export FCEDIT=vim
 #[ `which npm` ] && export NODE_PATH=`npm -g root`
 
 # Personal binaries
-if file.directory? "$HOME/bin"; then
-    path.push "$HOME/bin"
-fi
+home_bin_directory="$HOME/bin"
+[ -d $home_bin_directory ] && path.push $home_bin_directory
 
 # Homebrew
 #if [ `which brew` ]; then
@@ -43,24 +41,28 @@ fi
 #fi
 
 # rbenv
-if file.exists? "$HOME/.rbenv"; then
+if [ -e  "$HOME/.rbenv" ]; then
     export RBENV_ROOT="$HOME/.rbenv"
     eval "$(rbenv init -)";
 fi
 
 # Haskell binaries
-if file.directory? "$HOME/.cabal/bin"; then
-    path.unshift "$HOME/.cabal/bin"
-fi
+cabal_home="$HOME/.cabal/bin"
+[ -d $cabal_home ] && path.unshift "$HOME/.cabal/bin"
 
-if file.directory? "$HOME/.local/bin"; then
-    path.unshift "$HOME/.local/bin"
-fi
+# Local binaries
+local_bin="$HOME/.local/bin"
+[ -d $local_bin ] && path.unshift "$HOME/.local/bin"
 
 # Rust binaries
-if file.directory? "$HOME/.cargo/bin"; then
-    path.unshift "$HOME/.cargo/bin"
-fi
+cargo_home="$HOME/.cargo/bin"
+[ -d cargo_home ] && path.unshift "$HOME/.cargo/bin"
+
+git_completion_file="/usr/local/etc/bash_completion.d/git-completion.bash"
+[ -f $git_completion_file ] && source $git_completion_file
+
+sdkman_init_file="$HOME/.sdkman/bin/sdkman-init.sh"
+[ -f $sdkman_init_file ] && source $sdkman_init_file
 
 export LESSOPEN="| $(which highlight) %s --out-format=xterm256 --line-numbers --quiet --force --style=moria"
 export LESS=" -R -F -X"
