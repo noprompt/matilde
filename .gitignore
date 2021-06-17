@@ -17,3 +17,5 @@ emacs.d/\*Backtrace\*
 \#*
 *.DS_Store
 *.netrwhist
+*\~
+.\#*
