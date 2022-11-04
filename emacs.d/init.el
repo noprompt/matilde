@@ -293,6 +293,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 (straight-use-package
  '(base16-emacs
    :type git
+   :host github
    :repo "neeasade/base16-emacs"))
 
 (add-to-list 'custom-theme-load-path (concat user-emacs-directory "straight/repos/base16-emacs/build"))
@@ -300,6 +301,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 (straight-use-package
  '(emacs-tron-theme
    :type git
+   :host github
    :repo "ivanmarcin/emacs-tron-theme"))
 
 (add-to-list 'custom-theme-load-path (concat user-emacs-directory "straight/repos/emacs-tron-theme"))
@@ -307,6 +309,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 (straight-use-package
  '(eink-emacs
    :type git
+   :host github
    :repo "maio/eink-emacs"))
 
 (add-to-list 'custom-theme-load-path (concat user-emacs-directory "straight/repos/eink-emacs"))
@@ -314,6 +317,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 (straight-use-package
  '(almost-mono-themes
    :type git
+   :host github
    :repo "cryon/almost-mono-themes"))
 
 (add-to-list 'custom-theme-load-path (concat user-emacs-directory "straight/repos/almost-mono-themes"))
@@ -321,6 +325,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 (straight-use-package
  '(borland-blue-theme
    :type git
+   :host github
    :repo "fourier/borland-blue-theme"))
 
 (add-to-list 'custom-theme-load-path (concat user-emacs-directory "straight/repos/borland-blue-theme"))
